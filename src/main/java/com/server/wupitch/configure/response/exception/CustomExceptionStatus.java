@@ -50,6 +50,10 @@ public enum CustomExceptionStatus {
     // Role
     ACCOUNT_ACCESS_DENIED(false, 2050, "권한이 없습니다."),
 
+    // OAuth
+    OAUTH_EMPTY_INFORM(false, 2560, "OAuth에 필요한 정보가 누락되었습니다."),
+    INVALID_GENDER_TYPE(false, 2561, "남성회원만 가입이 가능합니다."),
+
     /**
      * 3000 : Response 오류
      */
