@@ -1,6 +1,7 @@
 package com.server.wupitch.account.entity;
 
 import com.server.wupitch.account.entity.enumtypes.OAuthType;
+import com.server.wupitch.area.Area;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
 import lombok.AllArgsConstructor;
@@ -8,10 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.server.wupitch.account.entity.enumtypes.RoleType;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -20,6 +18,7 @@ import javax.persistence.Id;
 public class Account extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
     @Enumerated(EnumType.STRING)
@@ -39,5 +38,11 @@ public class Account extends BaseTimeEntity {
     private OAuthType oAuth;
 
     private String oAuthId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "areaId")
+    private Area area;
+
+    private String introduction;
 
 }
