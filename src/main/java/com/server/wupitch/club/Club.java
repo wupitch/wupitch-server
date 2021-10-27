@@ -1,6 +1,6 @@
 package com.server.wupitch.club;
 
-import com.server.entity.Area;
+import com.server.wupitch.area.Area;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
 import lombok.AllArgsConstructor;

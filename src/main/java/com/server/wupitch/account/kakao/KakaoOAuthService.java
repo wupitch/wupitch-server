@@ -6,7 +6,6 @@ import com.server.wupitch.account.dto.AccountAuthDto;
 import com.server.wupitch.account.dto.SignInReq;
 import com.server.wupitch.account.dto.SignInRes;
 import com.server.wupitch.account.entity.Account;
-import com.server.wupitch.account.entity.enumtypes.GenderType;
 import com.server.wupitch.configure.entity.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,7 @@ public class KakaoOAuthService {
         String email = kakaoUserInfo.getEmail();
 
         Account account = null;
-        Optional<Account> byKakaoIdAndStatus = accountRepository.findByOAuthIdAndStatus(oAuthId, Status.VALID);
+        Optional<Account> byKakaoIdAndStatus = accountRepository.findByoAuthIdAndStatus(oAuthId, Status.VALID);
         if (byKakaoIdAndStatus.isPresent()) account = byKakaoIdAndStatus.get();
         else {
             AccountAuthDto accountReq = AccountAuthDto.builder()

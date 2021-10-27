@@ -35,6 +35,7 @@ public class Account extends BaseTimeEntity {
 
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private RoleType role;
 
     private String profileImage;

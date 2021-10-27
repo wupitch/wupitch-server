@@ -24,7 +24,7 @@ public class AccountAspect {
     Logger logger = LoggerFactory.getLogger(AccountAspect.class);
     private final AccountLogEntityRepository accountLogEntityRepository;
 
-    @Around("@annotation(com.project.kcookserver.configure.aop.annotation.AccountLog)")
+    @Around("@annotation(com.server.wupitch.configure.aop.annotation.AccountLog)")
     public Object AccountLogAspect(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed = joinPoint.proceed();
 
