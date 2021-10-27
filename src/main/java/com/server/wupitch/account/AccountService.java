@@ -37,6 +37,7 @@ public class AccountService {
 
         SignInRes res = SignInRes.builder()
                 .accountId(account.getAccountId())
+                .oAuthId(account.getOAuthId())
                 .jwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()))
                 .build();
 

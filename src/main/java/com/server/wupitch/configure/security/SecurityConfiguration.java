@@ -66,7 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up").permitAll()
-                .antMatchers(HttpMethod.GET, "/errors/**", "/app/cakes/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/errors/**", "/app/cakes/**","/app/account/kakao/callback").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/role").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()
