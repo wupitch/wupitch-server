@@ -7,6 +7,7 @@ import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.util.ValidationExceptionProvider;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(tags = {"Account API"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/app")
