@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/account/kakao").permitAll()
+                .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/account/kakao","/app/account/apple").permitAll()
                 .antMatchers(HttpMethod.GET, "/errors/**").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/role").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
