@@ -6,6 +6,7 @@ import com.server.wupitch.account.dto.AccountAuthDto;
 import com.server.wupitch.account.dto.SignInReq;
 import com.server.wupitch.account.dto.SignInRes;
 import com.server.wupitch.account.entity.Account;
+import com.server.wupitch.account.entity.enumtypes.OAuthType;
 import com.server.wupitch.configure.entity.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ public class KakaoOAuthService {
                     .password(passwordEncoder.encode(oAuthId+KAKAO_TOKEN))
                     .build();
 
-            Account newAccount = Account.createAccount(accountReq);
+            Account newAccount = Account.createAccount(accountReq, OAuthType.KAKAO);
             Account save = accountRepository.save(newAccount);
             account = save;
 
