@@ -1,4 +1,4 @@
-package com.server.wupitch.account.kakao;
+package com.server.wupitch.account.oAuth.kakao;
 
 import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.AccountService;
@@ -6,6 +6,7 @@ import com.server.wupitch.account.dto.AccountAuthDto;
 import com.server.wupitch.account.dto.SignInReq;
 import com.server.wupitch.account.dto.SignInRes;
 import com.server.wupitch.account.entity.Account;
+import com.server.wupitch.account.entity.enumtypes.OAuthType;
 import com.server.wupitch.configure.entity.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,7 @@ public class KakaoOAuthService {
     @Value("${OAuth.KAKAO_TOKEN}")
     private String KAKAO_TOKEN;
 
-    public SignInRes kakaoLogin(String code) {
-        KakaoUserInfo kakaoUserInfo = kakaoOAuth2.getUserInfo(code);
+    public SignInRes kakaoLogin(KakaoUserInfo kakaoUserInfo) {
         String oAuthId = "kakao_" + kakaoUserInfo.getId();
 
         String nickname = kakaoUserInfo.getNickname();
@@ -47,7 +47,7 @@ public class KakaoOAuthService {
                     .password(passwordEncoder.encode(oAuthId+KAKAO_TOKEN))
                     .build();
 
-            Account newAccount = Account.createAccount(accountReq);
+            Account newAccount = Account.createAccount(accountReq, OAuthType.KAKAO);
             Account save = accountRepository.save(newAccount);
             account = save;
 

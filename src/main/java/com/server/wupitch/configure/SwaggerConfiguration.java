@@ -33,7 +33,7 @@ public class SwaggerConfiguration {
     }
 
     private ApiInfo swaggerInfo() {
-        return new ApiInfoBuilder().title("K.Cook")
+        return new ApiInfoBuilder().title("wupitch")
                 .description("wupitch App Back-End 연동 문서")
                 .license("© 2021. vividswan").licenseUrl("https://vividswan.github.io/").version("1").build();
     }

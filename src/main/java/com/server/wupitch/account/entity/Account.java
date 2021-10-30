@@ -53,14 +53,14 @@ public class Account extends BaseTimeEntity {
 
     private String introduction;
 
-    public static Account createAccount(AccountAuthDto dto) {
+    public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
                 .role(ROLE_USER)
                 .password(dto.getPassword())
-                .oAuth(KAKAO)
+                .oAuth(oAuth)
                 .oAuthId(dto.getOAuthId()).build();
     }
 
