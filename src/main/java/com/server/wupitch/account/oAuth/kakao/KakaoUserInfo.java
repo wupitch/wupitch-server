@@ -1,4 +1,4 @@
-package com.server.wupitch.account.kakao;
+package com.server.wupitch.account.oAuth.kakao;
 
 import com.server.wupitch.account.entity.enumtypes.GenderType;
 import lombok.AllArgsConstructor;

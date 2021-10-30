@@ -1,4 +1,4 @@
-package com.server.wupitch.account.kakao;
+package com.server.wupitch.account.oAuth.kakao;
 
 import com.server.wupitch.account.entity.enumtypes.GenderType;
 import com.server.wupitch.configure.response.exception.CustomException;
@@ -26,8 +26,8 @@ public class KakaoOAuth2 {
     public KakaoUserInfo getUserInfo(String authorizedCode) {
         String accessToken = getAccessToken(authorizedCode);
         KakaoUserInfo userInfo = getUserInfoByToken(accessToken);
-        if (userInfo.getGenderType().equals(GenderType.MALE))
-            throw new CustomException(CustomExceptionStatus.INVALID_GENDER_TYPE);
+//        if (userInfo.getGenderType().equals(GenderType.MALE))
+//            throw new CustomException(CustomExceptionStatus.INVALID_GENDER_TYPE);
 
         return userInfo;
     }
