@@ -53,6 +53,7 @@ public enum CustomExceptionStatus {
     // OAuth
     OAUTH_EMPTY_INFORM(false, 2560, "OAuth에 필요한 정보가 누락되었습니다."),
     INVALID_GENDER_TYPE(false, 2561, "여성 회원만 가입이 가능합니다."),
+    INVALID_OAUTH_ERROR(false, 2562, "OAuth 인증에 실패했습니다."),
 
     /**
      * 3000 : Response 오류
