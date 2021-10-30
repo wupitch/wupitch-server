@@ -29,8 +29,7 @@ public class KakaoOAuthService {
     @Value("${OAuth.KAKAO_TOKEN}")
     private String KAKAO_TOKEN;
 
-    public SignInRes kakaoLogin(String code) {
-        KakaoUserInfo kakaoUserInfo = kakaoOAuth2.getUserInfo(code);
+    public SignInRes kakaoLogin(KakaoUserInfo kakaoUserInfo) {
         String oAuthId = "kakao_" + kakaoUserInfo.getId();
 
         String nickname = kakaoUserInfo.getNickname();
