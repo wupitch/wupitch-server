@@ -1,7 +1,7 @@
 package com.server.wupitch.configure.aop.annotation;
 
 import com.server.wupitch.account.entity.Account;
-import com.server.wupitch.configure.Repository.AccountLogEntityRepository;
+import com.server.wupitch.configure.repository.AccountLogEntityRepository;
 import com.server.wupitch.configure.entity.AccountLogEntity;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
