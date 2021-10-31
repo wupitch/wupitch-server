@@ -1,8 +1,10 @@
 package com.server.wupitch.account;
 
 import com.server.wupitch.account.dto.AccountAuthDto;
+import com.server.wupitch.account.dto.NicknameReq;
 import com.server.wupitch.account.dto.SignInReq;
 import com.server.wupitch.account.dto.SignInRes;
+import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
@@ -41,6 +43,15 @@ public class AccountController {
     @GetMapping(value = "/accounts/auth")
     public DataResponse<AccountAuthDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(accountService.getAuthAccount(customUserDetails));
+    }
+
+
+    @Operation(summary = "닉네임 Validation API", description = "닉네임의 형식, 중복 Validation API")
+    @PostMapping(value = "/account/nickname/validation")
+    public CommonResponse getNicknameValidation(@RequestBody @Valid NicknameReq dto, Errors errors) {
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        accountService.getNicknameValidation(dto.getNickname());
+        return responseService.getSuccessResponse();
     }
 
 }
