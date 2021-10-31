@@ -1,4 +1,4 @@
-package com.server.wupitch.configure.Repository;
+package com.server.wupitch.configure.repository;
 
 import com.server.wupitch.configure.entity.AccountLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

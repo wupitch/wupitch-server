@@ -7,6 +7,8 @@ import com.server.wupitch.account.oAuth.kakao.KakaoOAuthService;
 import com.server.wupitch.account.oAuth.kakao.KakaoUserInfo;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
+import com.server.wupitch.configure.response.exception.CustomException;
+import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +29,24 @@ public class OAuthController {
     @Operation(summary = "카카오 OAuth 인증 요청 API", description = "형식에 맞는 DTO로 리퀘스트 -> JWT 토큰을 포함한 회원 정보 리턴")
     @PostMapping("/account/kakao")
     public @ResponseBody DataResponse<SignInRes> kakaoLoginAccountInfoDto(@RequestBody KakaoUserInfo kakaoUserInfo) {
-        SignInRes signInRes = kakaoOAuthService.kakaoLogin(kakaoUserInfo);
+        SignInRes signInRes = null;
+        try {
+            signInRes = kakaoOAuthService.kakaoLogin(kakaoUserInfo);
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionStatus.INVALID_OAUTH_ERROR);
+        }
         return responseService.getDataResponse(signInRes);
     }
 
     @Operation(summary = "애플 OAuth 인증 요청 API", description = "형식에 맞는 DTO로 리퀘스트 -> JWT 토큰을 포함한 회원 정보 리턴")
     @PostMapping("/account/apple")
     public @ResponseBody DataResponse<SignInRes> appleLoginAccountInfoDto(@RequestBody AppleUserInfo appleUserInfo) {
-        SignInRes signInRes = appleOAuthService.appleLogin(appleUserInfo);
+        SignInRes signInRes = null;
+        try {
+            signInRes = appleOAuthService.appleLogin(appleUserInfo);
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionStatus.INVALID_OAUTH_ERROR);
+        }
         return responseService.getDataResponse(signInRes);
     }
 
