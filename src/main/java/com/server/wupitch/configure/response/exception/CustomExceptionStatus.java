@@ -55,6 +55,12 @@ public enum CustomExceptionStatus {
     INVALID_GENDER_TYPE(false, 2561, "여성 회원만 가입이 가능합니다."),
     INVALID_OAUTH_ERROR(false, 2562, "OAuth 인증에 실패했습니다."),
 
+    // Area
+    AREA_NOT_FOUND(false, 2070, "지역을 찾을 수 없습니다."),
+
+    // Sports
+    SPORTS_NOT_FOUND(false, 2080, "스포츠를 찾을 수 없습니다."),
+
     /**
      * 3000 : Response 오류
      */

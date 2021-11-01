@@ -1,9 +1,6 @@
 package com.server.wupitch.account;
 
-import com.server.wupitch.account.dto.AccountAuthDto;
-import com.server.wupitch.account.dto.NicknameReq;
-import com.server.wupitch.account.dto.SignInReq;
-import com.server.wupitch.account.dto.SignInRes;
+import com.server.wupitch.account.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
@@ -51,6 +48,19 @@ public class AccountController {
     public CommonResponse getNicknameValidation(@RequestBody @Valid NicknameReq dto, Errors errors) {
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         accountService.getNicknameValidation(dto.getNickname());
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "회원 정보 수정 API", description = "JWT 토큰을 기준으로 요청하는 회원 정보 수정(NULL일 땐 변경 x)")
+    @PatchMapping(value = "/accounts/information")
+    public CommonResponse changeAccountInform(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                              @RequestBody @Valid AccountInformReq dto ,
+                                              Errors errors) {
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        accountService.changeAccountInform(customUserDetails, dto);
         return responseService.getSuccessResponse();
     }
 
