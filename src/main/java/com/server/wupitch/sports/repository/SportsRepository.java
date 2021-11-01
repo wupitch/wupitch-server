@@ -1,4 +1,4 @@
-package com.server.wupitch.sports;
+package com.server.wupitch.sports.repository;
 
 import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.sports.entity.Sports;
