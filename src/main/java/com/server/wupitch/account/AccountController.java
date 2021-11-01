@@ -47,7 +47,7 @@ public class AccountController {
 
 
     @Operation(summary = "닉네임 Validation API", description = "닉네임의 형식, 중복 Validation API")
-    @PostMapping(value = "/account/nickname/validation")
+    @PostMapping(value = "/accounts/nickname/validation")
     public CommonResponse getNicknameValidation(@RequestBody @Valid NicknameReq dto, Errors errors) {
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         accountService.getNicknameValidation(dto.getNickname());

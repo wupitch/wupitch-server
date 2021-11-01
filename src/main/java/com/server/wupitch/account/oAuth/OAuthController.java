@@ -27,7 +27,7 @@ public class OAuthController {
 
 
     @Operation(summary = "카카오 OAuth 인증 요청 API", description = "형식에 맞는 DTO로 리퀘스트 -> JWT 토큰을 포함한 회원 정보 리턴")
-    @PostMapping("/account/kakao")
+    @PostMapping("/accounts/kakao")
     public @ResponseBody DataResponse<SignInRes> kakaoLoginAccountInfoDto(@RequestBody KakaoUserInfo kakaoUserInfo) {
         SignInRes signInRes = null;
         try {
@@ -39,7 +39,7 @@ public class OAuthController {
     }
 
     @Operation(summary = "애플 OAuth 인증 요청 API", description = "형식에 맞는 DTO로 리퀘스트 -> JWT 토큰을 포함한 회원 정보 리턴")
-    @PostMapping("/account/apple")
+    @PostMapping("/accounts/apple")
     public @ResponseBody DataResponse<SignInRes> appleLoginAccountInfoDto(@RequestBody AppleUserInfo appleUserInfo) {
         SignInRes signInRes = null;
         try {
