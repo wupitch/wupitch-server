@@ -1,4 +1,4 @@
-package com.server.wupitch.area;
+package com.server.wupitch.sports.entity;
 
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
@@ -12,11 +12,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Area extends BaseTimeEntity {
+public class Sports extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long areaId;
+    private Long sportsId;
 
     @Enumerated(EnumType.STRING)
     private Status status;

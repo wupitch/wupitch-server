@@ -1,6 +1,7 @@
 package com.server.wupitch.account.entity;
 
 import com.server.wupitch.account.dto.AccountAuthDto;
+import com.server.wupitch.account.dto.AccountInformReq;
 import com.server.wupitch.account.entity.enumtypes.OAuthType;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
@@ -13,7 +14,6 @@ import com.server.wupitch.account.entity.enumtypes.RoleType;
 
 import javax.persistence.*;
 
-import static com.server.wupitch.account.entity.enumtypes.OAuthType.*;
 import static com.server.wupitch.account.entity.enumtypes.RoleType.*;
 import static com.server.wupitch.configure.entity.Status.*;
 
@@ -53,6 +53,8 @@ public class Account extends BaseTimeEntity {
 
     private String introduction;
 
+    private Integer ageNum;
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
@@ -71,6 +73,16 @@ public class Account extends BaseTimeEntity {
                 .nickname(this.nickname)
                 .oAuthId(this.oAuthId)
                 .build();
+    }
+
+    public void setAccountInfoByDto(AccountInformReq dto) {
+        if(dto.getNickname() != null)this.nickname = dto.getNickname();
+        if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
+        if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
+    }
+
+    public void setAccountArea(Area area) {
+        this.area = area;
     }
 
 }
