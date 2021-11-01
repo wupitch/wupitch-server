@@ -23,7 +23,7 @@ public class AccountInformReq {
     private Integer ageNum;
 
     @NotBlank
-    @Length(min=3, max = 20)
+    @Length(min=1, max = 20)
     @Pattern(regexp = "^[가-힣a-zA-Z0-9_-]{1,20}$")
     private String nickname;
     private String introduce;
