@@ -1,4 +1,4 @@
-package com.server.wupitch.sports;
+package com.server.wupitch.sports.entity;
 
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
