@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.server.wupitch.configure.entity.Status.VALID;
@@ -80,16 +79,15 @@ public class AccountService {
 
         account.setAccountArea(area);
 
-        for (ArrayList<Long> value : dto.getSportsList()) {
-            Sports sports = sportsRepository.findBySportsIdAndStatus(value.get(0), VALID)
+        for (Long sportsId : dto.getSportsList()) {
+            Sports sports = sportsRepository.findBySportsIdAndStatus(sportsId, VALID)
                     .orElseThrow(() -> new CustomException(CustomExceptionStatus.SPORTS_NOT_FOUND));
-            Integer level = value.get(1).intValue();
             AccountSportsRelation accountSportsRelation = AccountSportsRelation.builder()
                     .status(VALID)
                     .account(account)
                     .sports(sports)
-                    .level(level)
                     .build();
+
             accountSportsRelationRepository.save(accountSportsRelation);
         }
 
