@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**")
                     .allowedOrigins(mappingUrl)
-                    .allowedMethods("GET", "POST", "OPTIONS", "PUT");
+                    .allowedMethods("GET", "POST", "OPTIONS", "PUT", "PATCH");
         }
     }
 
@@ -66,7 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/accounts/kakao","/app/accounts/apple","/app/accounts/nickname/validation").permitAll()
-                .antMatchers(HttpMethod.GET, "/errors/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/errors/**","/app/areas", "/app/sports").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/role").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()
