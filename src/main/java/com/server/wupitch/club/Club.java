@@ -3,6 +3,7 @@ package com.server.wupitch.club;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
+import com.server.wupitch.sports.entity.Sports;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +27,15 @@ public class Club extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String title;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "areaId")
     private Area area;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "sportsId")
+    private Sports sports;
 
     private String introduction;
 
@@ -52,5 +59,16 @@ public class Club extends BaseTimeEntity {
 
     private Long memberCount;
 
+    private Integer ageValue;
+
+    private Boolean teenager;
+
+    private Boolean twenties;
+
+    private Boolean thirties;
+
+    private Boolean forties;
+
+    private Boolean moreAge;
 
 }

@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface ClubRepositoryCustom {
 
-    Page<Club> findAllClub(Pageable pageable, Area area, Sports sports, List<Integer> days, Integer startTime, Integer endTime, Integer minCnt, Integer age);
+    Page<Club> findAllClub(Pageable pageable, Area area, Sports sports, List<Integer> days, Integer startTime, Integer endTime, Integer minCnt, List<Integer> ageList);
 
 }
