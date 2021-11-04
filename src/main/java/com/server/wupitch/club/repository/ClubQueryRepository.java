@@ -11,6 +11,7 @@ import com.server.wupitch.area.Area;
 import com.server.wupitch.area.QArea;
 import com.server.wupitch.club.Club;
 import com.server.wupitch.club.QClub;
+import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.sports.entity.QSports;
 import com.server.wupitch.sports.entity.Sports;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.server.wupitch.configure.entity.Status.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -46,17 +49,17 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
         QSports qSports = QSports.sports;
         Boolean[] boolDays = new Boolean[8];
         Arrays.fill(boolDays, false);
-        for (Integer day : days) boolDays[day] = true;
+        if(days != null) for (Integer day : days) boolDays[day] = true;
 
         Boolean[] boolAgeList = new Boolean[6];
         Arrays.fill(boolAgeList, false);
-        for (Integer integer : ageList) boolAgeList[integer] = true;
+        if(ageList != null) for (Integer integer : ageList) boolAgeList[integer] = true;
 
         QueryResults<Club> result = queryFactory
                 .select(qClub)
                 .from(qClub)
-                .join(qArea).fetchJoin()
-                .join(qSports).fetchJoin()
+                .leftJoin(qArea).on(qClub.area.eq(qArea).and(qArea.status.eq(VALID)))
+                .leftJoin(qSports).on(qClub.sports.eq(qSports).and(qSports.status.eq(VALID)))
                 .where(
                         areaEq(qClub, area), sportsEq(qClub, sports),
                         startTimeEq(qClub, startTime), endTimeEq(qClub, endTime),
