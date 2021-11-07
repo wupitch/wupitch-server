@@ -34,4 +34,6 @@ public class AccountAuthDto {
 
     private String jwt;
 
+    private String phoneNumber;
+
 }
