@@ -84,6 +84,7 @@ public class Account extends BaseTimeEntity {
         if(dto.getNickname() != null)this.nickname = dto.getNickname();
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
+        if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
     }
 
     public void setAccountArea(Area area) {
