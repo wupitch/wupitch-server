@@ -12,5 +12,6 @@ public class KakaoUserInfo {
     String email;
     String nickname;
     GenderType genderType;
+    String phoneNumber;
 
 }

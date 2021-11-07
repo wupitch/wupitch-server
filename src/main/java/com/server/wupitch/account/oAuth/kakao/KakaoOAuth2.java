@@ -26,8 +26,8 @@ public class KakaoOAuth2 {
     public KakaoUserInfo getUserInfo(String authorizedCode) {
         String accessToken = getAccessToken(authorizedCode);
         KakaoUserInfo userInfo = getUserInfoByToken(accessToken);
-//        if (userInfo.getGenderType().equals(GenderType.MALE))
-//            throw new CustomException(CustomExceptionStatus.INVALID_GENDER_TYPE);
+        if (userInfo.getGenderType().equals(GenderType.MALE))
+            throw new CustomException(CustomExceptionStatus.INVALID_GENDER_TYPE);
 
         return userInfo;
     }
@@ -81,13 +81,14 @@ public class KakaoOAuth2 {
         String email = body.getJSONObject("kakao_account").getString("email");
         String nickname = body.getJSONObject("properties").getString("nickname");
         String gender = body.getJSONObject("kakao_account").getString("gender");
-        if(id == null || email == null || nickname == null || gender == null)
+        String phoneNumber = body.getJSONObject("kakao_account").getString("phone_number");
+        if(id == null || email == null || nickname == null || gender == null || phoneNumber == null)
             throw new CustomException(CustomExceptionStatus.OAUTH_EMPTY_INFORM);
 
         GenderType genderType;
         if(gender.equals("male")) genderType = GenderType.MALE;
         else genderType = GenderType.FEMALE;
 
-        return new KakaoUserInfo(id, email, nickname, genderType);
+        return new KakaoUserInfo(id, email, nickname, genderType, phoneNumber);
     }
 }

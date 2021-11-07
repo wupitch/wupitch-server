@@ -55,6 +55,8 @@ public class Account extends BaseTimeEntity {
 
     private Integer ageNum;
 
+    private String phoneNumber;
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
@@ -63,7 +65,9 @@ public class Account extends BaseTimeEntity {
                 .role(ROLE_USER)
                 .password(dto.getPassword())
                 .oAuth(oAuth)
-                .oAuthId(dto.getOAuthId()).build();
+                .oAuthId(dto.getOAuthId())
+                .phoneNumber(dto.getPhoneNumber())
+                .build();
     }
 
     public AccountAuthDto getAccountInfoDto() {
@@ -72,6 +76,7 @@ public class Account extends BaseTimeEntity {
                 .email(this.email)
                 .nickname(this.nickname)
                 .oAuthId(this.oAuthId)
+                .phoneNumber(this.phoneNumber)
                 .build();
     }
 
@@ -79,6 +84,7 @@ public class Account extends BaseTimeEntity {
         if(dto.getNickname() != null)this.nickname = dto.getNickname();
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
+        if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
     }
 
     public void setAccountArea(Area area) {

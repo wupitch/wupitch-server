@@ -27,5 +27,6 @@ public class AccountInformReq {
     @Pattern(regexp = "^[가-힣a-zA-Z0-9_-]{1,20}$")
     private String nickname;
     private String introduce;
+    private String phoneNumber;
 
 }

@@ -35,6 +35,7 @@ public class KakaoOAuthService {
 
         String nickname = kakaoUserInfo.getNickname();
         String email = kakaoUserInfo.getEmail();
+        String phoneNumber = kakaoUserInfo.getPhoneNumber();
 
         Account account = null;
         Optional<Account> byKakaoIdAndStatus = accountRepository.findByoAuthIdAndStatus(oAuthId, Status.VALID);
@@ -45,6 +46,7 @@ public class KakaoOAuthService {
                     .email(email)
                     .nickname(nickname)
                     .password(passwordEncoder.encode(oAuthId+KAKAO_TOKEN))
+                    .phoneNumber(phoneNumber)
                     .build();
 
             Account newAccount = Account.createAccount(accountReq, OAuthType.KAKAO);
