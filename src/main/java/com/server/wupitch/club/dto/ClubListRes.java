@@ -56,19 +56,19 @@ public class ClubListRes {
         if(club.getEndTime() != null) endTime = club.getEndTime() + ":00";
         else endTime = "24:00";
 
-        if(club.getMonday()) timeTable.add("월요일 " + startTime + " " + endTime );
-        if(club.getTuesday()) timeTable.add("화요일 " + startTime + " " + endTime );
-        if(club.getWednesday()) timeTable.add("수요일 " + startTime + " " + endTime );
-        if(club.getThursday()) timeTable.add("목요일 " + startTime + " " + endTime );
-        if(club.getFriday()) timeTable.add("금요일 " + startTime + " " + endTime );
-        if(club.getSaturday()) timeTable.add("토요일 " + startTime + " " + endTime );
-        if(club.getMonday()) timeTable.add("일요일 " + startTime + " " + endTime );
+        if(club.getMonday() != null && club.getMonday()) timeTable.add("월요일 " + startTime + " " + endTime );
+        if(club.getTuesday() != null && club.getTuesday()) timeTable.add("화요일 " + startTime + " " + endTime );
+        if(club.getWednesday() != null && club.getWednesday()) timeTable.add("수요일 " + startTime + " " + endTime );
+        if(club.getThursday() != null && club.getThursday()) timeTable.add("목요일 " + startTime + " " + endTime );
+        if(club.getFriday() != null && club.getFriday()) timeTable.add("금요일 " + startTime + " " + endTime );
+        if(club.getSaturday() != null && club.getSaturday()) timeTable.add("토요일 " + startTime + " " + endTime );
+        if(club.getSunday() != null && club.getSunday()) timeTable.add("일요일 " + startTime + " " + endTime );
 
-        if (club.getTeenager()) ageTable.add("10대");
-        if (club.getTwenties()) ageTable.add("20대");
-        if (club.getThirties()) ageTable.add("30대");
-        if (club.getForties()) ageTable.add("40대");
-        if (club.getMoreAge()) ageTable.add("50대 이상");
+        if (club.getTeenager()  != null && club.getTeenager()) ageTable.add("10대");
+        if (club.getTwenties() != null && club.getTwenties()) ageTable.add("20대");
+        if (club.getThirties() != null && club.getThirties()) ageTable.add("30대");
+        if (club.getForties() != null && club.getForties()) ageTable.add("40대");
+        if (club.getMoreAge() != null && club.getMoreAge()) ageTable.add("50대 이상");
 
 
     }
