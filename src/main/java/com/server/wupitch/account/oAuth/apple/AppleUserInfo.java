@@ -9,5 +9,6 @@ public class AppleUserInfo {
 
     String email;
     String nickname;
+    String phoneNumber;
 
 }

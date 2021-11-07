@@ -34,6 +34,7 @@ public class AppleOAuthService {
 
         String nickname = appleUserInfo.getNickname();
         String email = appleUserInfo.getEmail();
+        String phoneNumber = appleUserInfo.getPhoneNumber();
 
         Account account = null;
         Optional<Account> byKakaoIdAndStatus = accountRepository.findByoAuthIdAndStatus(oAuthId, Status.VALID);
@@ -43,6 +44,7 @@ public class AppleOAuthService {
                     .oAuthId(oAuthId)
                     .email(email)
                     .nickname(nickname)
+                    .phoneNumber(phoneNumber)
                     .password(passwordEncoder.encode(oAuthId + APPLE_TOKEN))
                     .build();
 
