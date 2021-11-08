@@ -2,18 +2,21 @@ package com.server.wupitch.club;
 
 import com.server.wupitch.area.Area;
 import com.server.wupitch.club.dto.ClubListRes;
+import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
+import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.sports.entity.Sports;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,5 +52,17 @@ public class ClubController {
         Page<ClubListRes> result =  clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, startTime, endTime, memberCountValue, ageList);
         return responseService.getDataResponse(result);
     }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
+    @PostMapping("/clubs")
+    public CommonResponse createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        clubService.createClub(dto, customUserDetails);
+        return responseService.getSuccessResponse();
+    }
+
+
 
 }
