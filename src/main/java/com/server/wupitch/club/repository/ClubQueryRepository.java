@@ -87,22 +87,22 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
 
     private BooleanExpression dayEq(int idx, QClub qClub, Boolean day) {
         if (!day) return null;
-        if (idx == 1) return qClub.monday;
-        else if (idx == 2) return qClub.tuesday;
-        else if (idx == 3) return qClub.wednesday;
-        else if (idx == 4) return qClub.thursday;
-        else if (idx == 5) return qClub.friday;
-        else if (idx == 6) return qClub.saturday;
-        else return qClub.sunday;
+        if (idx == 1) return qClub.monday.eq(true);
+        else if (idx == 2) return qClub.tuesday.eq(true);
+        else if (idx == 3) return qClub.wednesday.eq(true);
+        else if (idx == 4) return qClub.thursday.eq(true);
+        else if (idx == 5) return qClub.friday.eq(true);
+        else if (idx == 6) return qClub.saturday.eq(true);
+        else return qClub.sunday.eq(true);
     }
 
     private BooleanExpression ageEq(int idx, QClub qClub, Boolean ageValue) {
         if (!ageValue) return null;
-        if (idx == 1) return qClub.teenager;
-        else if (idx == 2) return qClub.twenties;
-        else if (idx == 3) return qClub.thirties;
-        else if (idx == 4) return qClub.forties;
-        else return qClub.moreAge;
+        if (idx == 1) return qClub.teenager.eq(true);
+        else if (idx == 2) return qClub.twenties.eq(true);
+        else if (idx == 3) return qClub.thirties.eq(true);
+        else if (idx == 4) return qClub.forties.eq(true);
+        else return qClub.moreAge.eq(true);
     }
 
     private BooleanExpression startTimeEq(QClub qClub, Integer startTime) {
