@@ -20,8 +20,8 @@ public class CustomUserDetailService implements UserDetailsService {
     private final AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String oAuthId) {
-        Optional<Account> optionalAccount = accountRepository.findByoAuthIdAndStatus(oAuthId, VALID);
+    public UserDetails loadUserByUsername(String email) {
+        Optional<Account> optionalAccount = accountRepository.findByEmailAndStatus(email, VALID);
         if (!optionalAccount.isPresent()) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND);
         return new CustomUserDetails(optionalAccount.get());
     }
