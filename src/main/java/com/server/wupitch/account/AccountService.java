@@ -48,8 +48,8 @@ public class AccountService {
 
         SignInRes res = SignInRes.builder()
                 .accountId(account.getAccountId())
-                .oAuthId(account.getOAuthId())
-                .jwt(jwtTokenProvider.createToken(account.getOAuthId(), account.getRole()))
+                .email(account.getEmail())
+                .jwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()))
                 .build();
 
         return res;
@@ -91,5 +91,20 @@ public class AccountService {
             accountSportsRelationRepository.save(accountSportsRelation);
         }
 
+    }
+
+    @Transactional
+    public AccountAuthDto signUp(AccountAuthDto dto) {
+        if (accountRepository.findByEmailAndStatus(dto.getEmail(), VALID).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
+        if (dto.getNickname() != null){
+            if (accountRepository.findByNicknameAndStatus(dto.getNickname(), VALID).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_NICKNAME);
+        }
+
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        Account account = Account.createAccount(dto);
+        Account save = accountRepository.save(account);
+        dto.setAccountId(save.getAccountId());
+        dto.setJwt(jwtTokenProvider.createToken(account.getEmail(),account.getRole()));
+        return dto;
     }
 }

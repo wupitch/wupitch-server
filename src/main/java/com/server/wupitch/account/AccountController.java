@@ -64,4 +64,11 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "회원가입 API", description = "형식에 맞는 DTO로 리퀘스트 -> 회원가입")
+    @PostMapping(value = "/sign-up")
+    public DataResponse<AccountAuthDto> signUp(@RequestBody @Valid AccountAuthDto dto, Errors errors){
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        return responseService.getDataResponse(accountService.signUp(dto));
+    }
+
 }

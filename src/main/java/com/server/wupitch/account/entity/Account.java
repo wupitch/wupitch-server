@@ -91,4 +91,16 @@ public class Account extends BaseTimeEntity {
         this.area = area;
     }
 
+    public static Account createAccount(AccountAuthDto dto) {
+
+        return Account.builder()
+                .email(dto.getEmail())
+                .nickname(dto.getNickname())
+                .password(dto.getPassword())
+                .phoneNumber(dto.getPhoneNumber())
+                .status(VALID)
+                .role(RoleType.ROLE_USER)
+                .build();
+    }
+
 }
