@@ -16,6 +16,6 @@ public class SignInRes {
 
     private String jwt;
 
-    private String oAuthId;
+    private String email;
 
 }

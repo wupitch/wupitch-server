@@ -65,7 +65,7 @@ public class ClubService {
 
     @Transactional
     public void createClub(CreateClubReq dto, CustomUserDetails customUserDetails) {
-        Account account = accountRepository.findByoAuthIdAndStatus(customUserDetails.getOAuthId(), VALID)
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         Sports sports = sportsRepository.findBySportsIdAndStatus(dto.getSportsId(), VALID)

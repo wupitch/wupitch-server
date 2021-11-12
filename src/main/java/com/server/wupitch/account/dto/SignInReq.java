@@ -23,7 +23,6 @@ public class SignInReq {
     @Length(min=8, max= 50)
     private String password;
 
-    @NotBlank
     private String oAuthId;
 
 }
