@@ -51,6 +51,14 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "이메일 Validation API", description = "이메일의 형식, 중복 Validation API")
+    @PostMapping(value = "/accounts/email/validation")
+    public CommonResponse getEmailValidation(@RequestBody @Valid EmailReq dto, Errors errors) {
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        accountService.getEmailValidation(dto.getEmail());
+        return responseService.getSuccessResponse();
+    }
+
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
