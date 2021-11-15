@@ -23,7 +23,7 @@ public class AccountAuthDto {
 
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Length(min=8, max= 50)
+    @Length(min=6, max= 50)
     private String password;
 
     @Length(min=3, max = 20)

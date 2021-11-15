@@ -59,6 +59,13 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "패스워드 Validation API", description = "비밀번호의 형식 Validation API")
+    @PostMapping(value = "/accounts/password/validation")
+    public CommonResponse getPasswordValidation(@RequestBody @Valid PasswordReq dto, Errors errors) {
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        return responseService.getSuccessResponse();
+    }
+
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
