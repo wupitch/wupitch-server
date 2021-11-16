@@ -57,6 +57,8 @@ public class Account extends BaseTimeEntity {
 
     private String phoneNumber;
 
+    private Boolean isPushAgree;
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
@@ -65,8 +67,6 @@ public class Account extends BaseTimeEntity {
                 .role(ROLE_USER)
                 .password(dto.getPassword())
                 .oAuth(oAuth)
-                .oAuthId(dto.getOAuthId())
-                .phoneNumber(dto.getPhoneNumber())
                 .build();
     }
 
@@ -75,8 +75,6 @@ public class Account extends BaseTimeEntity {
                 .accountId(this.accountId)
                 .email(this.email)
                 .nickname(this.nickname)
-                .oAuthId(this.oAuthId)
-                .phoneNumber(this.phoneNumber)
                 .build();
     }
 
@@ -85,6 +83,7 @@ public class Account extends BaseTimeEntity {
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
         if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
+        if(dto.getIsPushAgree() != null) this.isPushAgree = dto.getIsPushAgree();
     }
 
     public void setAccountArea(Area area) {
@@ -97,9 +96,10 @@ public class Account extends BaseTimeEntity {
                 .email(dto.getEmail())
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
-                .phoneNumber(dto.getPhoneNumber())
                 .status(VALID)
                 .role(RoleType.ROLE_USER)
+                .introduction(dto.getIntroduce())
+                .isPushAgree(dto.getIsPushAgree())
                 .build();
     }
 

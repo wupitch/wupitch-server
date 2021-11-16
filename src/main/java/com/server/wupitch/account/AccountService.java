@@ -107,4 +107,9 @@ public class AccountService {
         dto.setJwt(jwtTokenProvider.createToken(account.getEmail(),account.getRole()));
         return dto;
     }
+
+    public void getEmailValidation(String email) {
+        Optional<Account> accountOptional = accountRepository.findByEmailAndStatus(email, VALID);
+        if(accountOptional.isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
+    }
 }
