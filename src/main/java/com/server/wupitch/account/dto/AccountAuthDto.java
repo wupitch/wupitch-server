@@ -36,4 +36,6 @@ public class AccountAuthDto {
 
     private String introduce;
 
+    private Boolean isPushAgree;
+
 }
