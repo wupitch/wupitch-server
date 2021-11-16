@@ -42,11 +42,9 @@ public class KakaoOAuthService {
         if (byKakaoIdAndStatus.isPresent()) account = byKakaoIdAndStatus.get();
         else {
             AccountAuthDto accountReq = AccountAuthDto.builder()
-                    .oAuthId(oAuthId)
                     .email(email)
                     .nickname(nickname)
                     .password(passwordEncoder.encode(oAuthId+KAKAO_TOKEN))
-                    .phoneNumber(phoneNumber)
                     .build();
 
             Account newAccount = Account.createAccount(accountReq, OAuthType.KAKAO);

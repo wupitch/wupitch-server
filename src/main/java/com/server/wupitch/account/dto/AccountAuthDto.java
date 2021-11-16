@@ -15,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 public class AccountAuthDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long accountId;
 
     @Email
@@ -30,10 +31,7 @@ public class AccountAuthDto {
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]{3,20}$")
     private String nickname;
 
-    private String oAuthId;
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String jwt;
-
-    private String phoneNumber;
 
 }

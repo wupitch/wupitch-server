@@ -65,8 +65,6 @@ public class Account extends BaseTimeEntity {
                 .role(ROLE_USER)
                 .password(dto.getPassword())
                 .oAuth(oAuth)
-                .oAuthId(dto.getOAuthId())
-                .phoneNumber(dto.getPhoneNumber())
                 .build();
     }
 
@@ -75,8 +73,6 @@ public class Account extends BaseTimeEntity {
                 .accountId(this.accountId)
                 .email(this.email)
                 .nickname(this.nickname)
-                .oAuthId(this.oAuthId)
-                .phoneNumber(this.phoneNumber)
                 .build();
     }
 
@@ -97,7 +93,6 @@ public class Account extends BaseTimeEntity {
                 .email(dto.getEmail())
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
-                .phoneNumber(dto.getPhoneNumber())
                 .status(VALID)
                 .role(RoleType.ROLE_USER)
                 .build();

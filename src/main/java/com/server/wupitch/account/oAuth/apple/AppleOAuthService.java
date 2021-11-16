@@ -40,7 +40,6 @@ public class AppleOAuthService {
         if (byKakaoIdAndStatus.isPresent()) account = byKakaoIdAndStatus.get();
         else {
             AccountAuthDto accountReq = AccountAuthDto.builder()
-                    .oAuthId(oAuthId)
                     .email(email)
                     .nickname(nickname)
                     .password(passwordEncoder.encode(oAuthId + APPLE_TOKEN))
