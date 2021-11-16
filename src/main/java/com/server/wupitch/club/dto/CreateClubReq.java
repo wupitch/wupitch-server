@@ -30,4 +30,14 @@ public class CreateClubReq {
 
     private Integer endTime;
 
+    private List<Long> extraInfoList = new ArrayList<>();
+
+    private String location;
+
+    private String inquiries;
+
+    private Integer conference;
+
+    private Integer guestConference;
+
 }

@@ -61,6 +61,9 @@ public enum CustomExceptionStatus {
     // Sports
     SPORTS_NOT_FOUND(false, 2080, "스포츠를 찾을 수 없습니다."),
 
+    // Extra
+    EXTRA_NOT_FOUND(false, 2090, "추가정보를 찾을 수 없습니다."),
+
     /**
      * 3000 : Response 오류
      */

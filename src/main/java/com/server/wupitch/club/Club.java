@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.server.wupitch.configure.entity.Status.*;
 import static javax.persistence.FetchType.*;
 
@@ -46,6 +49,12 @@ public class Club extends BaseTimeEntity {
 
     private String introduction;
 
+    private String inquiries;
+
+    private Integer conference;
+
+    private Integer guestConference;
+
     private Boolean monday;
 
     private Boolean tuesday;
@@ -76,6 +85,8 @@ public class Club extends BaseTimeEntity {
 
     private Boolean moreAge;
 
+    private String location;
+
     public Club(CreateClubReq dto, Account account, Sports sports, Area area) {
 
         this.sports = sports;
@@ -86,6 +97,11 @@ public class Club extends BaseTimeEntity {
 
         this.startTime = dto.getStartTime();
         this.endTime = dto.getEndTime();
+
+        this.location = dto.getLocation();
+        this.inquiries = dto.getInquiries();
+        this.conference = dto.getConference();
+        this.guestConference = dto.getGuestConference();
 
         if (dto.getDays() != null) {
             for (Integer time : dto.getDays()) {
