@@ -1,7 +1,7 @@
 package com.server.wupitch.extra;
 
-import com.server.wupitch.area.dto.AreaRes;
 import com.server.wupitch.extra.dto.ExtraRes;
+import com.server.wupitch.extra.repository.ExtraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

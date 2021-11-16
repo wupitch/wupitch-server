@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static com.server.wupitch.configure.entity.Status.*;
 import static javax.persistence.FetchType.*;
 
 @Getter
@@ -33,5 +34,11 @@ public class ClubExtraRelation extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "extraId")
     private Extra extra;
+
+    public ClubExtraRelation(Club club, Extra extra) {
+        this.status = VALID;
+        this.club = club;
+        this.extra = extra;
+    }
 
 }
