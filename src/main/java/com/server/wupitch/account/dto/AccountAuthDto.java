@@ -34,4 +34,6 @@ public class AccountAuthDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String jwt;
 
+    private String introduce;
+
 }

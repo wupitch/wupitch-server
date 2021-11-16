@@ -95,6 +95,7 @@ public class Account extends BaseTimeEntity {
                 .password(dto.getPassword())
                 .status(VALID)
                 .role(RoleType.ROLE_USER)
+                .introduction(dto.getIntroduce())
                 .build();
     }
 
