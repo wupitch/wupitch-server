@@ -28,6 +28,12 @@ dependencies {
 	annotationProcessor('org.projectlombok:lombok')
 	testAnnotationProcessor('org.projectlombok:lombok')
 
+	// AWS S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
+
+	// FCM
+	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+
 	// Swagger
 	implementation "io.springfox:springfox-boot-starter:3.0.0"
 
