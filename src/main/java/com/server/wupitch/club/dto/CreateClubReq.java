@@ -26,9 +26,9 @@ public class CreateClubReq {
 
     private String introduction;
 
-    private Integer startTime;
+    private Double startTime;
 
-    private Integer endTime;
+    private Double endTime;
 
     private List<Long> extraInfoList = new ArrayList<>();
 

@@ -69,9 +69,9 @@ public class Club extends BaseTimeEntity {
 
     private Boolean sunday;
 
-    private Integer startTime;
+    private Double startTime;
 
-    private Integer endTime;
+    private Double endTime;
 
     private Long memberCount;
 
