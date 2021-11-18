@@ -11,6 +11,10 @@ import com.server.wupitch.club.repository.ClubRepositoryCustom;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
+import com.server.wupitch.extra.entity.ClubExtraRelation;
+import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
+import com.server.wupitch.extra.repository.ExtraRepository;
+import com.server.wupitch.extra.entity.Extra;
 import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +40,12 @@ public class ClubService {
     private final SportsRepository sportsRepository;
     private final AccountRepository accountRepository;
     private final ClubRepository clubRepository;
+    private final ExtraRepository extraRepository;
+    private final ClubExtraRelationRepository clubExtraRelationRepository;
 
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
-            List<Integer> days, Integer startTime, Integer endTime, Integer memberCountValue, List<Integer> ageList) {
+            List<Integer> days, Double startTime, Double endTime, Integer memberCountValue, List<Integer> ageList) {
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -76,7 +82,17 @@ public class ClubService {
 
         Club club = new Club(dto, account, sports, area);
 
-        clubRepository.save(club);
+        Club save = clubRepository.save(club);
+
+        if (dto.getExtraInfoList() != null) {
+            for (Long extraNum : dto.getExtraInfoList()) {
+                Extra extra = extraRepository.findAllByExtraIdAndStatus(extraNum, VALID)
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.EXTRA_NOT_FOUND));
+
+                ClubExtraRelation clubExtraRelation = new ClubExtraRelation(save, extra);
+                clubExtraRelationRepository.save(clubExtraRelation);
+            }
+        }
 
     }
 }

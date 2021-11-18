@@ -11,7 +11,6 @@ import com.server.wupitch.area.Area;
 import com.server.wupitch.area.QArea;
 import com.server.wupitch.club.Club;
 import com.server.wupitch.club.QClub;
-import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.sports.entity.QSports;
 import com.server.wupitch.sports.entity.Sports;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,7 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
 
     @Override
     public Page<Club> findAllClub(Pageable pageable, Area area, Sports sports,
-                                  List<Integer> days, Integer startTime, Integer endTime, Integer memberCountValue, List<Integer> ageList) {
+                                  List<Integer> days, Double startTime, Double endTime, Integer memberCountValue, List<Integer> ageList) {
 
         QClub qClub = QClub.club;
         QArea qArea = QArea.area;
@@ -105,12 +104,12 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
         else return qClub.moreAge.eq(true);
     }
 
-    private BooleanExpression startTimeEq(QClub qClub, Integer startTime) {
+    private BooleanExpression startTimeEq(QClub qClub, Double startTime) {
         if (startTime == null) return null;
         return qClub.startTime.goe(startTime);
     }
 
-    private BooleanExpression endTimeEq(QClub qClub, Integer endTime) {
+    private BooleanExpression endTimeEq(QClub qClub, Double endTime) {
         if (endTime == null) return null;
         return qClub.endTime.loe(endTime);
     }
