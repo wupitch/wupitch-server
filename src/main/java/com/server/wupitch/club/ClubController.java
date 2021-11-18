@@ -39,8 +39,8 @@ public class ClubController {
             @RequestParam(name = "areaId", required = false) Long areaId,
             @RequestParam(name = "sportsId", required = false) Long sportsId,
             @RequestParam(name = "days", required = false) List<Integer> days,
-            @RequestParam(name = "startTime", required = false) Integer startTime,
-            @RequestParam(name = "endTime", required = false) Integer endTime,
+            @RequestParam(name = "startTime", required = false) Double startTime,
+            @RequestParam(name = "endTime", required = false) Double endTime,
             @RequestParam(name = "memberCountValue", required = false) Integer memberCountValue,
             @RequestParam(name = "ageList", required = false) List<Integer> ageList
     ) {

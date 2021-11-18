@@ -40,4 +40,6 @@ public class CreateClubReq {
 
     private Integer guestConference;
 
+    private Long memberCount;
+
 }

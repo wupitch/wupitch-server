@@ -45,7 +45,7 @@ public class ClubService {
 
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
-            List<Integer> days, Integer startTime, Integer endTime, Integer memberCountValue, List<Integer> ageList) {
+            List<Integer> days, Double startTime, Double endTime, Integer memberCountValue, List<Integer> ageList) {
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);

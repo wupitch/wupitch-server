@@ -102,6 +102,7 @@ public class Club extends BaseTimeEntity {
         this.inquiries = dto.getInquiries();
         this.conference = dto.getConference();
         this.guestConference = dto.getGuestConference();
+        this.memberCount = dto.getMemberCount();
 
         if (dto.getDays() != null) {
             for (Integer time : dto.getDays()) {
