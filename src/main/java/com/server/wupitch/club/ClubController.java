@@ -39,8 +39,6 @@ public class ClubController {
             @RequestParam(name = "areaId", required = false) Long areaId,
             @RequestParam(name = "sportsId", required = false) Long sportsId,
             @RequestParam(name = "days", required = false) List<Integer> days,
-            @RequestParam(name = "startTime", required = false) Double startTime,
-            @RequestParam(name = "endTime", required = false) Double endTime,
             @RequestParam(name = "memberCountValue", required = false) Integer memberCountValue,
             @RequestParam(name = "ageList", required = false) List<Integer> ageList
     ) {
@@ -49,7 +47,7 @@ public class ClubController {
         if (size == null) size = 10;
         if (isAsc == null) isAsc = true;
         if (sortBy == null) sortBy = "updatedAt";
-        Page<ClubListRes> result =  clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, startTime, endTime, memberCountValue, ageList);
+        Page<ClubListRes> result =  clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, memberCountValue, ageList);
         return responseService.getDataResponse(result);
     }
 

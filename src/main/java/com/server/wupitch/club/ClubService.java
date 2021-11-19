@@ -45,7 +45,7 @@ public class ClubService {
 
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
-            List<Integer> days, Double startTime, Double endTime, Integer memberCountValue, List<Integer> ageList) {
+            List<Integer> days, Integer memberCountValue, List<Integer> ageList) {
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -63,7 +63,7 @@ public class ClubService {
             if(optionalSports.isPresent()) sports = optionalSports.get();
         }
 
-        Page<Club> allClub = clubRepositoryCustom.findAllClub(pageable, area, sports, days, startTime, endTime, memberCountValue, ageList);
+        Page<Club> allClub = clubRepositoryCustom.findAllClub(pageable, area, sports, days, memberCountValue, ageList);
 
         return allClub.map(ClubListRes::new);
 
