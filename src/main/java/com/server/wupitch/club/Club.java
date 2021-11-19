@@ -69,9 +69,33 @@ public class Club extends BaseTimeEntity {
 
     private Boolean sunday;
 
-    private Double startTime;
+    private Double mondayStartTime;
 
-    private Double endTime;
+    private Double mondayEndTime;
+
+    private Double tuesdayStartTime;
+
+    private Double tuesdayEndTime;
+
+    private Double wednesdayStartTime;
+
+    private Double wednesdayEndTime;
+
+    private Double thursdayStartTime;
+
+    private Double thursdayEndTime;
+
+    private Double fridayStartTime;
+
+    private Double fridayEndTime;
+
+    private Double saturdayStartTime;
+
+    private Double saturdayEndTime;
+
+    private Double sundayStartTime;
+
+    private Double sundayEndTime;
 
     private Long memberCount;
 
@@ -95,9 +119,6 @@ public class Club extends BaseTimeEntity {
         this.memberCount = 0L;
         this.account = account;
 
-        this.startTime = dto.getStartTime();
-        this.endTime = dto.getEndTime();
-
         this.location = dto.getLocation();
         this.inquiries = dto.getInquiries();
         this.conference = dto.getConference();
@@ -106,13 +127,41 @@ public class Club extends BaseTimeEntity {
 
         if (dto.getDays() != null) {
             for (Integer time : dto.getDays()) {
-                if(time == 1) this.monday = true;
-                else if (time == 2) this.tuesday = true;
-                else if(time == 3) this.wednesday = true;
-                else if(time == 4) this.thursday = true;
-                else if(time == 5) this.friday = true;
-                else if(time == 6) this.saturday = true;
-                else this.sunday = true;
+                if(time == 1){
+                    this.monday = true;
+                    this.mondayStartTime = dto.getMondayStartTime();
+                    this.mondayEndTime = dto.getMondayEndTime();
+                }
+                else if (time == 2){
+                    this.tuesday = true;
+                    this.tuesdayStartTime = dto.getTuesdayStartTime();
+                    this.tuesdayEndTime = dto.getTuesdayEndTime();
+                }
+                else if(time == 3){
+                    this.wednesday = true;
+                    this.wednesdayStartTime = dto.getWednesdayStartTime();
+                    this.wednesdayEndTime = dto.getWednesdayEndTime();
+                }
+                else if(time == 4){
+                    this.thursday = true;
+                    this.thursdayStartTime = dto.getThursdayStartTime();
+                    this.thursdayEndTime = dto.getThursdayEndTime();
+                }
+                else if(time == 5) {
+                    this.friday = true;
+                    this.fridayStartTime = dto.getFridayStartTime();
+                    this.fridayEndTime = dto.getFridayEndTime();
+                }
+                else if(time == 6) {
+                    this.saturday = true;
+                    this.saturdayStartTime = dto.getSaturdayStartTime();
+                    this.saturdayEndTime = dto.getSaturdayEndTime();
+                }
+                else{
+                    this.sunday = true;
+                    this.sundayStartTime = dto.getSundayStartTime();
+                    this.sundayEndTime = dto.getSundayEndTime();
+                }
             }
         }
 

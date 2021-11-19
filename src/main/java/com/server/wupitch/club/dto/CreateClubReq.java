@@ -26,9 +26,33 @@ public class CreateClubReq {
 
     private String introduction;
 
-    private Double startTime;
+    private Double mondayStartTime;
 
-    private Double endTime;
+    private Double mondayEndTime;
+
+    private Double tuesdayStartTime;
+
+    private Double tuesdayEndTime;
+
+    private Double wednesdayStartTime;
+
+    private Double wednesdayEndTime;
+
+    private Double thursdayStartTime;
+
+    private Double thursdayEndTime;
+
+    private Double fridayStartTime;
+
+    private Double fridayEndTime;
+
+    private Double saturdayStartTime;
+
+    private Double saturdayEndTime;
+
+    private Double sundayStartTime;
+
+    private Double sundayEndTime;
 
     private List<Long> extraInfoList = new ArrayList<>();
 

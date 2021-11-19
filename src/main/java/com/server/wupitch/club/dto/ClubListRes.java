@@ -48,20 +48,57 @@ public class ClubListRes {
         this.introduction = club.getIntroduction();
 
         String startTime;
-        if (club.getStartTime() != null) startTime = club.getStartTime()+":00";
-        else startTime = "00:00";
-
         String endTime;
-        if(club.getEndTime() != null) endTime = club.getEndTime() + ":00";
-        else endTime = "24:00";
 
-        if(club.getMonday() != null && club.getMonday()) timeTable.add("월요일 " + startTime + " " + endTime );
-        if(club.getTuesday() != null && club.getTuesday()) timeTable.add("화요일 " + startTime + " " + endTime );
-        if(club.getWednesday() != null && club.getWednesday()) timeTable.add("수요일 " + startTime + " " + endTime );
-        if(club.getThursday() != null && club.getThursday()) timeTable.add("목요일 " + startTime + " " + endTime );
-        if(club.getFriday() != null && club.getFriday()) timeTable.add("금요일 " + startTime + " " + endTime );
-        if(club.getSaturday() != null && club.getSaturday()) timeTable.add("토요일 " + startTime + " " + endTime );
-        if(club.getSunday() != null && club.getSunday()) timeTable.add("일요일 " + startTime + " " + endTime );
+        if(club.getMonday() != null && club.getMonday()) {
+            if (club.getMondayStartTime() != null) startTime = club.getMondayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getMondayEndTime() != null) endTime = club.getMondayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("월요일 " + startTime + " " + endTime );
+        }
+        if(club.getTuesday() != null && club.getTuesday()){
+            if (club.getTuesdayStartTime() != null) startTime = club.getTuesdayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getTuesdayEndTime() != null) endTime = club.getTuesdayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("화요일 " + startTime + " " + endTime );
+        }
+        if(club.getWednesday() != null && club.getWednesday()){
+            if (club.getWednesdayStartTime() != null) startTime = club.getWednesdayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getWednesdayEndTime() != null) endTime = club.getWednesdayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("수요일 " + startTime + " " + endTime );
+        }
+        if(club.getThursday() != null && club.getThursday()){
+            if (club.getThursdayStartTime() != null) startTime = club.getThursdayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getThursdayEndTime() != null) endTime = club.getThursdayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("목요일 " + startTime + " " + endTime );
+        }
+        if(club.getFriday() != null && club.getFriday()){
+            if (club.getFridayStartTime() != null) startTime = club.getFridayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getFridayEndTime() != null) endTime = club.getFridayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("금요일 " + startTime + " " + endTime );
+        }
+        if(club.getSaturday() != null && club.getSaturday()){
+            if (club.getSaturdayStartTime() != null) startTime = club.getSaturdayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getSaturdayEndTime() != null) endTime = club.getSaturdayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("토요일 " + startTime + " " + endTime );
+        }
+        if(club.getSunday() != null && club.getSunday()){
+            if (club.getSundayStartTime() != null) startTime = club.getSundayStartTime()+":00";
+            else startTime = "00:00";
+            if(club.getSundayEndTime() != null) endTime = club.getSundayEndTime() + ":00";
+            else endTime = "24:00";
+            timeTable.add("일요일 " + startTime + " " + endTime );
+        }
 
         if (club.getTeenager()  != null && club.getTeenager()) ageTable.add("10대");
         if (club.getTwenties() != null && club.getTwenties()) ageTable.add("20대");
