@@ -26,11 +26,51 @@ public class ClubListRes {
 
     private String clubTitle;
 
-    private List<String> timeTable = new ArrayList<>();
-
     private List<String> ageTable = new ArrayList<>();
 
     private String introduction;
+
+    private Boolean monday;
+
+    private Boolean tuesday;
+
+    private Boolean wednesday;
+
+    private Boolean thursday;
+
+    private Boolean friday;
+
+    private Boolean saturday;
+
+    private Boolean sunday;
+
+    private Double mondayStartTime;
+
+    private Double mondayEndTime;
+
+    private Double tuesdayStartTime;
+
+    private Double tuesdayEndTime;
+
+    private Double wednesdayStartTime;
+
+    private Double wednesdayEndTime;
+
+    private Double thursdayStartTime;
+
+    private Double thursdayEndTime;
+
+    private Double fridayStartTime;
+
+    private Double fridayEndTime;
+
+    private Double saturdayStartTime;
+
+    private Double saturdayEndTime;
+
+    private Double sundayStartTime;
+
+    private Double sundayEndTime;
 
     public ClubListRes(Club club) {
         this.clubId = club.getClubId();
@@ -47,21 +87,55 @@ public class ClubListRes {
 
         this.introduction = club.getIntroduction();
 
-        String startTime;
-        if (club.getStartTime() != null) startTime = club.getStartTime()+":00";
-        else startTime = "00:00";
-
-        String endTime;
-        if(club.getEndTime() != null) endTime = club.getEndTime() + ":00";
-        else endTime = "24:00";
-
-        if(club.getMonday() != null && club.getMonday()) timeTable.add("월요일 " + startTime + " " + endTime );
-        if(club.getTuesday() != null && club.getTuesday()) timeTable.add("화요일 " + startTime + " " + endTime );
-        if(club.getWednesday() != null && club.getWednesday()) timeTable.add("수요일 " + startTime + " " + endTime );
-        if(club.getThursday() != null && club.getThursday()) timeTable.add("목요일 " + startTime + " " + endTime );
-        if(club.getFriday() != null && club.getFriday()) timeTable.add("금요일 " + startTime + " " + endTime );
-        if(club.getSaturday() != null && club.getSaturday()) timeTable.add("토요일 " + startTime + " " + endTime );
-        if(club.getSunday() != null && club.getSunday()) timeTable.add("일요일 " + startTime + " " + endTime );
+        if(club.getMonday() != null && club.getMonday()) {
+            this.monday = true;
+            if(club.getMondayStartTime() == null) this.mondayStartTime = 00.00;
+            else this.mondayStartTime = club.getMondayStartTime();
+            if(club.getMondayEndTime() == null) this.mondayEndTime = 24.00;
+            else this.mondayEndTime = club.getMondayEndTime();
+        }
+        if(club.getTuesday() != null && club.getTuesday()){
+            this.tuesday = true;
+            if(club.getTuesdayStartTime() == null) this.tuesdayStartTime = 00.00;
+            else this.tuesdayStartTime = club.getTuesdayStartTime();
+            if(club.getTuesdayEndTime() == null) this.tuesdayEndTime = 24.00;
+            else this.tuesdayEndTime = club.getTuesdayEndTime();
+        }
+        if(club.getWednesday() != null && club.getWednesday()){
+            this.wednesday = true;
+            if(club.getWednesdayStartTime() == null) this.wednesdayStartTime = 00.00;
+            else this.wednesdayStartTime = club.getWednesdayStartTime();
+            if(club.getWednesdayEndTime() == null) this.wednesdayEndTime = 24.00;
+            else this.wednesdayEndTime = club.getWednesdayEndTime();
+        }
+        if(club.getThursday() != null && club.getThursday()){
+            this.thursday = true;
+            if(club.getThursdayStartTime() == null) this.thursdayStartTime = 00.00;
+            else this.thursdayStartTime = club.getThursdayStartTime();
+            if(club.getThursdayEndTime() == null) this.thursdayEndTime = 24.00;
+            else this.thursdayEndTime = club.getThursdayEndTime();
+        }
+        if(club.getFriday() != null && club.getFriday()){
+            this.friday = true;
+            if(club.getFridayStartTime() == null) this.fridayStartTime = 00.00;
+            else this.fridayStartTime = club.getFridayStartTime();
+            if(club.getFridayEndTime() == null) this.fridayEndTime = 24.00;
+            else this.fridayEndTime = club.getFridayEndTime();
+        }
+        if(club.getSaturday() != null && club.getSaturday()){
+            this.saturday = true;
+            if(club.getSaturdayStartTime() == null) this.saturdayStartTime = 00.00;
+            else this.saturdayStartTime = club.getSaturdayStartTime();
+            if(club.getSaturdayEndTime() == null) this.saturdayEndTime = 24.00;
+            else this.saturdayEndTime = club.getSaturdayEndTime();
+        }
+        if(club.getSunday() != null && club.getSunday()){
+            this.sunday = true;
+            if(club.getSundayStartTime() == null) this.sundayStartTime = 00.00;
+            else this.sundayStartTime = club.getSundayStartTime();
+            if(club.getSundayEndTime() == null) this.sundayEndTime = 24.00;
+            else this.saturdayEndTime = club.getSaturdayEndTime();
+        }
 
         if (club.getTeenager()  != null && club.getTeenager()) ageTable.add("10대");
         if (club.getTwenties() != null && club.getTwenties()) ageTable.add("20대");
