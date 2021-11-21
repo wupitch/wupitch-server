@@ -4,6 +4,7 @@ import com.server.wupitch.account.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
+import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.util.ValidationExceptionProvider;
 import io.swagger.annotations.Api;
@@ -14,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Api(tags = {"Account API"})
 @RestController
@@ -79,11 +82,25 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+
     @Operation(summary = "회원가입 API", description = "형식에 맞는 DTO로 리퀘스트 -> 회원가입")
     @PostMapping(value = "/sign-up")
     public DataResponse<AccountAuthDto> signUp(@RequestBody @Valid AccountAuthDto dto, Errors errors){
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         return responseService.getDataResponse(accountService.signUp(dto));
     }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "사진등록 API", description = "JWT 토큰을 기준으로 현재 회원의 이미지 등록")
+    @PostMapping(value = "/accounts/image")
+    public CommonResponse uploadProfileImage(@RequestParam("images") MultipartFile multipartFile,
+                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        accountService.uploadProfileImage(multipartFile, customUserDetails);
+
+        return responseService.getSuccessResponse();
+    }
+
 
 }

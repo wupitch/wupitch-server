@@ -59,6 +59,10 @@ public class Account extends BaseTimeEntity {
 
     private Boolean isPushAgree;
 
+    public void registerProfileImage(String filePath){
+        this.profileImage = filePath;
+    }
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
