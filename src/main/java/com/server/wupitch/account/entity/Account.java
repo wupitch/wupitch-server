@@ -79,6 +79,7 @@ public class Account extends BaseTimeEntity {
                 .accountId(this.accountId)
                 .email(this.email)
                 .nickname(this.nickname)
+                .profileImageUrl(this.profileImage)
                 .build();
     }
 
