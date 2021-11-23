@@ -20,39 +20,11 @@ public class CreateClubReq {
 
     private String title;
 
-    private List<Integer> days = new ArrayList<>();
-
     private List<Integer> ageList = new ArrayList<>();
 
+    private List<Schedule> scheduleList = new ArrayList<>();
+
     private String introduction;
-
-    private Double mondayStartTime;
-
-    private Double mondayEndTime;
-
-    private Double tuesdayStartTime;
-
-    private Double tuesdayEndTime;
-
-    private Double wednesdayStartTime;
-
-    private Double wednesdayEndTime;
-
-    private Double thursdayStartTime;
-
-    private Double thursdayEndTime;
-
-    private Double fridayStartTime;
-
-    private Double fridayEndTime;
-
-    private Double saturdayStartTime;
-
-    private Double saturdayEndTime;
-
-    private Double sundayStartTime;
-
-    private Double sundayEndTime;
 
     private List<Long> extraInfoList = new ArrayList<>();
 
