@@ -3,6 +3,7 @@ package com.server.wupitch.club;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.Schedule;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.sports.entity.Sports;
@@ -125,42 +126,45 @@ public class Club extends BaseTimeEntity {
         this.guestConference = dto.getGuestConference();
         this.memberCount = dto.getMemberCount();
 
-        if (dto.getDays() != null) {
-            for (Integer time : dto.getDays()) {
-                if(time == 1){
+        if (dto.getScheduleList().size() > 0) {
+            for (Schedule schedule : dto.getScheduleList()) {
+                Integer dayIdx = schedule.getDayIdx();
+                Double startTime = schedule.getStartTime();
+                Double endTime = schedule.getEndTime();
+                if(dayIdx == 1){
                     this.monday = true;
-                    this.mondayStartTime = dto.getMondayStartTime();
-                    this.mondayEndTime = dto.getMondayEndTime();
+                    this.mondayStartTime = startTime;
+                    this.mondayEndTime = endTime;
                 }
-                else if (time == 2){
+                else if (dayIdx == 2){
                     this.tuesday = true;
-                    this.tuesdayStartTime = dto.getTuesdayStartTime();
-                    this.tuesdayEndTime = dto.getTuesdayEndTime();
+                    this.tuesdayStartTime = startTime;
+                    this.tuesdayEndTime = endTime;
                 }
-                else if(time == 3){
+                else if(dayIdx == 3){
                     this.wednesday = true;
-                    this.wednesdayStartTime = dto.getWednesdayStartTime();
-                    this.wednesdayEndTime = dto.getWednesdayEndTime();
+                    this.wednesdayStartTime = startTime;
+                    this.wednesdayEndTime = endTime;
                 }
-                else if(time == 4){
+                else if(dayIdx == 4){
                     this.thursday = true;
-                    this.thursdayStartTime = dto.getThursdayStartTime();
-                    this.thursdayEndTime = dto.getThursdayEndTime();
+                    this.thursdayStartTime = startTime;
+                    this.thursdayEndTime = endTime;
                 }
-                else if(time == 5) {
+                else if(dayIdx == 5) {
                     this.friday = true;
-                    this.fridayStartTime = dto.getFridayStartTime();
-                    this.fridayEndTime = dto.getFridayEndTime();
+                    this.fridayStartTime = startTime;
+                    this.fridayEndTime = endTime;
                 }
-                else if(time == 6) {
+                else if(dayIdx == 6) {
                     this.saturday = true;
-                    this.saturdayStartTime = dto.getSaturdayStartTime();
-                    this.saturdayEndTime = dto.getSaturdayEndTime();
+                    this.saturdayStartTime = startTime;
+                    this.saturdayEndTime = endTime;
                 }
                 else{
                     this.sunday = true;
-                    this.sundayStartTime = dto.getSundayStartTime();
-                    this.sundayEndTime = dto.getSundayEndTime();
+                    this.sundayStartTime = startTime;
+                    this.sundayEndTime = endTime;
                 }
             }
         }

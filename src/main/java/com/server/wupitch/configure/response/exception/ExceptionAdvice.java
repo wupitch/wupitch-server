@@ -21,7 +21,7 @@ public class ExceptionAdvice {
     private final ResponseService responseService;
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.OK)
     protected CommonResponse customException(CustomException customException) {
         CustomExceptionStatus status = customException.getCustomExceptionStatus();
         log.warn(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))+" : "+status.getMessage());
@@ -29,7 +29,7 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.OK)
     protected CommonResponse customDateTimeParseException(DateTimeParseException dateTimeParseException) {
         CustomExceptionStatus status = CustomExceptionStatus.POST_USERS_INVALID_DATE;
         log.warn(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))+" : "+status.getMessage());
