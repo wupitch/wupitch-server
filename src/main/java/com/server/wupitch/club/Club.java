@@ -114,6 +114,10 @@ public class Club extends BaseTimeEntity {
 
     private String location;
 
+    private String materials;
+
+    private String crewImage;
+
     public Club(CreateClubReq dto, Account account, Sports sports, Area area) {
 
         this.sports = sports;
@@ -127,6 +131,7 @@ public class Club extends BaseTimeEntity {
         this.conference = dto.getConference();
         this.guestConference = dto.getGuestConference();
         this.memberCount = dto.getMemberCount();
+        this.materials = dto.getMaterials();
 
         if (dto.getScheduleList().size() > 0) {
             for (Schedule schedule : dto.getScheduleList()) {

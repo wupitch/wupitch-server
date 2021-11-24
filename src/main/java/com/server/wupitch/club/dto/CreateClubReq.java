@@ -32,6 +32,8 @@ public class CreateClubReq {
 
     private String inquiries;
 
+    private String materials;
+
     private Integer conference;
 
     private Integer guestConference;

@@ -1,6 +1,7 @@
 package com.server.wupitch.club;
 
 import com.server.wupitch.area.Area;
+import com.server.wupitch.club.dto.ClubIdRes;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.configure.response.CommonResponse;
@@ -17,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"Club API"})
@@ -56,9 +59,9 @@ public class ClubController {
     })
     @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
     @PostMapping("/clubs")
-    public CommonResponse createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        clubService.createClub(dto, customUserDetails);
-        return responseService.getSuccessResponse();
+    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        Long clubId = clubService.createClub(dto, customUserDetails);
+        return responseService.getDataResponse(new ClubIdRes(clubId));
     }
 
 

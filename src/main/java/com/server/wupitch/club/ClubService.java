@@ -10,6 +10,7 @@ import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
+import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.extra.entity.ClubExtraRelation;
 import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
@@ -24,7 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +45,7 @@ public class ClubService {
     private final ClubRepository clubRepository;
     private final ExtraRepository extraRepository;
     private final ClubExtraRelationRepository clubExtraRelationRepository;
+    private final S3Uploader s3Uploader;
 
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
@@ -70,7 +74,7 @@ public class ClubService {
     }
 
     @Transactional
-    public void createClub(CreateClubReq dto, CustomUserDetails customUserDetails) {
+    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) throws IOException {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -93,6 +97,6 @@ public class ClubService {
                 clubExtraRelationRepository.save(clubExtraRelation);
             }
         }
-
+        return save.getClubId();
     }
 }
