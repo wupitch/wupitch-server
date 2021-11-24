@@ -6,6 +6,8 @@ import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.club.dto.Schedule;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
+import com.server.wupitch.configure.response.exception.CustomException;
+import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.sports.entity.Sports;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -132,36 +134,43 @@ public class Club extends BaseTimeEntity {
                 Double startTime = schedule.getStartTime();
                 Double endTime = schedule.getEndTime();
                 if(dayIdx == 1){
+                    if(this.monday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.monday = true;
                     this.mondayStartTime = startTime;
                     this.mondayEndTime = endTime;
                 }
                 else if (dayIdx == 2){
+                    if(this.tuesday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.tuesday = true;
                     this.tuesdayStartTime = startTime;
                     this.tuesdayEndTime = endTime;
                 }
                 else if(dayIdx == 3){
+                    if(this.wednesday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.wednesday = true;
                     this.wednesdayStartTime = startTime;
                     this.wednesdayEndTime = endTime;
                 }
                 else if(dayIdx == 4){
+                    if(this.thursday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.thursday = true;
                     this.thursdayStartTime = startTime;
                     this.thursdayEndTime = endTime;
                 }
                 else if(dayIdx == 5) {
+                    if(this.friday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.friday = true;
                     this.fridayStartTime = startTime;
                     this.fridayEndTime = endTime;
                 }
                 else if(dayIdx == 6) {
+                    if(this.saturday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.saturday = true;
                     this.saturdayStartTime = startTime;
                     this.saturdayEndTime = endTime;
                 }
                 else{
+                    if(this.sunday != null) throw new CustomException(CustomExceptionStatus.SCHEDULE_ALREADY_EXIST);
                     this.sunday = true;
                     this.sundayStartTime = startTime;
                     this.sundayEndTime = endTime;

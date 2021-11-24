@@ -64,6 +64,9 @@ public enum CustomExceptionStatus {
     // Extra
     EXTRA_NOT_FOUND(false, 2090, "추가정보를 찾을 수 없습니다."),
 
+    // Club
+    SCHEDULE_ALREADY_EXIST(false, 2100, "스케쥴을 잘 못 입력했습니다."),
+
     /**
      * 3000 : Response 오류
      */
