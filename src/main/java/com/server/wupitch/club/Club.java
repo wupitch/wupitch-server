@@ -197,4 +197,8 @@ public class Club extends BaseTimeEntity {
         }
     }
 
+    public void setImageUrl(String imageUrl) {
+        this.crewImage = imageUrl;
+    }
+
 }

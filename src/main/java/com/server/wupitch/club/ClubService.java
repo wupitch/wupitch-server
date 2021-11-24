@@ -8,6 +8,7 @@ import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
+import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -74,7 +75,7 @@ public class ClubService {
     }
 
     @Transactional
-    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) throws IOException {
+    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails){
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -98,5 +99,13 @@ public class ClubService {
             }
         }
         return save.getClubId();
+    }
+
+    @Transactional
+    public void uploadCrewImage(MultipartFile multipartFile, Long crewId) throws IOException{
+        String crewImageUrl = s3Uploader.upload(multipartFile, "crewImage");
+        Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        club.setImageUrl(crewImageUrl);
     }
 }

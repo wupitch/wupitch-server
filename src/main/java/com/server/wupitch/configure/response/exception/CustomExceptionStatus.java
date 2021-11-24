@@ -83,6 +83,9 @@ public enum CustomExceptionStatus {
     FAILED_TO_RECEPTION(false,3016,"유효한 수신 번호가 아닙니다."),
     DUPLICATED_ID(false, 3017, "중복된 아이디입니다."),
 
+    // Club
+    CREW_NOT_FOUND(false, 3100, "크루를 찾을 수 없습니다."),
+
 
     /**
      * 4000 : Database, Server 오류
