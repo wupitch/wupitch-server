@@ -111,5 +111,15 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "회원 알림 동의 변경 API", description = "JWT 토큰을 기준으로 토글 방식으로 동의 변경")
+    @PatchMapping(value = "/accounts/toggle-alarm-info")
+    public CommonResponse toggleAccountAlarmInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        accountService.toggleAccountAlarmInfo(customUserDetails);
+        return responseService.getSuccessResponse();
+    }
+
 
 }

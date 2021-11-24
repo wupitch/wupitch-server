@@ -109,8 +109,12 @@ public class Account extends BaseTimeEntity {
     }
 
     public void toggleValid() {
-        if(this.status.equals(VALID))this.status = DELETED;
+        if(this.status.equals(VALID)) this.status = DELETED;
         else this.status = VALID;
     }
 
+    public void toggleAlarmInfo() {
+        if(this.isPushAgree == null || !this.isPushAgree) this.isPushAgree = true;
+        else this.isPushAgree = false;
+    }
 }
