@@ -64,6 +64,9 @@ public enum CustomExceptionStatus {
     // Extra
     EXTRA_NOT_FOUND(false, 2090, "추가정보를 찾을 수 없습니다."),
 
+    // Club
+    SCHEDULE_ALREADY_EXIST(false, 2100, "스케쥴을 잘 못 입력했습니다."),
+
     /**
      * 3000 : Response 오류
      */
@@ -79,6 +82,9 @@ public enum CustomExceptionStatus {
     FAILED_TO_CERTIFICATION(false,3015,"유효한 토큰 값이 아닙니다."),
     FAILED_TO_RECEPTION(false,3016,"유효한 수신 번호가 아닙니다."),
     DUPLICATED_ID(false, 3017, "중복된 아이디입니다."),
+
+    // Club
+    CREW_NOT_FOUND(false, 3100, "크루를 찾을 수 없습니다."),
 
 
     /**

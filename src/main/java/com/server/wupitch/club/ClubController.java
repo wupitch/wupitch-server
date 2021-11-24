@@ -1,6 +1,7 @@
 package com.server.wupitch.club;
 
 import com.server.wupitch.area.Area;
+import com.server.wupitch.club.dto.ClubIdRes;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.configure.response.CommonResponse;
@@ -17,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"Club API"})
@@ -56,10 +59,22 @@ public class ClubController {
     })
     @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
     @PostMapping("/clubs")
-    public CommonResponse createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        clubService.createClub(dto, customUserDetails);
+    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long clubId = clubService.createClub(dto, customUserDetails);
+        return responseService.getDataResponse(new ClubIdRes(clubId));
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 이미지 추가 API", description = "크루 ID를 기준으로 크루 이미지 추가")
+    @PatchMapping(value = "/clubs/image")
+    public CommonResponse uploadCrewImage(@RequestParam("images") MultipartFile multipartFile,
+                                             @RequestParam("crewId") Long crewId) throws IOException {
+        clubService.uploadCrewImage(multipartFile, crewId);
         return responseService.getSuccessResponse();
     }
+
 
 
 
