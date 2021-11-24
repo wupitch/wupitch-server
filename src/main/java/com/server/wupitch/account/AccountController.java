@@ -4,7 +4,6 @@ import com.server.wupitch.account.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
-import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.util.ValidationExceptionProvider;
 import io.swagger.annotations.Api;
@@ -99,6 +98,16 @@ public class AccountController {
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         accountService.uploadProfileImage(multipartFile, customUserDetails);
 
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "회원 삭제 API", description = "JWT 토큰을 기준으로 회원의 Status를 변경")
+    @PatchMapping(value = "/accounts/toggle-status")
+    public CommonResponse toggleAccountValidation(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        accountService.toggleAccountValidation(customUserDetails);
         return responseService.getSuccessResponse();
     }
 

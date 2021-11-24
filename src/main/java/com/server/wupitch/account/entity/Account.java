@@ -108,4 +108,9 @@ public class Account extends BaseTimeEntity {
                 .build();
     }
 
+    public void toggleValid() {
+        if(this.status.equals(VALID))this.status = DELETED;
+        else this.status = VALID;
+    }
+
 }
