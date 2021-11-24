@@ -1,22 +1,22 @@
 package com.server.wupitch.impromptu;
 
-import com.server.wupitch.club.dto.ClubIdRes;
-import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
 import com.server.wupitch.impromptu.dto.ImpromptuIdRes;
+import com.server.wupitch.impromptu.dto.ImpromptuListRes;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = {"Impromptu API"})
 @RestController
@@ -35,6 +35,27 @@ public class ImpromptuController {
     public DataResponse<ImpromptuIdRes> createImpromptu(@RequestBody CreateImpromptuReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long impromptuId = impromptuService.createImpromptu(dto, customUserDetails);
         return responseService.getDataResponse(new ImpromptuIdRes(impromptuId));
+    }
+
+    @Operation(summary = "번개 조회 API", description = "page, size, sortBy, isAsc, RequestParam 설정")
+    @GetMapping(value = "/impromptus")
+    public DataResponse<Page<ImpromptuListRes>> getAllImpromptuList(
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "isAsc", required = false) Boolean isAsc,
+            @RequestParam(name = "areaId", required = false) Long areaId,
+            @RequestParam(name = "scheduleIndex", required = false) Integer scheduleIndex,
+            @RequestParam(name = "days", required = false) List<Integer> days,
+            @RequestParam(name = "memberCountIndex", required = false) Integer memberCountIndex
+    ) {
+        if (page == null) page = 1;
+        page = page - 1;
+        if (size == null) size = 10;
+        if (isAsc == null) isAsc = true;
+        if (sortBy == null) sortBy = "updatedAt";
+        Page<ImpromptuListRes> result = impromptuService.getAllImpromptuList(page, size, sortBy, isAsc, areaId, scheduleIndex, days, memberCountIndex);
+        return responseService.getDataResponse(result);
     }
 
 }

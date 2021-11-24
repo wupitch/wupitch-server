@@ -2,6 +2,7 @@ package com.server.wupitch.impromptu.entity;
 
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
+import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Impromptu {
+public class Impromptu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

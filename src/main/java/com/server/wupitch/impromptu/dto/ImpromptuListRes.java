@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
 @Getter
@@ -44,11 +45,10 @@ public class ImpromptuListRes {
     public ImpromptuListRes(Impromptu impromptu) {
         this.impromptuId = impromptu.getImpromptuId();
         this.impromptuImage = impromptu.getImpromptuImage();
-        LocalDate validDateTime = impromptu.getDate();
+        LocalDate validDate = impromptu.getDate();
         LocalDate now = LocalDate.now();
-        long diffTime = validDateTime.until(now, ChronoUnit.SECONDS);
-        diffTime = diffTime / 24;
-        this.dDay = (int)diffTime;
+        Period between = Period.between(now, validDate);
+        this.dDay = between.getDays();
 
         this.title = impromptu.getTitle();
         this.date = impromptu.getDate();
@@ -59,6 +59,13 @@ public class ImpromptuListRes {
         this.introduction = impromptu.getIntroduction();
         this.materials = impromptu.getMaterials();
         this.inquiries = impromptu.getInquiries();
+        if(impromptu.getDayIdx() == 1) day = "월요일";
+        else if(impromptu.getDayIdx() == 2) day = "화요일";
+        else if(impromptu.getDayIdx() == 3) day = "수요일";
+        else if(impromptu.getDayIdx() == 4) day = "목요일";
+        else if(impromptu.getDayIdx() == 5) day = "금요일";
+        else if(impromptu.getDayIdx() == 6) day = "토요일";
+        else  day = "일요일";
 
 
     }
