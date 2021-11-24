@@ -1,4 +1,4 @@
-package com.server.wupitch.impromptu;
+package com.server.wupitch.impromptu.repository;
 
 import com.server.wupitch.impromptu.entity.Impromptu;
 import org.springframework.data.jpa.repository.JpaRepository;
