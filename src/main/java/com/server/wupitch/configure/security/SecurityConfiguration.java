@@ -67,6 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/accounts/kakao","/app/accounts/apple","/app/accounts/nickname/validation", "/app/accounts/email/validation", "/app/accounts/password/validation").permitAll()
                 .antMatchers(HttpMethod.GET, "/errors/**","/app/areas", "/app/sports","/app/clubs","/app/extras","/app/impromptus").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/app/accounts/invalid-status/{email}").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/role").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()

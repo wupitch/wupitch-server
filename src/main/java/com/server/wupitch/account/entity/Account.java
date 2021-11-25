@@ -63,6 +63,10 @@ public class Account extends BaseTimeEntity {
         this.profileImage = filePath;
     }
 
+    public void restoreAccount() {
+        this.status = VALID;
+    }
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)

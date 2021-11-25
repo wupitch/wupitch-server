@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.server.wupitch.configure.entity.Status.DELETED;
 import static com.server.wupitch.configure.entity.Status.VALID;
 
 
@@ -137,5 +138,12 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
         account.toggleAlarmInfo();
+    }
+
+    @Transactional
+    public void toggleInvalidStatus(String email) {
+        Account account = accountRepository.findByEmailAndStatus(email, DELETED)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.restoreAccount();
     }
 }

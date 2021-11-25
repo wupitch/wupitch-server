@@ -121,5 +121,11 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "회원 복구 API", description = "이메일을 기준으로 회원 복구")
+    @PatchMapping(value = "/accounts/invalid-status/{email}")
+    public CommonResponse toggleInvalidStatus(@PathVariable String email){
+        accountService.toggleInvalidStatus(email);
+        return responseService.getSuccessResponse();
+    }
 
 }
