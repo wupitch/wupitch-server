@@ -128,4 +128,15 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "비밀번호 변경 API", description = "JWT 토큰을 기준으로 비밀번호 변경")
+    @PatchMapping(value = "/accounts/auth/password")
+    public CommonResponse changeAuthPassword(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody @Valid ChangePwdReq dto, Errors errors){
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        accountService.changeAuthPassword(customUserDetails, dto);
+        return responseService.getSuccessResponse();
+    }
+
 }

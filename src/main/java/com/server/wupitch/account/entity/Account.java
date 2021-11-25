@@ -121,4 +121,8 @@ public class Account extends BaseTimeEntity {
         if(this.isPushAgree == null || !this.isPushAgree) this.isPushAgree = true;
         else this.isPushAgree = false;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

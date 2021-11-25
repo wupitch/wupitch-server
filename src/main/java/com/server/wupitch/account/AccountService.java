@@ -1,9 +1,6 @@
 package com.server.wupitch.account;
 
-import com.server.wupitch.account.dto.AccountAuthDto;
-import com.server.wupitch.account.dto.AccountInformReq;
-import com.server.wupitch.account.dto.SignInReq;
-import com.server.wupitch.account.dto.SignInRes;
+import com.server.wupitch.account.dto.*;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
@@ -145,5 +142,12 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(email, DELETED)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         account.restoreAccount();
+    }
+
+    @Transactional
+    public void changeAuthPassword(CustomUserDetails customUserDetails, ChangePwdReq dto) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.changePassword(passwordEncoder.encode(dto.getPassword()));
     }
 }
