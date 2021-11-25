@@ -21,11 +21,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.warn(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))+" : Exception transmitted to AuthenticationEntryPoint");
 
         String exception = (String)request.getAttribute("exception");
-        if (exception.equals(CustomExceptionStatus.NOT_AUTHENTICATED_ACCOUNT.getMessage())) {
-            response.sendRedirect("/errors/not-authenticated-account");
-        }
-        else if (exception.equals(CustomExceptionStatus.INVALID_JWT.getMessage())) {
+        if (exception == null ||exception.equals(CustomExceptionStatus.INVALID_JWT.getMessage())) {
             response.sendRedirect("/errors/invalid-jwt");
+        }
+        else if (exception.equals(CustomExceptionStatus.NOT_AUTHENTICATED_ACCOUNT.getMessage())) {
+            response.sendRedirect("/errors/not-authenticated-account");
         }
         else if (exception.equals(CustomExceptionStatus.EMPTY_JWT.getMessage())) {
             response.sendRedirect("/errors/empty-jwt");
