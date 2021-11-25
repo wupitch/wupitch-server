@@ -50,6 +50,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token){
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
+        if(userDetails == null) return null;
         return  new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
     }
 

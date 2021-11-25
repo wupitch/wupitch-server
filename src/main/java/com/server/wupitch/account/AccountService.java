@@ -1,9 +1,6 @@
 package com.server.wupitch.account;
 
-import com.server.wupitch.account.dto.AccountAuthDto;
-import com.server.wupitch.account.dto.AccountInformReq;
-import com.server.wupitch.account.dto.SignInReq;
-import com.server.wupitch.account.dto.SignInRes;
+import com.server.wupitch.account.dto.*;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
@@ -25,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.server.wupitch.configure.entity.Status.DELETED;
 import static com.server.wupitch.configure.entity.Status.VALID;
 
 
@@ -99,9 +97,9 @@ public class AccountService {
 
     @Transactional
     public AccountAuthDto signUp(AccountAuthDto dto) {
-        if (accountRepository.findByEmailAndStatus(dto.getEmail(), VALID).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
+        if (accountRepository.findByEmail(dto.getEmail()).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
         if (dto.getNickname() != null){
-            if (accountRepository.findByNicknameAndStatus(dto.getNickname(), VALID).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_NICKNAME);
+            if (accountRepository.findByNickname(dto.getNickname()).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_NICKNAME);
         }
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -137,5 +135,19 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
         account.toggleAlarmInfo();
+    }
+
+    @Transactional
+    public void toggleInvalidStatus(String email) {
+        Account account = accountRepository.findByEmailAndStatus(email, DELETED)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.restoreAccount();
+    }
+
+    @Transactional
+    public void changeAuthPassword(CustomUserDetails customUserDetails, ChangePwdReq dto) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.changePassword(passwordEncoder.encode(dto.getPassword()));
     }
 }

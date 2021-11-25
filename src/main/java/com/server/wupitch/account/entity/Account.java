@@ -63,6 +63,10 @@ public class Account extends BaseTimeEntity {
         this.profileImage = filePath;
     }
 
+    public void restoreAccount() {
+        this.status = VALID;
+    }
+
     public static Account createAccount(AccountAuthDto dto, OAuthType oAuth) {
         return Account.builder()
                 .status(VALID)
@@ -116,5 +120,9 @@ public class Account extends BaseTimeEntity {
     public void toggleAlarmInfo() {
         if(this.isPushAgree == null || !this.isPushAgree) this.isPushAgree = true;
         else this.isPushAgree = false;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
     }
 }
