@@ -71,7 +71,7 @@ public class AccountService {
 
     @Transactional
     public void changeAccountInform(CustomUserDetails customUserDetails, AccountInformReq dto) {
-        Account account = accountRepository.findByoAuthIdAndStatus(customUserDetails.getOAuthId(), VALID)
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         account.setAccountInfoByDto(dto);

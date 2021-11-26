@@ -76,7 +76,7 @@ public class AccountController {
     public CommonResponse changeAccountInform(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                               @RequestBody @Valid AccountInformReq dto ,
                                               Errors errors) {
-        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        if (dto.getNickname() != null && errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         accountService.changeAccountInform(customUserDetails, dto);
         return responseService.getSuccessResponse();
     }
