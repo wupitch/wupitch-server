@@ -151,4 +151,16 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "비밀번호 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 비밀번호가 맞는지 확인")
+    @PostMapping(value = "/accounts/auth/password/check")
+    public DataResponse<Boolean> chkPasswordByAuth(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody PasswordChkReq dto)
+    {
+        Boolean result = accountService.chkPasswordByAuth(customUserDetails, dto);
+        return responseService.getDataResponse(result);
+    }
+
 }

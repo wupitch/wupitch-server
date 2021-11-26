@@ -158,4 +158,11 @@ public class AccountService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         account.changePassword(passwordEncoder.encode(dto.getPassword()));
     }
+
+    public Boolean chkPasswordByAuth(CustomUserDetails customUserDetails, PasswordChkReq dto) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        return passwordEncoder.matches(dto.getPassword(), account.getPassword());
+    }
 }
