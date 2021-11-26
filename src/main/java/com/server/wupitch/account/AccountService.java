@@ -124,6 +124,14 @@ public class AccountService {
     }
 
     @Transactional
+    public void uploadIdentification(MultipartFile multipartFile, CustomUserDetails customUserDetails) throws IOException {
+        String identificationImage = s3Uploader.upload(multipartFile, "identification");
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.registerIdentification(identificationImage);
+    }
+
+    @Transactional
     public void toggleAccountValidation(CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));

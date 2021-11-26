@@ -59,8 +59,14 @@ public class Account extends BaseTimeEntity {
 
     private Boolean isPushAgree;
 
+    private String identification;
+
     public void registerProfileImage(String filePath){
         this.profileImage = filePath;
+    }
+
+    public void registerIdentification(String filePath){
+        this.identification = filePath;
     }
 
     public void restoreAccount() {
