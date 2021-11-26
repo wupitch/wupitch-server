@@ -6,11 +6,11 @@ import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository;
+import com.server.wupitch.club.dto.ClubDetailRes;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
-import com.server.wupitch.configure.entity.Status;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.server.wupitch.configure.entity.Status.*;
 
@@ -121,4 +122,14 @@ public class ClubService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
         club.setImageUrl(crewImageUrl);
     }
+
+    public ClubDetailRes getDetailClubById(Long clubId) {
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        ClubDetailRes clubDetailRes = new ClubDetailRes(club);
+        List<ClubExtraRelation> extraRelationList = clubExtraRelationRepository.findAllByClubAndStatus(club, VALID);
+        clubDetailRes.setExtraList(extraRelationList.stream().map(e -> e.getExtra().getInfo()).collect(Collectors.toList()));
+        return clubDetailRes;
+    }
+
 }

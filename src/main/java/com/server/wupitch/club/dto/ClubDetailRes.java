@@ -26,6 +26,16 @@ public class ClubDetailRes {
 
     private String clubTitle;
 
+    private String crewName;
+
+    private Integer dues;
+
+    private Integer guestDues;
+
+    private Long memberCount;
+
+    private List<String> extraList;
+
     private List<String> ageTable = new ArrayList<>();
 
     private String introduction;
@@ -43,13 +53,21 @@ public class ClubDetailRes {
 
         this.sportsName = sports.getName();
 
-        this.areaName = club.getArea().getName();
+        this.areaName = club.getLocation();
 
         this.clubTitle = club.getTitle();
 
         this.introduction = club.getIntroduction();
 
         this.crewImage = club.getCrewImage();
+
+        this.crewName = club.getCrewName();
+
+        this.dues = club.getConference();
+
+        this.guestDues = club.getGuestConference();
+
+        this.memberCount = club.getMemberCount();
 
 
         if (club.getMonday() != null && club.getMonday()) {
