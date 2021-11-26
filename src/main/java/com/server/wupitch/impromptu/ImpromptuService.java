@@ -4,19 +4,18 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
-import com.server.wupitch.club.Club;
-import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
+import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelation;
+import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelationRepository;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
 import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
 import com.server.wupitch.impromptu.dto.ImpromptuListRes;
 import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
 import com.server.wupitch.impromptu.repository.ImpromptuRepositoryCustom;
-import com.server.wupitch.sports.entity.Sports;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +41,7 @@ public class ImpromptuService {
     private final ImpromptuRepository impromptuRepository;
     private final ImpromptuRepositoryCustom impromptuRepositoryCustom;
     private final S3Uploader s3Uploader;
+    private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
 
     @Transactional
     public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptusId) throws IOException {
@@ -69,8 +69,12 @@ public class ImpromptuService {
     }
 
     public Page<ImpromptuListRes> getAllImpromptuList
-            (Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex)
+            (Integer page, Integer size, String sortBy, Boolean isAsc,
+             Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex, CustomUserDetails customUserDetails)
     {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
 
@@ -84,12 +88,21 @@ public class ImpromptuService {
 
         Page<Impromptu> allImpromptu = impromptuRepositoryCustom.getAllImpromptuList(pageable, area,scheduleIndex ,days, memberCountIndex);
 
-        return allImpromptu.map(ImpromptuListRes::new);
+        Page<ImpromptuListRes> dtoPage = allImpromptu.map(ImpromptuListRes::new);
+        for (ImpromptuListRes impromptuListRes : dtoPage) {
+            Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
+            Optional<AccountImpromptuRelation> optional
+                    = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
+            if(optional.isEmpty() || !optional.get().getIsPinUp()) impromptuListRes.setIsPinUp(false);
+            else impromptuListRes.setIsPinUp(true);
+        }
+
+        return dtoPage;
 
     }
 
-    public ImpromptuDetailRes getDetailImpromptusById(Long impromptusId) {
-        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptusId, VALID)
+    public ImpromptuDetailRes getDetailImpromptusById(Long impromptuId) {
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
 
         return new ImpromptuDetailRes(impromptu);

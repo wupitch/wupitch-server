@@ -37,6 +37,8 @@ public class ImpromptuListRes {
 
     private Double endTime;
 
+    private Boolean isPinUp;
+
     public ImpromptuListRes(Impromptu impromptu) {
         this.impromptuId = impromptu.getImpromptuId();
         this.impromptuImage = impromptu.getImpromptuImage();

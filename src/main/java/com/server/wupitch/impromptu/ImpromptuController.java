@@ -41,6 +41,9 @@ public class ImpromptuController {
         return responseService.getDataResponse(new ImpromptuIdRes(impromptuId));
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "번개 조회 API", description = "page, size, sortBy, isAsc, RequestParam 설정")
     @GetMapping(value = "/impromptus")
     public DataResponse<Page<ImpromptuListRes>> getAllImpromptuList(
@@ -51,14 +54,15 @@ public class ImpromptuController {
             @RequestParam(name = "areaId", required = false) Long areaId,
             @RequestParam(name = "scheduleIndex", required = false) Integer scheduleIndex,
             @RequestParam(name = "days", required = false) List<Integer> days,
-            @RequestParam(name = "memberCountIndex", required = false) Integer memberCountIndex
+            @RequestParam(name = "memberCountIndex", required = false) Integer memberCountIndex,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         if (page == null) page = 1;
         page = page - 1;
         if (size == null) size = 10;
         if (isAsc == null) isAsc = true;
         if (sortBy == null) sortBy = "updatedAt";
-        Page<ImpromptuListRes> result = impromptuService.getAllImpromptuList(page, size, sortBy, isAsc, areaId, scheduleIndex, days, memberCountIndex);
+        Page<ImpromptuListRes> result = impromptuService.getAllImpromptuList(page, size, sortBy, isAsc, areaId, scheduleIndex, days, memberCountIndex, customUserDetails);
         return responseService.getDataResponse(result);
     }
 
@@ -77,9 +81,9 @@ public class ImpromptuController {
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
     @Operation(summary = "번개 세부 조회 API", description = "번개 ID를 기준으로 번개 세부 정보 조회")
-    @GetMapping(value = "/impromptus/{impromptusId}")
-    public DataResponse<ImpromptuDetailRes> getDetailImpromptusById(@PathVariable Long impromptusId) {
-        ImpromptuDetailRes impromptuDetailRes = impromptuService.getDetailImpromptusById(impromptusId);
+    @GetMapping(value = "/impromptus/{impromptuId}")
+    public DataResponse<ImpromptuDetailRes> getDetailImpromptusById(@PathVariable Long impromptuId) {
+        ImpromptuDetailRes impromptuDetailRes = impromptuService.getDetailImpromptusById(impromptuId);
         return responseService.getDataResponse(impromptuDetailRes);
     }
 
