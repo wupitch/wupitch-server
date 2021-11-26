@@ -8,6 +8,7 @@ import com.server.wupitch.club.Club;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
+import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
 import com.server.wupitch.impromptu.dto.ImpromptuListRes;
@@ -22,7 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +40,15 @@ public class ImpromptuService {
     private final AreaRepository areaRepository;
     private final ImpromptuRepository impromptuRepository;
     private final ImpromptuRepositoryCustom impromptuRepositoryCustom;
+    private final S3Uploader s3Uploader;
+
+    @Transactional
+    public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptusId) throws IOException {
+        String impromptusUrl = s3Uploader.upload(multipartFile, "impromptusImage");
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptusId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+        impromptu.setImpromptuImage(impromptusUrl);
+    }
 
     @Transactional
     public Long createImpromptu(CreateImpromptuReq dto, CustomUserDetails customUserDetails) {

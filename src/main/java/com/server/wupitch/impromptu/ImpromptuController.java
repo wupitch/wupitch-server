@@ -1,6 +1,7 @@
 package com.server.wupitch.impromptu;
 
 import com.server.wupitch.club.dto.ClubListRes;
+import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
@@ -15,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"Impromptu API"})
@@ -56,6 +59,17 @@ public class ImpromptuController {
         if (sortBy == null) sortBy = "updatedAt";
         Page<ImpromptuListRes> result = impromptuService.getAllImpromptuList(page, size, sortBy, isAsc, areaId, scheduleIndex, days, memberCountIndex);
         return responseService.getDataResponse(result);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 크루 이미지 추가")
+    @PatchMapping(value = "/impromptus/image")
+    public CommonResponse uploadImpromptusImage(@RequestParam("images") MultipartFile multipartFile,
+                                          @RequestParam("impromptusId") Long impromptusId) throws IOException {
+        impromptuService.uploadImpromptusImage(multipartFile, impromptusId);
+        return responseService.getSuccessResponse();
     }
 
 }

@@ -86,6 +86,9 @@ public enum CustomExceptionStatus {
     // Club
     CREW_NOT_FOUND(false, 3100, "크루를 찾을 수 없습니다."),
 
+    // impromptus
+    IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),
+
 
     /**
      * 4000 : Database, Server 오류
