@@ -13,6 +13,8 @@ public class Schedule {
 
     Integer dayIdx;
 
+    String day;
+
     Double startTime;
 
     Double endTime;
