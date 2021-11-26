@@ -70,10 +70,10 @@ public class ImpromptuController {
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
     @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 번개 이미지 추가")
-    @PatchMapping(value = "/impromptus/image")
+    @PatchMapping(value = "/impromptu/image")
     public CommonResponse uploadImpromptusImage(@RequestParam("images") MultipartFile multipartFile,
-                                          @RequestParam("impromptusId") Long impromptusId) throws IOException {
-        impromptuService.uploadImpromptusImage(multipartFile, impromptusId);
+                                          @RequestParam("impromptuId") Long impromptuId) throws IOException {
+        impromptuService.uploadImpromptusImage(multipartFile, impromptuId);
         return responseService.getSuccessResponse();
     }
 

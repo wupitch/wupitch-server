@@ -44,9 +44,9 @@ public class ImpromptuService {
     private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
 
     @Transactional
-    public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptusId) throws IOException {
+    public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptuId) throws IOException {
         String impromptusUrl = s3Uploader.upload(multipartFile, "impromptusImage");
-        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptusId, VALID)
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
         impromptu.setImpromptuImage(impromptusUrl);
     }
