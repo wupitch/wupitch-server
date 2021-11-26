@@ -76,7 +76,7 @@ public class AccountController {
     public CommonResponse changeAccountInform(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                               @RequestBody @Valid AccountInformReq dto ,
                                               Errors errors) {
-        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        if (dto.getNickname() != null && errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         accountService.changeAccountInform(customUserDetails, dto);
         return responseService.getSuccessResponse();
     }
@@ -97,6 +97,18 @@ public class AccountController {
     public CommonResponse uploadProfileImage(@RequestParam("images") MultipartFile multipartFile,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         accountService.uploadProfileImage(multipartFile, customUserDetails);
+
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "신분증 사진등록 API", description = "JWT 토큰을 기준으로 현재 회원의 신분증 이미지 등록")
+    @PostMapping(value = "/accounts/identification")
+    public CommonResponse uploadIdentification(@RequestParam("images") MultipartFile multipartFile,
+                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        accountService.uploadIdentification(multipartFile, customUserDetails);
 
         return responseService.getSuccessResponse();
     }
@@ -137,6 +149,18 @@ public class AccountController {
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         accountService.changeAuthPassword(customUserDetails, dto);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "비밀번호 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 비밀번호가 맞는지 확인")
+    @PostMapping(value = "/accounts/auth/password/check")
+    public DataResponse<Boolean> chkPasswordByAuth(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody PasswordChkReq dto)
+    {
+        Boolean result = accountService.chkPasswordByAuth(customUserDetails, dto);
+        return responseService.getDataResponse(result);
     }
 
 }

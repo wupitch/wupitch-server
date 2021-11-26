@@ -1,5 +1,6 @@
 package com.server.wupitch.account.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.server.wupitch.account.dto.AccountAuthDto;
 import com.server.wupitch.account.dto.AccountInformReq;
 import com.server.wupitch.account.entity.enumtypes.OAuthType;
@@ -11,8 +12,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.server.wupitch.account.entity.enumtypes.RoleType;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import static com.server.wupitch.account.entity.enumtypes.RoleType.*;
 import static com.server.wupitch.configure.entity.Status.*;
@@ -59,8 +64,14 @@ public class Account extends BaseTimeEntity {
 
     private Boolean isPushAgree;
 
+    private String identification;
+
     public void registerProfileImage(String filePath){
         this.profileImage = filePath;
+    }
+
+    public void registerIdentification(String filePath){
+        this.identification = filePath;
     }
 
     public void restoreAccount() {
@@ -83,6 +94,9 @@ public class Account extends BaseTimeEntity {
                 .accountId(this.accountId)
                 .email(this.email)
                 .nickname(this.nickname)
+                .profileImageUrl(this.profileImage)
+                .introduce(this.introduction)
+                .isPushAgree(this.isPushAgree)
                 .profileImageUrl(this.profileImage)
                 .build();
     }

@@ -18,6 +18,8 @@ public class CreateClubReq {
 
     private Long areaId;
 
+    private String crewName;
+
     private String title;
 
     private List<Integer> ageList = new ArrayList<>();

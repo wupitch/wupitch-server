@@ -65,6 +65,10 @@ public class Impromptu extends BaseTimeEntity {
 
     private Integer dues;
 
+    public void setImpromptuImage(String imageUrl) {
+        this.impromptuImage = imageUrl;
+    }
+
     public Impromptu(Account account, Area area, CreateImpromptuReq dto) {
         this.status = VALID;
         this.account = account;

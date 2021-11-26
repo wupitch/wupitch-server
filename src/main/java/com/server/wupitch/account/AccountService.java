@@ -71,7 +71,7 @@ public class AccountService {
 
     @Transactional
     public void changeAccountInform(CustomUserDetails customUserDetails, AccountInformReq dto) {
-        Account account = accountRepository.findByoAuthIdAndStatus(customUserDetails.getOAuthId(), VALID)
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         account.setAccountInfoByDto(dto);
@@ -124,6 +124,14 @@ public class AccountService {
     }
 
     @Transactional
+    public void uploadIdentification(MultipartFile multipartFile, CustomUserDetails customUserDetails) throws IOException {
+        String identificationImage = s3Uploader.upload(multipartFile, "identification");
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.registerIdentification(identificationImage);
+    }
+
+    @Transactional
     public void toggleAccountValidation(CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
@@ -149,5 +157,12 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         account.changePassword(passwordEncoder.encode(dto.getPassword()));
+    }
+
+    public Boolean chkPasswordByAuth(CustomUserDetails customUserDetails, PasswordChkReq dto) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        return passwordEncoder.matches(dto.getPassword(), account.getPassword());
     }
 }

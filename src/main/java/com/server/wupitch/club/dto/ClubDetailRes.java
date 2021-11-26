@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClubListRes {
+public class ClubDetailRes {
 
     private Long clubId;
 
@@ -22,7 +22,21 @@ public class ClubListRes {
 
     private String sportsName;
 
+    private String areaName;
+
     private String clubTitle;
+
+    private String crewName;
+
+    private Integer dues;
+
+    private Integer guestDues;
+
+    private Long memberCount;
+
+    private List<String> extraList;
+
+    private List<String> ageTable = new ArrayList<>();
 
     private String introduction;
 
@@ -30,11 +44,7 @@ public class ClubListRes {
 
     private String crewImage;
 
-    private Boolean isPinUp;
-
-    private String areaName;
-
-    public ClubListRes(Club club) {
+    public ClubDetailRes(Club club) {
         this.clubId = club.getClubId();
 
         Sports sports = club.getSports();
@@ -50,6 +60,14 @@ public class ClubListRes {
         this.introduction = club.getIntroduction();
 
         this.crewImage = club.getCrewImage();
+
+        this.crewName = club.getCrewName();
+
+        this.dues = club.getConference();
+
+        this.guestDues = club.getGuestConference();
+
+        this.memberCount = club.getMemberCount();
 
 
         if (club.getMonday() != null && club.getMonday()) {
@@ -122,6 +140,12 @@ public class ClubListRes {
             else schedule.endTime = club.getSaturdayEndTime();
             this.schedules.add(schedule);
         }
+
+        if (club.getTeenager() != null && club.getTeenager()) ageTable.add("10대");
+        if (club.getTwenties() != null && club.getTwenties()) ageTable.add("20대");
+        if (club.getThirties() != null && club.getThirties()) ageTable.add("30대");
+        if (club.getForties() != null && club.getForties()) ageTable.add("40대");
+        if (club.getMoreAge() != null && club.getMoreAge()) ageTable.add("50대 이상");
 
 
     }

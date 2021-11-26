@@ -1,6 +1,7 @@
 package com.server.wupitch.club;
 
 import com.server.wupitch.area.Area;
+import com.server.wupitch.club.dto.ClubDetailRes;
 import com.server.wupitch.club.dto.ClubIdRes;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
@@ -32,6 +33,9 @@ public class ClubController {
     private final ClubService clubService;
     private final ResponseService responseService;
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "크루 조회 API", description = "page, size, sortBy, isAsc RequestParam 설정")
     @GetMapping(value = "/clubs")
     public DataResponse<Page<ClubListRes>> getAllClubList(
@@ -43,14 +47,16 @@ public class ClubController {
             @RequestParam(name = "sportsId", required = false) Long sportsId,
             @RequestParam(name = "days", required = false) List<Integer> days,
             @RequestParam(name = "memberCountValue", required = false) Integer memberCountValue,
-            @RequestParam(name = "ageList", required = false) List<Integer> ageList
+            @RequestParam(name = "ageList", required = false) List<Integer> ageList,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
+
         if (page == null) page = 1;
         page = page - 1;
         if (size == null) size = 10;
         if (isAsc == null) isAsc = true;
         if (sortBy == null) sortBy = "updatedAt";
-        Page<ClubListRes> result =  clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, memberCountValue, ageList);
+        Page<ClubListRes> result = clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, memberCountValue, ageList, customUserDetails);
         return responseService.getDataResponse(result);
     }
 
@@ -70,9 +76,19 @@ public class ClubController {
     @Operation(summary = "크루 이미지 추가 API", description = "크루 ID를 기준으로 크루 이미지 추가")
     @PatchMapping(value = "/clubs/image")
     public CommonResponse uploadCrewImage(@RequestParam("images") MultipartFile multipartFile,
-                                             @RequestParam("crewId") Long crewId) throws IOException {
+                                          @RequestParam("crewId") Long crewId) throws IOException {
         clubService.uploadCrewImage(multipartFile, crewId);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 세부 조회 API", description = "크루 ID를 기준으로 크루 세부 조회")
+    @GetMapping(value = "/clubs/{clubId}")
+    public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId)  {
+        ClubDetailRes clubDetailRes = clubService.getDetailClubById(clubId);
+        return responseService.getDataResponse(clubDetailRes);
     }
 
 
