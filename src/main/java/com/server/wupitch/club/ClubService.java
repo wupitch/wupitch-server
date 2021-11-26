@@ -4,6 +4,8 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
+import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
+import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
 import com.server.wupitch.club.repository.ClubRepository;
@@ -47,10 +49,14 @@ public class ClubService {
     private final ExtraRepository extraRepository;
     private final ClubExtraRelationRepository clubExtraRelationRepository;
     private final S3Uploader s3Uploader;
+    private final AccountClubRelationRepository accountClubRelationRepository;
 
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
-            List<Integer> days, Integer memberCountValue, List<Integer> ageList) {
+            List<Integer> days, Integer memberCountValue, List<Integer> ageList, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -59,23 +65,30 @@ public class ClubService {
 
         Area area = null;
         Sports sports = null;
-        if(areaId != null){
+        if (areaId != null) {
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
-            if(optionalArea.isPresent()) area = optionalArea.get();
+            if (optionalArea.isPresent()) area = optionalArea.get();
         }
         if (sportsId != null) {
             Optional<Sports> optionalSports = sportsRepository.findBySportsIdAndStatus(sportsId, VALID);
-            if(optionalSports.isPresent()) sports = optionalSports.get();
+            if (optionalSports.isPresent()) sports = optionalSports.get();
         }
 
         Page<Club> allClub = clubRepositoryCustom.findAllClub(pageable, area, sports, days, memberCountValue, ageList);
+        Page<ClubListRes> dtoPage = allClub.map(ClubListRes::new);
+        for (ClubListRes clubListRes : dtoPage) {
+            Club club = clubRepository.findById(clubListRes.getClubId()).get();
+            Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+            if (optional.isEmpty() || !optional.get().getIsPinUp()) clubListRes.setIsPinUp(false);
+            else clubListRes.setIsPinUp(true);
+        }
 
-        return allClub.map(ClubListRes::new);
+        return dtoPage;
 
     }
 
     @Transactional
-    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails){
+    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -102,7 +115,7 @@ public class ClubService {
     }
 
     @Transactional
-    public void uploadCrewImage(MultipartFile multipartFile, Long crewId) throws IOException{
+    public void uploadCrewImage(MultipartFile multipartFile, Long crewId) throws IOException {
         String crewImageUrl = s3Uploader.upload(multipartFile, "crewImage");
         Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));

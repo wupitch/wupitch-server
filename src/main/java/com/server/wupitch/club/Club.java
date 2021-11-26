@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.server.wupitch.configure.entity.Status.*;
 import static javax.persistence.FetchType.*;
 
@@ -39,6 +36,8 @@ public class Club extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accountId")
     private Account account;
+
+    private String crewName;
 
     private String title;
 
@@ -126,6 +125,7 @@ public class Club extends BaseTimeEntity {
         this.memberCount = 0L;
         this.account = account;
 
+        this.crewName = dto.getCrewName();
         this.location = dto.getLocation();
         this.inquiries = dto.getInquiries();
         this.conference = dto.getConference();

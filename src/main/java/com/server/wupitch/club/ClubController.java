@@ -32,6 +32,9 @@ public class ClubController {
     private final ClubService clubService;
     private final ResponseService responseService;
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "크루 조회 API", description = "page, size, sortBy, isAsc RequestParam 설정")
     @GetMapping(value = "/clubs")
     public DataResponse<Page<ClubListRes>> getAllClubList(
@@ -43,14 +46,16 @@ public class ClubController {
             @RequestParam(name = "sportsId", required = false) Long sportsId,
             @RequestParam(name = "days", required = false) List<Integer> days,
             @RequestParam(name = "memberCountValue", required = false) Integer memberCountValue,
-            @RequestParam(name = "ageList", required = false) List<Integer> ageList
+            @RequestParam(name = "ageList", required = false) List<Integer> ageList,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
+
         if (page == null) page = 1;
         page = page - 1;
         if (size == null) size = 10;
         if (isAsc == null) isAsc = true;
         if (sortBy == null) sortBy = "updatedAt";
-        Page<ClubListRes> result =  clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, memberCountValue, ageList);
+        Page<ClubListRes> result = clubService.getAllClubList(page, size, sortBy, isAsc, areaId, sportsId, days, memberCountValue, ageList, customUserDetails);
         return responseService.getDataResponse(result);
     }
 
