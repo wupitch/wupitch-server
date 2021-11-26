@@ -11,6 +11,7 @@ import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
+import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
 import com.server.wupitch.impromptu.dto.ImpromptuListRes;
 import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
@@ -85,5 +86,12 @@ public class ImpromptuService {
 
         return allImpromptu.map(ImpromptuListRes::new);
 
+    }
+
+    public ImpromptuDetailRes getDetailImpromptusById(Long impromptusId) {
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptusId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        return new ImpromptuDetailRes(impromptu);
     }
 }

@@ -6,6 +6,7 @@ import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
+import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
 import com.server.wupitch.impromptu.dto.ImpromptuIdRes;
 import com.server.wupitch.impromptu.dto.ImpromptuListRes;
 import io.swagger.annotations.Api;
@@ -64,12 +65,22 @@ public class ImpromptuController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
-    @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 크루 이미지 추가")
+    @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 번개 이미지 추가")
     @PatchMapping(value = "/impromptus/image")
     public CommonResponse uploadImpromptusImage(@RequestParam("images") MultipartFile multipartFile,
                                           @RequestParam("impromptusId") Long impromptusId) throws IOException {
         impromptuService.uploadImpromptusImage(multipartFile, impromptusId);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 세부 조회 API", description = "번개 ID를 기준으로 번개 세부 정보 조회")
+    @GetMapping(value = "/impromptus/{impromptusId}")
+    public DataResponse<ImpromptuDetailRes> getDetailImpromptusById(@PathVariable Long impromptusId) {
+        ImpromptuDetailRes impromptuDetailRes = impromptuService.getDetailImpromptusById(impromptusId);
+        return responseService.getDataResponse(impromptuDetailRes);
     }
 
 }
