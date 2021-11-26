@@ -28,6 +28,12 @@ dependencies {
 	annotationProcessor('org.projectlombok:lombok')
 	testAnnotationProcessor('org.projectlombok:lombok')
 
+	// firebase sdk
+	implementation 'com.google.firebase:firebase-admin:6.8.1'
+
+	// okhttp
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
 	// AWS S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
 
