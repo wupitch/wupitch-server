@@ -29,8 +29,8 @@ public class FirebaseController {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @Operation(summary = "fcm test API", description = "호출 시 'test'라는 메세지 전송")
-    @PostMapping("/app/fcm/test")
-    public CommonResponse fcmTest(FcmSendReq dto) throws IOException {
+    @PostMapping("/fcm/test")
+    public CommonResponse fcmTest(@RequestBody FcmSendReq dto) throws IOException {
         firebaseCloudMessageService.sendMessageTo(dto.getTargetToken(), dto.getTitle(), dto.getContents());
         return responseService.getSuccessResponse();
     }
