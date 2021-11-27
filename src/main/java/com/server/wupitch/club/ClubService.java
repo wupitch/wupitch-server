@@ -128,4 +128,25 @@ public class ClubService {
         return clubDetailRes;
     }
 
+    @Transactional
+    public void clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        Optional<AccountClubRelation> optional
+                = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+        if(optional.isPresent()) optional.get().togglePinUp();
+        else{
+            AccountClubRelation build = AccountClubRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .club(club)
+                    .isPinUp(true)
+                    .build();
+            accountClubRelationRepository.save(build);
+        }
+    }
 }

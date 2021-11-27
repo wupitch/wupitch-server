@@ -39,4 +39,8 @@ public class AccountClubRelation extends BaseTimeEntity {
 
     private Boolean isSelect;
 
+    public void togglePinUp() {
+        this.isPinUp = !this.isPinUp;
+    }
+
 }
