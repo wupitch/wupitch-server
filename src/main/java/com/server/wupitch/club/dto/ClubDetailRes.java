@@ -44,6 +44,10 @@ public class ClubDetailRes {
 
     private String crewImage;
 
+    private String inquiries;
+
+    private String materials;
+
     public ClubDetailRes(Club club) {
         this.clubId = club.getClubId();
 
@@ -68,6 +72,10 @@ public class ClubDetailRes {
         this.guestDues = club.getGuestConference();
 
         this.memberCount = club.getMemberCount();
+
+        this.inquiries = club.getInquiries();
+
+        this.materials = club.getMaterials();
 
 
         if (club.getMonday() != null && club.getMonday()) {
