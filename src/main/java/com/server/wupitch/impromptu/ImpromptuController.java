@@ -87,4 +87,15 @@ public class ImpromptuController {
         return responseService.getDataResponse(impromptuDetailRes);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 핀업 토글 API", description = "번개 ID, JWT토큰을 기준으로 크루 핀업 토글")
+    @PatchMapping(value = "/impromptus/{impromptuId}/pinUp-toggle")
+    public CommonResponse clubPinUpToggleByAuth(@PathVariable Long impromptuId,
+                                                @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        impromptuService.impromptuPinUpToggleByAuth(impromptuId, customUserDetails);
+        return responseService.getSuccessResponse();
+    }
+
 }
