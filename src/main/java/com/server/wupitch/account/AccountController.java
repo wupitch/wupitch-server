@@ -163,4 +163,24 @@ public class AccountController {
         return responseService.getDataResponse(result);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "인증된 회원의 스포츠 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 스포츠 확인")
+    @GetMapping(value = "/accounts/auth/sports")
+    public DataResponse<AccountSportsRes> getSportsByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        AccountSportsRes accountSportsRes = accountService.getSportsByAuth(customUserDetails);
+        return responseService.getDataResponse(accountSportsRes);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "인증된 회원의 나이대 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 나이대 확인")
+    @GetMapping(value = "/accounts/auth/age")
+    public DataResponse<AccountAgeRes> getAgeByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        AccountAgeRes accountAgeRes = accountService.getAgeByAuth(customUserDetails);
+        return responseService.getDataResponse(accountAgeRes);
+    }
+
 }

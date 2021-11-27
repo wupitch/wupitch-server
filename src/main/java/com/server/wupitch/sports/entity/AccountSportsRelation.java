@@ -34,4 +34,8 @@ public class AccountSportsRelation extends BaseTimeEntity {
     @JoinColumn(name = "sportsId")
     private Sports sports;
 
+    public void makeDeleted() {
+        this.status = Status.DELETED;
+    }
+
 }
