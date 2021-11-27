@@ -200,4 +200,17 @@ public class AccountService {
         else age = "50대 이상";
         return new AccountAgeRes(ageIdx, age);
     }
+
+    public AccountPhoneRes getPhoneNumberByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        return new AccountPhoneRes(account.getPhoneNumber());
+    }
+
+    public AccountAreaRes getAreaByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        Area area = account.getArea();
+        return new AccountAreaRes(area.getAreaId(), area.getName());
+    }
 }

@@ -183,4 +183,24 @@ public class AccountController {
         return responseService.getDataResponse(accountAgeRes);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "인증된 회원의 폰 넘버 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 폰 넘버 확인")
+    @GetMapping(value = "/accounts/auth/phoneNumber")
+    public DataResponse<AccountPhoneRes> getPhoneNumberByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        AccountPhoneRes accountPhoneRes = accountService.getPhoneNumberByAuth(customUserDetails);
+        return responseService.getDataResponse(accountPhoneRes);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "인증된 회원의 지역 확인 API", description = "JWT 토큰을 기준으로 현재 회원의 지역 확인")
+    @GetMapping(value = "/accounts/auth/area")
+    public DataResponse<AccountAreaRes> getAreaByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        AccountAreaRes accountAreaRes = accountService.getAreaByAuth(customUserDetails);
+        return responseService.getDataResponse(accountAreaRes);
+    }
+
 }
