@@ -68,6 +68,8 @@ public class Account extends BaseTimeEntity {
 
     private String identification;
 
+    private String deviceToken;
+
     public void registerProfileImage(String filePath){
         this.profileImage = filePath;
     }
@@ -113,10 +115,13 @@ public class Account extends BaseTimeEntity {
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
 
         if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
-        else if(this.getPhoneNumber() == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        else if(this.phoneNumber == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getIsPushAgree() != null)this.isPushAgree = dto.getIsPushAgree();
-        else if(this.getIsPushAgree() == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        else if(this.isPushAgree == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+
+        if (dto.getDeviceToken() != null) this.deviceToken = dto.getDeviceToken();
+        else if(this.deviceToken == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
     }
 
     public void setAccountArea(Area area) {
