@@ -7,6 +7,8 @@ import com.server.wupitch.account.entity.enumtypes.OAuthType;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
+import com.server.wupitch.configure.response.exception.CustomException;
+import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -102,11 +104,19 @@ public class Account extends BaseTimeEntity {
     }
 
     public void setAccountInfoByDto(AccountInformReq dto) {
-        if(dto.getNickname() != null)this.nickname = dto.getNickname();
+        if (dto.getNickname() != null) this.nickname = dto.getNickname();
+        else if(this.nickname == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
+        else if(this.ageNum == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
+
         if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
-        if(dto.getIsPushAgree() != null) this.isPushAgree = dto.getIsPushAgree();
+        else if(this.getPhoneNumber() == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+
+        if(dto.getIsPushAgree() != null)this.isPushAgree = dto.getIsPushAgree();
+        else if(this.getIsPushAgree() == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
     }
 
     public void setAccountArea(Area area) {
