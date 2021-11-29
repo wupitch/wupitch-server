@@ -15,11 +15,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.server.wupitch.account.entity.enumtypes.RoleType;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import java.util.List;
 
 import static com.server.wupitch.account.entity.enumtypes.RoleType.*;
 import static com.server.wupitch.configure.entity.Status.*;
