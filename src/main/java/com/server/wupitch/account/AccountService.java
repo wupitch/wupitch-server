@@ -213,4 +213,13 @@ public class AccountService {
         Area area = account.getArea();
         return new AccountAreaRes(area.getAreaId(), area.getName());
     }
+
+
+    @Transactional
+    public void changeDeviceTokenByAuth(CustomUserDetails customUserDetails, DeviceTokenReq deviceTokenReq) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(()-> new CustomException(CustomExceptionStatus.FAILED_TO_LOGIN));
+        account.changeDeviceToken(deviceTokenReq.getDeviceToken());
+    }
+
 }

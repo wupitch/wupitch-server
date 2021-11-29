@@ -122,9 +122,6 @@ public class Account extends BaseTimeEntity {
 
         if(dto.getIsPushAgree() != null)this.isPushAgree = dto.getIsPushAgree();
         else if(this.isPushAgree == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
-
-        if (dto.getDeviceToken() != null) this.deviceToken = dto.getDeviceToken();
-        else if(this.deviceToken == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
     }
 
     public void setAccountArea(Area area) {
@@ -141,6 +138,7 @@ public class Account extends BaseTimeEntity {
                 .role(RoleType.ROLE_USER)
                 .introduction(dto.getIntroduce())
                 .isPushAgree(dto.getIsPushAgree())
+                .deviceToken(dto.getDeviceToken())
                 .build();
     }
 
@@ -157,4 +155,6 @@ public class Account extends BaseTimeEntity {
     public void changePassword(String password) {
         this.password = password;
     }
+
+    public void changeDeviceToken(String deviceToken) { this.deviceToken = deviceToken; }
 }
