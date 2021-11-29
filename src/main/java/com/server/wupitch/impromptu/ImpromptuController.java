@@ -70,10 +70,10 @@ public class ImpromptuController {
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
     @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 번개 이미지 추가")
-    @PatchMapping(value = "/impromptus/image")
+    @PatchMapping(value = "/impromptu/image")
     public CommonResponse uploadImpromptusImage(@RequestParam("images") MultipartFile multipartFile,
-                                          @RequestParam("impromptusId") Long impromptusId) throws IOException {
-        impromptuService.uploadImpromptusImage(multipartFile, impromptusId);
+                                          @RequestParam("impromptuId") Long impromptuId) throws IOException {
+        impromptuService.uploadImpromptusImage(multipartFile, impromptuId);
         return responseService.getSuccessResponse();
     }
 
@@ -85,6 +85,28 @@ public class ImpromptuController {
     public DataResponse<ImpromptuDetailRes> getDetailImpromptusById(@PathVariable Long impromptuId) {
         ImpromptuDetailRes impromptuDetailRes = impromptuService.getDetailImpromptusById(impromptuId);
         return responseService.getDataResponse(impromptuDetailRes);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 핀업 토글 API", description = "번개 ID, JWT토큰을 기준으로 크루 핀업 토글")
+    @PatchMapping(value = "/impromptus/{impromptuId}/pinUp-toggle")
+    public CommonResponse clubPinUpToggleByAuth(@PathVariable Long impromptuId,
+                                                @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        impromptuService.impromptuPinUpToggleByAuth(impromptuId, customUserDetails);
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 번개 참여 토글")
+    @PostMapping(value = "/impromptus/{impromptuId}/participation-toggle")
+    public CommonResponse impromptuParticipationToggleByAuth(@PathVariable Long impromptuId,
+                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        impromptuService.impromptuParticipationToggleByAuth(impromptuId, customUserDetails);
+        return responseService.getSuccessResponse();
     }
 
 }

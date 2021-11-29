@@ -4,6 +4,8 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
+import com.server.wupitch.club.Club;
+import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -44,9 +46,9 @@ public class ImpromptuService {
     private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
 
     @Transactional
-    public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptusId) throws IOException {
+    public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptuId) throws IOException {
         String impromptusUrl = s3Uploader.upload(multipartFile, "impromptusImage");
-        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptusId, VALID)
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
         impromptu.setImpromptuImage(impromptusUrl);
     }
@@ -106,5 +108,55 @@ public class ImpromptuService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
 
         return new ImpromptuDetailRes(impromptu);
+    }
+
+    @Transactional
+    public void impromptuPinUpToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        Optional<AccountImpromptuRelation> optional
+                = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
+        if(optional.isPresent()) optional.get().togglePinUp();
+        else{
+            AccountImpromptuRelation build = AccountImpromptuRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .impromptu(impromptu)
+                    .isPinUp(true)
+                    .build();
+            accountImpromptuRelationRepository.save(build);
+        }
+    }
+
+    @Transactional
+    public void impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        Optional<AccountImpromptuRelation> optional
+                = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
+        if(optional.isPresent()){
+            if(optional.get().getIsSelect()) impromptu.minusMemberCount();
+            else impromptu.addMemberCount();
+            optional.get().toggleSelect();
+        }
+        else{
+            AccountImpromptuRelation build = AccountImpromptuRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .impromptu(impromptu)
+                    .isSelect(true)
+                    .build();
+            accountImpromptuRelationRepository.save(build);
+            impromptu.addMemberCount();
+        }
     }
 }

@@ -28,5 +28,6 @@ public class AccountInformReq {
     private String introduce;
     private String phoneNumber;
     private Boolean isPushAgree;
+    private String deviceToken;
 
 }

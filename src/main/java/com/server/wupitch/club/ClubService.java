@@ -53,7 +53,7 @@ public class ClubService {
     private final AccountClubRelationRepository accountClubRelationRepository;
 
     public Page<ClubListRes> getAllClubList(
-            Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, Long sportsId,
+            Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, List<Long> sportsList,
             List<Integer> days, Integer memberCountValue, List<Integer> ageList, CustomUserDetails customUserDetails) {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
@@ -70,12 +70,8 @@ public class ClubService {
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
             if (optionalArea.isPresent()) area = optionalArea.get();
         }
-        if (sportsId != null) {
-            Optional<Sports> optionalSports = sportsRepository.findBySportsIdAndStatus(sportsId, VALID);
-            if (optionalSports.isPresent()) sports = optionalSports.get();
-        }
 
-        Page<Club> allClub = clubRepositoryCustom.findAllClub(pageable, area, sports, days, memberCountValue, ageList);
+        Page<Club> allClub = clubRepositoryCustom.findAllClub(pageable, area, sportsList, days, memberCountValue, ageList);
         Page<ClubListRes> dtoPage = allClub.map(ClubListRes::new);
         for (ClubListRes clubListRes : dtoPage) {
             Club club = clubRepository.findById(clubListRes.getClubId()).get();
@@ -132,4 +128,54 @@ public class ClubService {
         return clubDetailRes;
     }
 
+    @Transactional
+    public void clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        Optional<AccountClubRelation> optional
+                = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+        if(optional.isPresent()) optional.get().togglePinUp();
+        else{
+            AccountClubRelation build = AccountClubRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .club(club)
+                    .isPinUp(true)
+                    .build();
+            accountClubRelationRepository.save(build);
+        }
+    }
+
+    @Transactional
+    public void clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        Optional<AccountClubRelation> optional
+                = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+        if(optional.isPresent()){
+            if(optional.get().getIsSelect()) club.minusMemberCount();
+            else club.addMemberCount();
+            optional.get().toggleSelect();
+        }
+        else{
+            AccountClubRelation build = AccountClubRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .club(club)
+                    .isSelect(true)
+                    .build();
+            accountClubRelationRepository.save(build);
+            club.addMemberCount();
+        }
+
+    }
 }

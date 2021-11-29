@@ -1,79 +1,97 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.5'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	//querydsl 추가
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
-	id 'java'
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    //querydsl 추가
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'java'
 }
 
 group = 'com'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.projectlombok:lombok:1.18.18'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	annotationProcessor('org.projectlombok:lombok')
-	testAnnotationProcessor('org.projectlombok:lombok')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.projectlombok:lombok:1.18.18'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'mysql:mysql-connector-java'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    annotationProcessor('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
 
-	// AWS S3
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
+    // firebase sdk
+    implementation 'com.google.firebase:firebase-admin:6.8.1'
 
-	// FCM
-	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+    // okhttp
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
 
-	// Swagger
-	implementation "io.springfox:springfox-boot-starter:3.0.0"
+    // AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
 
-	// JWT
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    // FCM
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
 
-	// Validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Swagger
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
 
-	// JSON Parser
-	implementation group: 'org.json', name: 'json', version: '20210307'
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-	// SMS Service
-	implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// querydsl
-	implementation 'com.querydsl:querydsl-jpa'
+    // JSON Parser
+    implementation group: 'org.json', name: 'json', version: '20210307'
+
+    // SMS Service
+    implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+
+    // querydsl
+    implementation 'com.querydsl:querydsl-jpa'
 }
 
 //querydsl
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
+    jpa = true
+    querydslSourcesDir = querydslDir
 }
 
 sourceSets {
-	main.java.srcDir querydslDir
+    main.java.srcDir querydslDir
 }
 
 configurations {
-	querydsl.extendsFrom compileClasspath
+    querydsl.extendsFrom compileClasspath
 }
 
 compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
+    options.annotationProcessorPath = configurations.querydsl
 }
-//querydsl
+
+/** * comileQuerydsl.doFirst 추가 */
+compileQuerydsl.doFirst {
+    if (file(querydslDir).exists())
+        delete(file(querydslDir))
+}
+
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

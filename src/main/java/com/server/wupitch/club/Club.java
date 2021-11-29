@@ -197,6 +197,14 @@ public class Club extends BaseTimeEntity {
         }
     }
 
+    public void addMemberCount() {
+        this.memberCount++;
+    }
+
+    public void minusMemberCount() {
+        this.memberCount--;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.crewImage = imageUrl;
     }

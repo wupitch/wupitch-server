@@ -40,7 +40,7 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
     }
 
     @Override
-    public Page<Club> findAllClub(Pageable pageable, Area area, Sports sports,
+    public Page<Club> findAllClub(Pageable pageable, Area area, List<Long> sportsList,
                                   List<Integer> days, Integer memberCountValue, List<Integer> ageList) {
 
         QClub qClub = QClub.club;
@@ -60,7 +60,7 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
                 .leftJoin(qArea).on(qClub.area.eq(qArea).and(qArea.status.eq(VALID)))
                 .leftJoin(qSports).on(qClub.sports.eq(qSports).and(qSports.status.eq(VALID)))
                 .where(
-                        areaEq(qClub, area), sportsEq(qClub, sports),
+                        areaEq(qClub, area), sportsEq(qClub, sportsList),
                         memberCountValueEq(qClub, memberCountValue),
                         dayEq(1, qClub, boolDays[1]), dayEq(2, qClub, boolDays[2]), dayEq(3, qClub, boolDays[3]), dayEq(4, qClub, boolDays[4]), dayEq(5, qClub, boolDays[5]), dayEq(6, qClub, boolDays[6]), dayEq(7, qClub, boolDays[7]),
                         ageEq(1, qClub, boolAgeList[1]), ageEq(2, qClub, boolAgeList[2]), ageEq(3, qClub, boolAgeList[3]), ageEq(4, qClub, boolAgeList[4]), ageEq(5, qClub, boolAgeList[5])
@@ -78,9 +78,9 @@ public class ClubQueryRepository implements ClubRepositoryCustom {
         return qClub.area.eq(area);
     }
 
-    private BooleanExpression sportsEq(QClub qClub, Sports sports) {
-        if (sports == null) return null;
-        return qClub.sports.eq(sports);
+    private BooleanExpression sportsEq(QClub qClub, List<Long> sportsList) {
+        if (sportsList == null) return null;
+        return qClub.sports.sportsId.in(sportsList);
     }
 
     private BooleanExpression dayEq(int idx, QClub qClub, Boolean day) {
