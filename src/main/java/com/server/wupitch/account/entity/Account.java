@@ -155,4 +155,6 @@ public class Account extends BaseTimeEntity {
     public void changePassword(String password) {
         this.password = password;
     }
+
+    public void changeDeviceToken(String deviceToken) { this.deviceToken = deviceToken; }
 }

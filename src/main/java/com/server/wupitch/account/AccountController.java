@@ -203,4 +203,14 @@ public class AccountController {
         return responseService.getDataResponse(accountAreaRes);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "현재 인증된 회원 정보 요청 API", description = "JWT 토큰을 기준으로 인증된 회원 정보 리턴")
+    @PatchMapping(value = "/device-token")
+    public CommonResponse changeDeviceTokenByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody DeviceTokenReq dto) {
+        accountService.changeDeviceTokenByAuth(customUserDetails, dto);
+        return responseService.getSuccessResponse();
+    }
+
 }
