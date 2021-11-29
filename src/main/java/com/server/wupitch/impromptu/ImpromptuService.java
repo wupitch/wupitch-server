@@ -144,8 +144,8 @@ public class ImpromptuService {
         Optional<AccountImpromptuRelation> optional
                 = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
         if(optional.isPresent()){
-            if(optional.get().getIsSelect()) impromptu.minusMemberCount();
-            else impromptu.addMemberCount();
+            if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()) impromptu.addMemberCount();
+            else impromptu.minusMemberCount();
             optional.get().toggleSelect();
         }
         else{

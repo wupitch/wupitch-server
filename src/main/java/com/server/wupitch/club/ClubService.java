@@ -76,8 +76,14 @@ public class ClubService {
         for (ClubListRes clubListRes : dtoPage) {
             Club club = clubRepository.findById(clubListRes.getClubId()).get();
             Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
-            if (optional.isEmpty() || !optional.get().getIsPinUp()) clubListRes.setIsPinUp(false);
-            else clubListRes.setIsPinUp(true);
+            if (optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()){
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.FALSE);
+                else clubListRes.setIsPinUp(false);
+            }
+            else{
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.TRUE);
+                clubListRes.setIsPinUp(true);
+            }
         }
 
         return dtoPage;
@@ -162,8 +168,9 @@ public class ClubService {
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
         if(optional.isPresent()){
-            if(optional.get().getIsSelect()) club.minusMemberCount();
-            else club.addMemberCount();
+            if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
+                club.addMemberCount();
+            } else club.minusMemberCount();
             optional.get().toggleSelect();
         }
         else{
