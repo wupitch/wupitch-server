@@ -39,4 +39,6 @@ public class AccountAuthDto {
     private Boolean isPushAgree;
 
     private String profileImageUrl;
+
+    private String deviceToken;
 }
