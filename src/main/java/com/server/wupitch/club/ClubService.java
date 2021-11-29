@@ -162,7 +162,7 @@ public class ClubService {
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
         if(optional.isPresent()){
-            if(optional.get().getIsPinUp()) club.minusMemberCount();
+            if(optional.get().getIsSelect()) club.minusMemberCount();
             else club.addMemberCount();
             optional.get().toggleSelect();
         }

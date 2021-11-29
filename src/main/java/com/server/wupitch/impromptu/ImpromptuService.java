@@ -131,4 +131,32 @@ public class ImpromptuService {
             accountImpromptuRelationRepository.save(build);
         }
     }
+
+    @Transactional
+    public void impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        Optional<AccountImpromptuRelation> optional
+                = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
+        if(optional.isPresent()){
+            if(optional.get().getIsSelect()) impromptu.minusMemberCount();
+            else impromptu.addMemberCount();
+            optional.get().toggleSelect();
+        }
+        else{
+            AccountImpromptuRelation build = AccountImpromptuRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .impromptu(impromptu)
+                    .isSelect(true)
+                    .build();
+            accountImpromptuRelationRepository.save(build);
+            impromptu.addMemberCount();
+        }
+    }
 }

@@ -87,4 +87,12 @@ public class Impromptu extends BaseTimeEntity {
         this.nowMemberCount = 1;
     }
 
+    public void addMemberCount() {
+        this.nowMemberCount++;
+    }
+
+    public void minusMemberCount() {
+        this.nowMemberCount--;
+    }
+
 }

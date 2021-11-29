@@ -40,7 +40,11 @@ public class AccountImpromptuRelation extends BaseTimeEntity {
     private Boolean isSelect;
 
     public void togglePinUp() {
-        this.isPinUp = !isPinUp;
+        this.isPinUp = !this.isPinUp;
+    }
+
+    public void toggleSelect() {
+        this.isSelect = !this.isSelect;
     }
 
 }
