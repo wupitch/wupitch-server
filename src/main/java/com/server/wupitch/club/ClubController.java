@@ -1,9 +1,6 @@
 package com.server.wupitch.club;
 
-import com.server.wupitch.club.dto.ClubDetailRes;
-import com.server.wupitch.club.dto.ClubIdRes;
-import com.server.wupitch.club.dto.ClubListRes;
-import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
@@ -110,7 +107,15 @@ public class ClubController {
         return responseService.getSuccessResponse();
     }
 
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 필터 조회 API", description = "JWT를 기준으로 선택했던 크루 필터 조회")
+    @GetMapping("/accounts/auth/crew-filter")
+    public DataResponse<CrewFilterRes> getCrewFilterByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        CrewFilterRes dto = clubService.getCrewFilterByAuth(customUserDetails);
+        return responseService.getDataResponse(dto);
+    }
 
 
 }

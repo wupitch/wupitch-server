@@ -9,6 +9,7 @@ import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository
 import com.server.wupitch.club.dto.ClubDetailRes;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
 import com.server.wupitch.configure.response.exception.CustomException;
@@ -187,5 +188,11 @@ public class ClubService {
             club.addMemberCount();
         }
 
+    }
+
+    public CrewFilterRes getCrewFilterByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        return new CrewFilterRes(account);
     }
 }
