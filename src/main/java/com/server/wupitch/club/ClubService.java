@@ -193,6 +193,8 @@ public class ClubService {
     public CrewFilterRes getCrewFilterByAuth(CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
-        return new CrewFilterRes(account);
+        Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getCrewPickAreaId(), VALID);
+        if (optional.isEmpty()) return new CrewFilterRes(account, null);
+        else return new CrewFilterRes(account, optional.get());
     }
 }

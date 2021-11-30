@@ -10,6 +10,7 @@ import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.configure.security.jwt.JwtTokenProvider;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.sports.entity.AccountSportsRelation;
 import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
@@ -40,6 +41,7 @@ public class AccountService {
     private final SportsRepository sportsRepository;
     private final AccountSportsRelationRepository accountSportsRelationRepository;
     private final S3Uploader s3Uploader;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
 
     @Transactional
