@@ -36,7 +36,7 @@ public class ImpromptuController {
     })
     @Operation(summary = "번개 생성 API", description = "생성 DTO를 기준으로 크루 번개")
     @PostMapping("/impromptus")
-    public DataResponse<ImpromptuIdRes> createImpromptu(@RequestBody CreateImpromptuReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public DataResponse<ImpromptuIdRes> createImpromptu(@RequestBody CreateImpromptuReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         Long impromptuId = impromptuService.createImpromptu(dto, customUserDetails);
         return responseService.getDataResponse(new ImpromptuIdRes(impromptuId));
     }
@@ -104,7 +104,7 @@ public class ImpromptuController {
     @Operation(summary = "번개 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 번개 참여 토글")
     @PostMapping(value = "/impromptus/{impromptuId}/participation-toggle")
     public CommonResponse impromptuParticipationToggleByAuth(@PathVariable Long impromptuId,
-                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         impromptuService.impromptuParticipationToggleByAuth(impromptuId, customUserDetails);
         return responseService.getSuccessResponse();
     }

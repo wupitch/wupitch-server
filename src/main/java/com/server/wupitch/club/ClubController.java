@@ -59,7 +59,7 @@ public class ClubController {
     })
     @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
     @PostMapping("/clubs")
-    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         Long clubId = clubService.createClub(dto, customUserDetails);
         return responseService.getDataResponse(new ClubIdRes(clubId));
     }
@@ -102,7 +102,7 @@ public class ClubController {
     @Operation(summary = "크루 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여 토글")
     @PostMapping(value = "/clubs/{clubId}/participation-toggle")
     public CommonResponse clubParticipationToggleByAuth(@PathVariable Long clubId,
-                                                @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
         return responseService.getSuccessResponse();
     }

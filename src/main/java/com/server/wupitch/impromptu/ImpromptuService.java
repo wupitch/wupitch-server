@@ -4,12 +4,11 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
-import com.server.wupitch.club.Club;
-import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelation;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelationRepository;
 import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
@@ -44,6 +43,7 @@ public class ImpromptuService {
     private final ImpromptuRepositoryCustom impromptuRepositoryCustom;
     private final S3Uploader s3Uploader;
     private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @Transactional
     public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptuId) throws IOException {
@@ -54,7 +54,7 @@ public class ImpromptuService {
     }
 
     @Transactional
-    public Long createImpromptu(CreateImpromptuReq dto, CustomUserDetails customUserDetails) {
+    public Long createImpromptu(CreateImpromptuReq dto, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
@@ -65,6 +65,8 @@ public class ImpromptuService {
         Impromptu impromptu = new Impromptu(account, area, dto);
 
         Impromptu save = impromptuRepository.save(impromptu);
+
+        firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"번개 생성", "번개 생성이 완료되었습니다!");
 
         return save.getImpromptuId();
 
@@ -133,7 +135,7 @@ public class ImpromptuService {
     }
 
     @Transactional
-    public void impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+    public void impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -144,8 +146,11 @@ public class ImpromptuService {
         Optional<AccountImpromptuRelation> optional
                 = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
         if(optional.isPresent()){
-            if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()) impromptu.addMemberCount();
-            else impromptu.minusMemberCount();
+            if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()){
+                impromptu.addMemberCount();
+                firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(), "번개 참여", "번개에 참여하였습니다!");
+            }
+            else{ impromptu.minusMemberCount();}
             optional.get().toggleSelect();
         }
         else{

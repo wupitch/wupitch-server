@@ -105,7 +105,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountAuthDto signUp(AccountAuthDto dto) {
+    public AccountAuthDto signUp(AccountAuthDto dto) throws IOException {
         if (accountRepository.findByEmail(dto.getEmail()).isPresent())
             throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
         if (dto.getNickname() != null) {
@@ -118,6 +118,7 @@ public class AccountService {
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
         dto.setJwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()));
+        firebaseCloudMessageService.sendMessageTo(dto.getDeviceToken(), "회원가입", "회원가입에 성공했습니다.");
         return dto;
     }
 

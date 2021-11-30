@@ -20,6 +20,7 @@ import com.server.wupitch.extra.entity.ClubExtraRelation;
 import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
 import com.server.wupitch.extra.repository.ExtraRepository;
 import com.server.wupitch.extra.entity.Extra;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class ClubService {
     private final ClubExtraRelationRepository clubExtraRelationRepository;
     private final S3Uploader s3Uploader;
     private final AccountClubRelationRepository accountClubRelationRepository;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @Transactional
     public Page<ClubListRes> getAllClubList(
@@ -95,7 +97,7 @@ public class ClubService {
     }
 
     @Transactional
-    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) {
+    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) throws IOException {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -118,6 +120,7 @@ public class ClubService {
                 clubExtraRelationRepository.save(clubExtraRelation);
             }
         }
+        firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 생성", "크루 생성이 완료되었습니다!");
         return save.getClubId();
     }
 
@@ -161,7 +164,7 @@ public class ClubService {
     }
 
     @Transactional
-    public void clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+    public void clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -174,6 +177,7 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
+                firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
             } else club.minusMemberCount();
             optional.get().toggleSelect();
         }
@@ -186,6 +190,7 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
+            firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
         }
 
     }
