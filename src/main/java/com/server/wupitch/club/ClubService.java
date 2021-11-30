@@ -52,12 +52,15 @@ public class ClubService {
     private final S3Uploader s3Uploader;
     private final AccountClubRelationRepository accountClubRelationRepository;
 
+    @Transactional
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, List<Long> sportsList,
             List<Integer> days, Integer memberCountValue, List<Integer> ageList, CustomUserDetails customUserDetails) {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        account.saveFilterInfo(ageList, areaId, days, memberCountValue, sportsList);
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);

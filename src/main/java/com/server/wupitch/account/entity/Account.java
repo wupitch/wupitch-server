@@ -73,6 +73,56 @@ public class Account extends BaseTimeEntity {
 
     private String deviceToken;
 
+    private Long crewPickAreaId;
+
+    private String crewPickAgeList;
+
+    private String crewPickDays;
+
+    private Integer crewPickMemberCountValue;
+
+    private String crewPickSportsList;
+
+    public void saveFilterInfo(
+            List<Integer> ageList, Long crewPickAreaId, List<Integer> days, Integer crewPickMemberCountValue, List<Long> sportsList
+    ) {
+        if (ageList != null) {
+            StringBuilder tempAge = new StringBuilder();
+            for (int i = 0; i < ageList.size(); i++) {
+                if(ageList.size() -1 == i){ tempAge.append(ageList.get(i));}
+                else{
+                    tempAge.append(ageList.get(i));
+                    tempAge.append(",");
+                }
+            }
+            this.crewPickAgeList = tempAge.toString();
+        }
+        this.crewPickAreaId = crewPickAreaId;
+        if (days != null) {
+            StringBuilder tempDays = new StringBuilder();
+            for (int i = 0; i < days.size(); i++) {
+                if(days.size() -1 == i){ tempDays.append(days.get(i));}
+                else{
+                    tempDays.append(days.get(i));
+                    tempDays.append(",");
+                }
+            }
+            this.crewPickDays = tempDays.toString();
+        }
+        this.crewPickMemberCountValue = crewPickMemberCountValue;
+        if (sportsList != null) {
+            StringBuilder tempSports = new StringBuilder();
+            for (int i = 0; i < sportsList.size(); i++) {
+                if(sportsList.size() -1 == i){ tempSports.append(sportsList.get(i));}
+                else{
+                    tempSports.append(sportsList.get(i));
+                    tempSports.append(",");
+                }
+            }
+            this.crewPickSportsList = tempSports.toString();
+        }
+    }
+
     public void registerProfileImage(String filePath){
         this.profileImage = filePath;
     }
