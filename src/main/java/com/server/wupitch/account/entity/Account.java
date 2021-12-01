@@ -22,6 +22,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.server.wupitch.account.entity.enumtypes.RoleType.*;
@@ -73,6 +74,85 @@ public class Account extends BaseTimeEntity {
 
     private String deviceToken;
 
+    private Long crewPickAreaId;
+
+    private String crewPickAgeList;
+
+    private String crewPickDays;
+
+    private Integer crewPickMemberCountValue;
+
+    private String crewPickSportsList;
+
+    private Long impromptuPickAreaId;
+
+    private String impromptuPickAreaName;
+
+    private Integer impromptuPickScheduleIndex;
+
+    private String impromptuPickDays;
+
+    private Integer impromptuPickMemberCountValue;
+
+    public void saveFilterInfo(
+            List<Integer> ageList, Long crewPickAreaId, List<Integer> days, Integer crewPickMemberCountValue, List<Long> sportsList
+    ) {
+        if (ageList != null) {
+            StringBuilder tempAge = new StringBuilder();
+            for (int i = 0; i < ageList.size(); i++) {
+                if(ageList.size() -1 == i){ tempAge.append(ageList.get(i));}
+                else{
+                    tempAge.append(ageList.get(i));
+                    tempAge.append(",");
+                }
+            }
+            this.crewPickAgeList = tempAge.toString();
+        } else this.crewPickAgeList = null;
+        this.crewPickAreaId = crewPickAreaId;
+        if (days != null) {
+            StringBuilder tempDays = new StringBuilder();
+            for (int i = 0; i < days.size(); i++) {
+                if(days.size() -1 == i){ tempDays.append(days.get(i));}
+                else{
+                    tempDays.append(days.get(i));
+                    tempDays.append(",");
+                }
+            }
+            this.crewPickDays = tempDays.toString();
+        } else this.crewPickDays = null;
+        this.crewPickMemberCountValue = crewPickMemberCountValue;
+        if (sportsList != null) {
+            StringBuilder tempSports = new StringBuilder();
+            for (int i = 0; i < sportsList.size(); i++) {
+                if(sportsList.size() -1 == i){ tempSports.append(sportsList.get(i));}
+                else{
+                    tempSports.append(sportsList.get(i));
+                    tempSports.append(",");
+                }
+            }
+            this.crewPickSportsList = tempSports.toString();
+        } else this.crewPickSportsList = null;
+    }
+
+    public void saveImpromptuFilterInfo(
+            Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex
+    ) {
+        this.impromptuPickAreaId = areaId;
+        if (days != null) {
+            StringBuilder tempDays = new StringBuilder();
+            for (int i = 0; i < days.size(); i++) {
+                if(days.size() -1 == i){ tempDays.append(days.get(i));}
+                else{
+                    tempDays.append(days.get(i));
+                    tempDays.append(",");
+                }
+            }
+            this.impromptuPickDays = tempDays.toString();
+        } else this.impromptuPickDays = null;
+        this.impromptuPickScheduleIndex = scheduleIndex;
+        this.impromptuPickMemberCountValue = memberCountIndex;
+    }
+
     public void registerProfileImage(String filePath){
         this.profileImage = filePath;
     }
@@ -110,18 +190,14 @@ public class Account extends BaseTimeEntity {
 
     public void setAccountInfoByDto(AccountInformReq dto) {
         if (dto.getNickname() != null) this.nickname = dto.getNickname();
-        else if(this.nickname == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
-        else if(this.ageNum == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
 
         if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
-        else if(this.phoneNumber == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getIsPushAgree() != null)this.isPushAgree = dto.getIsPushAgree();
-        else if(this.isPushAgree == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
     }
 
     public void setAccountArea(Area area) {

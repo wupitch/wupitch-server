@@ -6,9 +6,7 @@ import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository;
-import com.server.wupitch.club.dto.ClubDetailRes;
-import com.server.wupitch.club.dto.ClubListRes;
-import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.*;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
 import com.server.wupitch.configure.response.exception.CustomException;
@@ -19,6 +17,7 @@ import com.server.wupitch.extra.entity.ClubExtraRelation;
 import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
 import com.server.wupitch.extra.repository.ExtraRepository;
 import com.server.wupitch.extra.entity.Extra;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,13 +50,17 @@ public class ClubService {
     private final ClubExtraRelationRepository clubExtraRelationRepository;
     private final S3Uploader s3Uploader;
     private final AccountClubRelationRepository accountClubRelationRepository;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
+    @Transactional
     public Page<ClubListRes> getAllClubList(
             Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, List<Long> sportsList,
             List<Integer> days, Integer memberCountValue, List<Integer> ageList, CustomUserDetails customUserDetails) {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        account.saveFilterInfo(ageList, areaId, days, memberCountValue, sportsList);
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -91,7 +94,7 @@ public class ClubService {
     }
 
     @Transactional
-    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) {
+    public Long createClub(CreateClubReq dto, CustomUserDetails customUserDetails) throws IOException {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -114,6 +117,7 @@ public class ClubService {
                 clubExtraRelationRepository.save(clubExtraRelation);
             }
         }
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 생성", "크루 생성이 완료되었습니다!");
         return save.getClubId();
     }
 
@@ -125,17 +129,33 @@ public class ClubService {
         club.setImageUrl(crewImageUrl);
     }
 
-    public ClubDetailRes getDetailClubById(Long clubId) {
+    public ClubDetailRes getDetailClubById(Long clubId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        Optional<AccountClubRelation> optionalAccountClubRelation =
+                accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
         ClubDetailRes clubDetailRes = new ClubDetailRes(club);
+        if (optionalAccountClubRelation.isEmpty()) {
+            clubDetailRes.setIsPinUp(false);
+            clubDetailRes.setIsSelect(false);
+        }
+        else {
+            if (optionalAccountClubRelation.get().getIsPinUp() == null || !optionalAccountClubRelation.get().getIsPinUp()) clubDetailRes.setIsPinUp(false);
+            else clubDetailRes.setIsPinUp(true);
+
+            if (optionalAccountClubRelation.get().getIsSelect() == null || !optionalAccountClubRelation.get().getIsSelect()) clubDetailRes.setIsSelect(false);
+            else clubDetailRes.setIsSelect(true);
+        }
         List<ClubExtraRelation> extraRelationList = clubExtraRelationRepository.findAllByClubAndStatus(club, VALID);
         clubDetailRes.setExtraList(extraRelationList.stream().map(e -> e.getExtra().getInfo()).collect(Collectors.toList()));
         return clubDetailRes;
     }
 
     @Transactional
-    public void clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+    public CrewResultRes clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
@@ -144,7 +164,11 @@ public class ClubService {
 
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
-        if(optional.isPresent()) optional.get().togglePinUp();
+        if(optional.isPresent()){
+            optional.get().togglePinUp();
+            if (optional.get().getIsPinUp()) return new CrewResultRes(true);
+            else return new CrewResultRes(false);
+        }
         else{
             AccountClubRelation build = AccountClubRelation.builder()
                     .status(VALID)
@@ -153,11 +177,12 @@ public class ClubService {
                     .isPinUp(true)
                     .build();
             accountClubRelationRepository.save(build);
+            return new CrewResultRes(true);
         }
     }
 
     @Transactional
-    public void clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+    public CrewResultRes clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -170,8 +195,14 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
-            } else club.minusMemberCount();
-            optional.get().toggleSelect();
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+                optional.get().toggleSelect();
+                return new CrewResultRes(true);
+            } else{
+                club.minusMemberCount();
+                optional.get().toggleSelect();
+                return new CrewResultRes(false);
+            }
         }
         else{
             AccountClubRelation build = AccountClubRelation.builder()
@@ -182,7 +213,17 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+            return new CrewResultRes(true);
         }
 
+    }
+
+    public CrewFilterRes getCrewFilterByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getCrewPickAreaId(), VALID);
+        if (optional.isEmpty()) return new CrewFilterRes(account, null);
+        else return new CrewFilterRes(account, optional.get());
     }
 }

@@ -84,7 +84,7 @@ public class AccountController {
 
     @Operation(summary = "회원가입 API", description = "형식에 맞는 DTO로 리퀘스트 -> 회원가입")
     @PostMapping(value = "/sign-up")
-    public DataResponse<AccountAuthDto> signUp(@RequestBody @Valid AccountAuthDto dto, Errors errors){
+    public DataResponse<AccountAuthDto> signUp(@RequestBody @Valid AccountAuthDto dto, Errors errors) throws IOException {
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
         return responseService.getDataResponse(accountService.signUp(dto));
     }
@@ -206,7 +206,7 @@ public class AccountController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
-    @Operation(summary = "현재 인증된 회원 정보 요청 API", description = "JWT 토큰을 기준으로 인증된 회원 정보 리턴")
+    @Operation(summary = "현재 인증된 회원 디바이스 토큰 수정 API", description = "JWT 토큰을 기준으로 인증된 회원 디바이스 정보 수정")
     @PatchMapping(value = "/device-token")
     public CommonResponse changeDeviceTokenByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody DeviceTokenReq dto) {
         accountService.changeDeviceTokenByAuth(customUserDetails, dto);

@@ -90,6 +90,9 @@ public enum CustomExceptionStatus {
     // impromptus
     IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),
 
+    // FCM
+    FCM_NOT_FOUND(false, 3200, "알림을 찾을 수 없습니다."),
+
 
     /**
      * 4000 : Database, Server 오류

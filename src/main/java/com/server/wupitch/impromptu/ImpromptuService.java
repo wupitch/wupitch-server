@@ -4,17 +4,15 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
-import com.server.wupitch.club.Club;
-import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
+import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelation;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelationRepository;
-import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
-import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
-import com.server.wupitch.impromptu.dto.ImpromptuListRes;
+import com.server.wupitch.impromptu.dto.*;
 import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
 import com.server.wupitch.impromptu.repository.ImpromptuRepositoryCustom;
@@ -44,6 +42,7 @@ public class ImpromptuService {
     private final ImpromptuRepositoryCustom impromptuRepositoryCustom;
     private final S3Uploader s3Uploader;
     private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @Transactional
     public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptuId) throws IOException {
@@ -54,7 +53,7 @@ public class ImpromptuService {
     }
 
     @Transactional
-    public Long createImpromptu(CreateImpromptuReq dto, CustomUserDetails customUserDetails) {
+    public Long createImpromptu(CreateImpromptuReq dto, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
@@ -66,10 +65,13 @@ public class ImpromptuService {
 
         Impromptu save = impromptuRepository.save(impromptu);
 
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"번개 생성", "번개 생성이 완료되었습니다!");
+
         return save.getImpromptuId();
 
     }
 
+    @Transactional
     public Page<ImpromptuListRes> getAllImpromptuList
             (Integer page, Integer size, String sortBy, Boolean isAsc,
              Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex, CustomUserDetails customUserDetails)
@@ -77,6 +79,7 @@ public class ImpromptuService {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.saveImpromptuFilterInfo(areaId, scheduleIndex, days, memberCountIndex);
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
 
@@ -95,7 +98,7 @@ public class ImpromptuService {
             Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
             Optional<AccountImpromptuRelation> optional
                     = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
-            if(optional.isEmpty() || !optional.get().getIsPinUp()) impromptuListRes.setIsPinUp(false);
+            if(optional.isEmpty() || (optional.get().getIsPinUp() != null && optional.get().getIsPinUp())) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
         }
 
@@ -103,15 +106,33 @@ public class ImpromptuService {
 
     }
 
-    public ImpromptuDetailRes getDetailImpromptusById(Long impromptuId) {
+    public ImpromptuDetailRes getDetailImpromptusById(Long impromptuId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+        Optional<AccountImpromptuRelation> optionalAccountImpromptuRelation
+                = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
 
-        return new ImpromptuDetailRes(impromptu);
+        ImpromptuDetailRes impromptuDetailRes = new ImpromptuDetailRes(impromptu);
+        if (optionalAccountImpromptuRelation.isEmpty()) {
+            impromptuDetailRes.setIsPinUp(false);
+            impromptuDetailRes.setIsSelect(false);
+        }
+        else {
+            if(optionalAccountImpromptuRelation.get().getIsPinUp() == null || !optionalAccountImpromptuRelation.get().getIsPinUp()) impromptuDetailRes.setIsPinUp(false);
+            else impromptuDetailRes.setIsPinUp(true);
+
+            if(optionalAccountImpromptuRelation.get().getIsSelect() == null || !optionalAccountImpromptuRelation.get().getIsSelect()) impromptuDetailRes.setIsSelect(false);
+            else impromptuDetailRes.setIsSelect(true);
+        }
+
+
+        return impromptuDetailRes;
     }
 
     @Transactional
-    public void impromptuPinUpToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+    public ImpromptuResultRes impromptuPinUpToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
@@ -120,7 +141,12 @@ public class ImpromptuService {
 
         Optional<AccountImpromptuRelation> optional
                 = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
-        if(optional.isPresent()) optional.get().togglePinUp();
+        if(optional.isPresent()){
+            optional.get().togglePinUp();
+            if(optional.get().getIsPinUp()) return new ImpromptuResultRes(true);
+            else return new ImpromptuResultRes(false);
+        }
+
         else{
             AccountImpromptuRelation build = AccountImpromptuRelation.builder()
                     .status(VALID)
@@ -129,11 +155,12 @@ public class ImpromptuService {
                     .isPinUp(true)
                     .build();
             accountImpromptuRelationRepository.save(build);
+            return new ImpromptuResultRes(true);
         }
     }
 
     @Transactional
-    public void impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) {
+    public ImpromptuResultRes impromptuParticipationToggleByAuth(Long impromptuId, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -144,9 +171,17 @@ public class ImpromptuService {
         Optional<AccountImpromptuRelation> optional
                 = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
         if(optional.isPresent()){
-            if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()) impromptu.addMemberCount();
-            else impromptu.minusMemberCount();
-            optional.get().toggleSelect();
+            if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()){
+                impromptu.addMemberCount();
+                optional.get().toggleSelect();
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "번개 참여", "번개에 참여하였습니다!");
+                return new ImpromptuResultRes(true);
+            }
+            else{
+                impromptu.minusMemberCount();
+                optional.get().toggleSelect();
+                return new ImpromptuResultRes(false);
+            }
         }
         else{
             AccountImpromptuRelation build = AccountImpromptuRelation.builder()
@@ -157,6 +192,16 @@ public class ImpromptuService {
                     .build();
             accountImpromptuRelationRepository.save(build);
             impromptu.addMemberCount();
+            return new ImpromptuResultRes(true);
         }
+    }
+
+    @Transactional
+    public ImpromptuFilterRes getImpromptuFilterRes(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getImpromptuPickAreaId(), VALID);
+        if (optional.isEmpty()) return new ImpromptuFilterRes(account, null);
+        else return new ImpromptuFilterRes(account, optional.get());
     }
 }

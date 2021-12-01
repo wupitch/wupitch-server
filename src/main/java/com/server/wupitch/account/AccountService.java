@@ -10,6 +10,7 @@ import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.configure.security.jwt.JwtTokenProvider;
+import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.sports.entity.AccountSportsRelation;
 import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
@@ -40,6 +41,7 @@ public class AccountService {
     private final SportsRepository sportsRepository;
     private final AccountSportsRelationRepository accountSportsRelationRepository;
     private final S3Uploader s3Uploader;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
 
     @Transactional
@@ -103,7 +105,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountAuthDto signUp(AccountAuthDto dto) {
+    public AccountAuthDto signUp(AccountAuthDto dto) throws IOException {
         if (accountRepository.findByEmail(dto.getEmail()).isPresent())
             throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
         if (dto.getNickname() != null) {
@@ -116,6 +118,7 @@ public class AccountService {
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
         dto.setJwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()));
+        firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입", "회원가입에 성공했습니다.");
         return dto;
     }
 
@@ -193,7 +196,10 @@ public class AccountService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Integer ageIdx = account.getAgeNum();
         String age;
-        if (ageIdx == 1) age = "10대";
+        if (ageIdx == null){
+            age = "나이를 등록하지 않았습니다.";
+        }
+        else if (ageIdx == 1) age = "10대";
         else if (ageIdx == 2) age = "20대";
         else if (ageIdx == 3) age = "30대";
         else if (ageIdx == 4) age = "40대";

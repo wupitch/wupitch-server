@@ -48,6 +48,10 @@ public class ClubDetailRes {
 
     private String materials;
 
+    private Boolean isPinUp;
+
+    private Boolean isSelect;
+
     public ClubDetailRes(Club club) {
         this.clubId = club.getClubId();
 

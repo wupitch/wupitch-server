@@ -1,9 +1,6 @@
 package com.server.wupitch.club;
 
-import com.server.wupitch.club.dto.ClubDetailRes;
-import com.server.wupitch.club.dto.ClubIdRes;
-import com.server.wupitch.club.dto.ClubListRes;
-import com.server.wupitch.club.dto.CreateClubReq;
+import com.server.wupitch.club.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
@@ -62,7 +59,7 @@ public class ClubController {
     })
     @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
     @PostMapping("/clubs")
-    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         Long clubId = clubService.createClub(dto, customUserDetails);
         return responseService.getDataResponse(new ClubIdRes(clubId));
     }
@@ -83,8 +80,9 @@ public class ClubController {
     })
     @Operation(summary = "크루 세부 조회 API", description = "크루 ID를 기준으로 크루 세부 조회")
     @GetMapping(value = "/clubs/{clubId}")
-    public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId)  {
-        ClubDetailRes clubDetailRes = clubService.getDetailClubById(clubId);
+    public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId,
+                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        ClubDetailRes clubDetailRes = clubService.getDetailClubById(clubId, customUserDetails);
         return responseService.getDataResponse(clubDetailRes);
     }
 
@@ -93,10 +91,10 @@ public class ClubController {
     })
     @Operation(summary = "크루 핀업 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 핀업 토글")
     @PatchMapping(value = "/clubs/{clubId}/pinUp-toggle")
-    public CommonResponse clubPinUpToggleByAuth(@PathVariable Long clubId,
+    public DataResponse<CrewResultRes> clubPinUpToggleByAuth(@PathVariable Long clubId,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
-        clubService.clubPinUpToggleByAuth(clubId, customUserDetails);
-        return responseService.getSuccessResponse();
+        CrewResultRes crewResultRes = clubService.clubPinUpToggleByAuth(clubId, customUserDetails);
+        return responseService.getDataResponse(crewResultRes);
     }
 
     @ApiImplicitParams({
@@ -104,13 +102,21 @@ public class ClubController {
     })
     @Operation(summary = "크루 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여 토글")
     @PostMapping(value = "/clubs/{clubId}/participation-toggle")
-    public CommonResponse clubParticipationToggleByAuth(@PathVariable Long clubId,
-                                                @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
-        clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
-        return responseService.getSuccessResponse();
+    public DataResponse<CrewResultRes> clubParticipationToggleByAuth(@PathVariable Long clubId,
+                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        CrewResultRes crewResultRes = clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
+        return responseService.getDataResponse(crewResultRes);
     }
 
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 필터 조회 API", description = "JWT를 기준으로 선택했던 크루 필터 조회")
+    @GetMapping("/accounts/auth/crew-filter")
+    public DataResponse<CrewFilterRes> getCrewFilterByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        CrewFilterRes dto = clubService.getCrewFilterByAuth(customUserDetails);
+        return responseService.getDataResponse(dto);
+    }
 
 
 }
