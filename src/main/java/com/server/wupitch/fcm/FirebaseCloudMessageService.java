@@ -3,6 +3,7 @@ package com.server.wupitch.fcm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.server.wupitch.account.entity.Account;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.core.io.ClassPathResource;
@@ -17,8 +18,9 @@ import java.util.List;
 public class FirebaseCloudMessageService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/wupitch-server/messages:send";
     private final ObjectMapper objectMapper;
+    private final FcmNoticeRepository fcmNoticeRepository;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
+    public void sendMessageTo(Account account, String targetToken, String title, String body) throws IOException {
         String message = makeMessage(targetToken, title, body);
 
         OkHttpClient client = new OkHttpClient();
@@ -34,6 +36,8 @@ public class FirebaseCloudMessageService {
                 .execute();
 
         System.out.println(response.body().string());
+        FcmNotice fcmNotice = new FcmNotice(account, title, body);
+        fcmNoticeRepository.save(fcmNotice);
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
