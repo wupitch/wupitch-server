@@ -6,10 +6,7 @@ import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository;
-import com.server.wupitch.club.dto.ClubDetailRes;
-import com.server.wupitch.club.dto.ClubListRes;
-import com.server.wupitch.club.dto.CreateClubReq;
-import com.server.wupitch.club.dto.CrewFilterRes;
+import com.server.wupitch.club.dto.*;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
 import com.server.wupitch.configure.response.exception.CustomException;
@@ -120,7 +117,7 @@ public class ClubService {
                 clubExtraRelationRepository.save(clubExtraRelation);
             }
         }
-        firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 생성", "크루 생성이 완료되었습니다!");
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 생성", "크루 생성이 완료되었습니다!");
         return save.getClubId();
     }
 
@@ -142,7 +139,7 @@ public class ClubService {
     }
 
     @Transactional
-    public void clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
+    public CrewResultRes clubPinUpToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
@@ -151,7 +148,11 @@ public class ClubService {
 
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
-        if(optional.isPresent()) optional.get().togglePinUp();
+        if(optional.isPresent()){
+            optional.get().togglePinUp();
+            if (optional.get().getIsPinUp()) return new CrewResultRes(true);
+            else return new CrewResultRes(false);
+        }
         else{
             AccountClubRelation build = AccountClubRelation.builder()
                     .status(VALID)
@@ -160,11 +161,12 @@ public class ClubService {
                     .isPinUp(true)
                     .build();
             accountClubRelationRepository.save(build);
+            return new CrewResultRes(true);
         }
     }
 
     @Transactional
-    public void clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) throws IOException {
+    public CrewResultRes clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) throws IOException {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -177,9 +179,14 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
-                firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
-            } else club.minusMemberCount();
-            optional.get().toggleSelect();
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+                optional.get().toggleSelect();
+                return new CrewResultRes(true);
+            } else{
+                club.minusMemberCount();
+                optional.get().toggleSelect();
+                return new CrewResultRes(false);
+            }
         }
         else{
             AccountClubRelation build = AccountClubRelation.builder()
@@ -190,7 +197,8 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
-            firebaseCloudMessageService.sendMessageTo(account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+            return new CrewResultRes(true);
         }
 
     }

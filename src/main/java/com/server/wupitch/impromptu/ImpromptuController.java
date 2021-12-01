@@ -5,10 +5,7 @@ import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
-import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
-import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
-import com.server.wupitch.impromptu.dto.ImpromptuIdRes;
-import com.server.wupitch.impromptu.dto.ImpromptuListRes;
+import com.server.wupitch.impromptu.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -92,10 +89,10 @@ public class ImpromptuController {
     })
     @Operation(summary = "번개 핀업 토글 API", description = "번개 ID, JWT토큰을 기준으로 크루 핀업 토글")
     @PatchMapping(value = "/impromptus/{impromptuId}/pinUp-toggle")
-    public CommonResponse clubPinUpToggleByAuth(@PathVariable Long impromptuId,
+    public DataResponse<ImpromptuResultRes> clubPinUpToggleByAuth(@PathVariable Long impromptuId,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
-        impromptuService.impromptuPinUpToggleByAuth(impromptuId, customUserDetails);
-        return responseService.getSuccessResponse();
+        ImpromptuResultRes impromptuResultRes = impromptuService.impromptuPinUpToggleByAuth(impromptuId, customUserDetails);
+        return responseService.getDataResponse(impromptuResultRes);
     }
 
     @ApiImplicitParams({
@@ -103,10 +100,10 @@ public class ImpromptuController {
     })
     @Operation(summary = "번개 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 번개 참여 토글")
     @PostMapping(value = "/impromptus/{impromptuId}/participation-toggle")
-    public CommonResponse impromptuParticipationToggleByAuth(@PathVariable Long impromptuId,
-                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
-        impromptuService.impromptuParticipationToggleByAuth(impromptuId, customUserDetails);
-        return responseService.getSuccessResponse();
+    public DataResponse<ImpromptuResultRes> impromptuParticipationToggleByAuth(@PathVariable Long impromptuId,
+                                                                               @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        ImpromptuResultRes impromptuResultRes = impromptuService.impromptuParticipationToggleByAuth(impromptuId, customUserDetails);
+        return responseService.getDataResponse(impromptuResultRes);
     }
 
 }
