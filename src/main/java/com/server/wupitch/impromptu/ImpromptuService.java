@@ -4,6 +4,7 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
+import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -11,10 +12,7 @@ import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelation;
 import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelationRepository;
-import com.server.wupitch.impromptu.dto.CreateImpromptuReq;
-import com.server.wupitch.impromptu.dto.ImpromptuDetailRes;
-import com.server.wupitch.impromptu.dto.ImpromptuListRes;
-import com.server.wupitch.impromptu.dto.ImpromptuResultRes;
+import com.server.wupitch.impromptu.dto.*;
 import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
 import com.server.wupitch.impromptu.repository.ImpromptuRepositoryCustom;
@@ -73,6 +71,7 @@ public class ImpromptuService {
 
     }
 
+    @Transactional
     public Page<ImpromptuListRes> getAllImpromptuList
             (Integer page, Integer size, String sortBy, Boolean isAsc,
              Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex, CustomUserDetails customUserDetails)
@@ -80,6 +79,7 @@ public class ImpromptuService {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        account.saveImpromptuFilterInfo(areaId, scheduleIndex, days, memberCountIndex);
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
 
@@ -106,11 +106,29 @@ public class ImpromptuService {
 
     }
 
-    public ImpromptuDetailRes getDetailImpromptusById(Long impromptuId) {
+    public ImpromptuDetailRes getDetailImpromptusById(Long impromptuId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+        Optional<AccountImpromptuRelation> optionalAccountImpromptuRelation
+                = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
 
-        return new ImpromptuDetailRes(impromptu);
+        ImpromptuDetailRes impromptuDetailRes = new ImpromptuDetailRes(impromptu);
+        if (optionalAccountImpromptuRelation.isEmpty()) {
+            impromptuDetailRes.setIsPinUp(false);
+            impromptuDetailRes.setIsSelect(false);
+        }
+        else {
+            if(optionalAccountImpromptuRelation.get().getIsPinUp() == null || !optionalAccountImpromptuRelation.get().getIsPinUp()) impromptuDetailRes.setIsPinUp(false);
+            else impromptuDetailRes.setIsPinUp(true);
+
+            if(optionalAccountImpromptuRelation.get().getIsSelect() == null || !optionalAccountImpromptuRelation.get().getIsSelect()) impromptuDetailRes.setIsSelect(false);
+            else impromptuDetailRes.setIsSelect(true);
+        }
+
+
+        return impromptuDetailRes;
     }
 
     @Transactional
@@ -176,5 +194,14 @@ public class ImpromptuService {
             impromptu.addMemberCount();
             return new ImpromptuResultRes(true);
         }
+    }
+
+    @Transactional
+    public ImpromptuFilterRes getImpromptuFilterRes(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getImpromptuPickAreaId(), VALID);
+        if (optional.isEmpty()) return new ImpromptuFilterRes(account, null);
+        else return new ImpromptuFilterRes(account, optional.get());
     }
 }

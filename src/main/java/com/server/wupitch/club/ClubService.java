@@ -129,10 +129,26 @@ public class ClubService {
         club.setImageUrl(crewImageUrl);
     }
 
-    public ClubDetailRes getDetailClubById(Long clubId) {
+    public ClubDetailRes getDetailClubById(Long clubId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        Optional<AccountClubRelation> optionalAccountClubRelation =
+                accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
         ClubDetailRes clubDetailRes = new ClubDetailRes(club);
+        if (optionalAccountClubRelation.isEmpty()) {
+            clubDetailRes.setIsPinUp(false);
+            clubDetailRes.setIsSelect(false);
+        }
+        else {
+            if (optionalAccountClubRelation.get().getIsPinUp() == null || !optionalAccountClubRelation.get().getIsPinUp()) clubDetailRes.setIsPinUp(false);
+            else clubDetailRes.setIsPinUp(true);
+
+            if (optionalAccountClubRelation.get().getIsSelect() == null || !optionalAccountClubRelation.get().getIsSelect()) clubDetailRes.setIsSelect(false);
+            else clubDetailRes.setIsSelect(true);
+        }
         List<ClubExtraRelation> extraRelationList = clubExtraRelationRepository.findAllByClubAndStatus(club, VALID);
         clubDetailRes.setExtraList(extraRelationList.stream().map(e -> e.getExtra().getInfo()).collect(Collectors.toList()));
         return clubDetailRes;

@@ -45,6 +45,10 @@ public class ImpromptuDetailRes {
 
     private Double endTime;
 
+    private Boolean isPinUp;
+
+    private Boolean isSelect;
+
     public ImpromptuDetailRes(Impromptu impromptu) {
         this.impromptuId = impromptu.getImpromptuId();
         this.impromptuImage = impromptu.getImpromptuImage();

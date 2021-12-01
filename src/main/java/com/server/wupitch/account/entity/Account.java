@@ -22,6 +22,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.server.wupitch.account.entity.enumtypes.RoleType.*;
@@ -83,6 +84,16 @@ public class Account extends BaseTimeEntity {
 
     private String crewPickSportsList;
 
+    private Long impromptuPickAreaId;
+
+    private String impromptuPickAreaName;
+
+    private Integer impromptuPickScheduleIndex;
+
+    private String impromptuPickDays;
+
+    private Integer impromptuPickMemberCountValue;
+
     public void saveFilterInfo(
             List<Integer> ageList, Long crewPickAreaId, List<Integer> days, Integer crewPickMemberCountValue, List<Long> sportsList
     ) {
@@ -121,6 +132,25 @@ public class Account extends BaseTimeEntity {
             }
             this.crewPickSportsList = tempSports.toString();
         } else this.crewPickSportsList = null;
+    }
+
+    public void saveImpromptuFilterInfo(
+            Long areaId, Integer scheduleIndex, List<Integer> days, Integer memberCountIndex
+    ) {
+        this.impromptuPickAreaId = areaId;
+        if (days != null) {
+            StringBuilder tempDays = new StringBuilder();
+            for (int i = 0; i < days.size(); i++) {
+                if(days.size() -1 == i){ tempDays.append(days.get(i));}
+                else{
+                    tempDays.append(days.get(i));
+                    tempDays.append(",");
+                }
+            }
+            this.impromptuPickDays = tempDays.toString();
+        } else this.impromptuPickDays = null;
+        this.impromptuPickScheduleIndex = scheduleIndex;
+        this.impromptuPickMemberCountValue = memberCountIndex;
     }
 
     public void registerProfileImage(String filePath){

@@ -80,8 +80,9 @@ public class ClubController {
     })
     @Operation(summary = "크루 세부 조회 API", description = "크루 ID를 기준으로 크루 세부 조회")
     @GetMapping(value = "/clubs/{clubId}")
-    public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId)  {
-        ClubDetailRes clubDetailRes = clubService.getDetailClubById(clubId);
+    public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId,
+                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        ClubDetailRes clubDetailRes = clubService.getDetailClubById(clubId, customUserDetails);
         return responseService.getDataResponse(clubDetailRes);
     }
 
