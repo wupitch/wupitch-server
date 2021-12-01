@@ -41,14 +41,14 @@ public class CrewFilterRes {
             for (String s : tempList) {
                 this.crewPickAgeList.add(Long.parseLong(s));
             }
-        }
+        } else this.crewPickAgeList = null;
         if (account.getCrewPickDays() != null) {
             this.crewPickDays = new ArrayList<>();
             tempList = account.getCrewPickDays().split(",");
             for (String s : tempList) {
                 this.crewPickDays.add(Integer.parseInt(s));
             }
-        }
+        } else this.crewPickDays = null;
         this.crewPickMemberCountValue = account.getCrewPickMemberCountValue();
         if (account.getCrewPickSportsList() != null) {
             this.crewPickSportsList = new ArrayList<>();
@@ -56,7 +56,7 @@ public class CrewFilterRes {
             for (String s : tempList) {
                 this.crewPickSportsList.add(Long.parseLong(s));
             }
-        }
+        } else this.crewPickSportsList = null;
     }
 
 }

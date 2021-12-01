@@ -96,7 +96,7 @@ public class Account extends BaseTimeEntity {
                 }
             }
             this.crewPickAgeList = tempAge.toString();
-        }
+        } else this.crewPickAgeList = null;
         this.crewPickAreaId = crewPickAreaId;
         if (days != null) {
             StringBuilder tempDays = new StringBuilder();
@@ -108,7 +108,7 @@ public class Account extends BaseTimeEntity {
                 }
             }
             this.crewPickDays = tempDays.toString();
-        }
+        } else this.crewPickDays = null;
         this.crewPickMemberCountValue = crewPickMemberCountValue;
         if (sportsList != null) {
             StringBuilder tempSports = new StringBuilder();
@@ -120,7 +120,7 @@ public class Account extends BaseTimeEntity {
                 }
             }
             this.crewPickSportsList = tempSports.toString();
-        }
+        } else this.crewPickSportsList = null;
     }
 
     public void registerProfileImage(String filePath){
@@ -160,18 +160,14 @@ public class Account extends BaseTimeEntity {
 
     public void setAccountInfoByDto(AccountInformReq dto) {
         if (dto.getNickname() != null) this.nickname = dto.getNickname();
-        else if(this.nickname == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getAgeNum() != null) this.ageNum = dto.getAgeNum();
-        else if(this.ageNum == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getIntroduce() != null) this.introduction = dto.getIntroduce();
 
         if(dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
-        else if(this.phoneNumber == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
 
         if(dto.getIsPushAgree() != null)this.isPushAgree = dto.getIsPushAgree();
-        else if(this.isPushAgree == null) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
     }
 
     public void setAccountArea(Area area) {

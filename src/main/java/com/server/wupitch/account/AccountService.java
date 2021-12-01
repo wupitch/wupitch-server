@@ -118,7 +118,7 @@ public class AccountService {
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
         dto.setJwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()));
-        firebaseCloudMessageService.sendMessageTo(dto.getDeviceToken(), "회원가입", "회원가입에 성공했습니다.");
+        firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입", "회원가입에 성공했습니다.");
         return dto;
     }
 
@@ -196,7 +196,10 @@ public class AccountService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Integer ageIdx = account.getAgeNum();
         String age;
-        if (ageIdx == 1) age = "10대";
+        if (ageIdx == null){
+            age = "나이를 등록하지 않았습니다.";
+        }
+        else if (ageIdx == 1) age = "10대";
         else if (ageIdx == 2) age = "20대";
         else if (ageIdx == 3) age = "30대";
         else if (ageIdx == 4) age = "40대";

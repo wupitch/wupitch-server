@@ -90,10 +90,10 @@ public class ClubController {
     })
     @Operation(summary = "크루 핀업 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 핀업 토글")
     @PatchMapping(value = "/clubs/{clubId}/pinUp-toggle")
-    public CommonResponse clubPinUpToggleByAuth(@PathVariable Long clubId,
+    public DataResponse<CrewResultRes> clubPinUpToggleByAuth(@PathVariable Long clubId,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
-        clubService.clubPinUpToggleByAuth(clubId, customUserDetails);
-        return responseService.getSuccessResponse();
+        CrewResultRes crewResultRes = clubService.clubPinUpToggleByAuth(clubId, customUserDetails);
+        return responseService.getDataResponse(crewResultRes);
     }
 
     @ApiImplicitParams({
@@ -101,10 +101,10 @@ public class ClubController {
     })
     @Operation(summary = "크루 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여 토글")
     @PostMapping(value = "/clubs/{clubId}/participation-toggle")
-    public CommonResponse clubParticipationToggleByAuth(@PathVariable Long clubId,
+    public DataResponse<CrewResultRes> clubParticipationToggleByAuth(@PathVariable Long clubId,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
-        clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
-        return responseService.getSuccessResponse();
+        CrewResultRes crewResultRes = clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
+        return responseService.getDataResponse(crewResultRes);
     }
 
     @ApiImplicitParams({
