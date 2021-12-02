@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.server.wupitch.configure.entity.Status.VALID;
 
@@ -98,10 +100,10 @@ public class ImpromptuService {
             Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
             Optional<AccountImpromptuRelation> optional
                     = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
-            if(optional.isEmpty() || (optional.get().getIsPinUp() != null && optional.get().getIsPinUp())) impromptuListRes.isPinUp = false;
+            if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
         }
-
+        
         return dtoPage;
 
     }
