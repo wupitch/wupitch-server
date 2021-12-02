@@ -346,6 +346,88 @@ public class ClubService {
                 clubListRes.setIsPinUp(true);
             }
         }
-        return dtoPage;
+        Page<ClubListRes> result = new Page<ClubListRes>() {
+            @Override
+            public int getTotalPages() {
+                return dtoPage.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return dtoPage.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ClubListRes, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return dtoPage.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return dtoPage.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return dtoPage.getNumberOfElements();
+            }
+
+            @Override
+            public List<ClubListRes> getContent() {
+                return dtoPage.getContent().stream().sorted().collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean hasContent() {
+                return dtoPage.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return dtoPage.getSort();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return dtoPage.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return dtoPage.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return dtoPage.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return dtoPage.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return dtoPage.nextPageable();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return dtoPage.previousPageable();
+            }
+
+            @NotNull
+            @Override
+            public Iterator<ClubListRes> iterator() {
+                return dtoPage.iterator();
+            }
+        };
+        return result;
     }
 }
