@@ -4,6 +4,9 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
+import com.server.wupitch.club.Club;
+import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
+import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
@@ -103,7 +106,7 @@ public class ImpromptuService {
             if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
         }
-        
+
         return dtoPage;
 
     }
@@ -205,5 +208,36 @@ public class ImpromptuService {
         Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getImpromptuPickAreaId(), VALID);
         if (optional.isEmpty()) return new ImpromptuFilterRes(account, null);
         else return new ImpromptuFilterRes(account, optional.get());
+    }
+
+    public Page<ImpromptuListRes> getAllImpromptuListByTitle
+            (Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, String title, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Area area = null;
+        if (areaId != null) {
+            Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
+            if (optionalArea.isPresent()) area = optionalArea.get();
+        }
+        if(title == null) title = "";
+        Page<Impromptu> allImpromptu = null;
+        if(area == null) allImpromptu = impromptuRepository.findByStatusAndTitleContaining(pageable, VALID, title);
+        else allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndArea(pageable, VALID, title, area);
+        Page<ImpromptuListRes> dtoPage = allImpromptu.map(ImpromptuListRes::new);
+        for (ImpromptuListRes impromptuListRes : dtoPage) {
+            Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
+            Optional<AccountImpromptuRelation> optional
+                    = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
+            if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
+            else impromptuListRes.setIsPinUp(true);
+        }
+        return dtoPage;
     }
 }
