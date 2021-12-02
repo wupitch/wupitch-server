@@ -226,4 +226,39 @@ public class ClubService {
         if (optional.isEmpty()) return new CrewFilterRes(account, null);
         else return new CrewFilterRes(account, optional.get());
     }
+
+    public Page<ClubListRes> getAllClubListByClubTitle
+            (Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, String crewTitle, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Area area = null;
+        if (areaId != null) {
+            Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
+            if (optionalArea.isPresent()) area = optionalArea.get();
+        }
+        if(crewTitle == null) crewTitle = "";
+        Page<Club> allClub = null;
+        if(area == null) allClub = clubRepository.findByStatusAndTitleContaining(pageable, VALID, crewTitle);
+        else allClub = clubRepository.findByStatusAndTitleContainingAndArea(pageable, VALID, crewTitle, area);
+        Page<ClubListRes> dtoPage = allClub.map(ClubListRes::new);
+        for (ClubListRes clubListRes : dtoPage) {
+            Club club = clubRepository.findById(clubListRes.getClubId()).get();
+            Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+            if (optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()){
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.FALSE);
+                else clubListRes.setIsPinUp(false);
+            }
+            else{
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.TRUE);
+                clubListRes.setIsPinUp(true);
+            }
+        }
+        return dtoPage;
+    }
 }
