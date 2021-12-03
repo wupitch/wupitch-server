@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -313,8 +314,8 @@ public class ImpromptuService {
         }
         if(title == null) title = "";
         Page<Impromptu> allImpromptu = null;
-        if(area == null) allImpromptu = impromptuRepository.findByStatusAndTitleContaining(pageable, VALID, title);
-        else allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndArea(pageable, VALID, title, area);
+        if(area == null) allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndDateAfter(pageable, VALID, title, LocalDate.now().minusDays(1));
+        else allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndAreaAndDateAfter(pageable, VALID, title, area, LocalDate.now().minusDays(1));
         Page<ImpromptuListRes> dtoPage = allImpromptu.map(ImpromptuListRes::new);
         for (ImpromptuListRes impromptuListRes : dtoPage) {
             Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
