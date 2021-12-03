@@ -9,6 +9,7 @@ import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository
 import com.server.wupitch.club.dto.*;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
+import com.server.wupitch.club.repository.GuestInfoRepository;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -55,6 +56,7 @@ public class ClubService {
     private final S3Uploader s3Uploader;
     private final AccountClubRelationRepository accountClubRelationRepository;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final GuestInfoRepository guestInfoRepository;
 
     @Transactional
     public Page<ClubListRes> getAllClubList(
@@ -431,36 +433,24 @@ public class ClubService {
         return result;
     }
 
-    @Transactional
-    public CrewResultRes clubGuestToggleByAuth(Long clubId, CustomUserDetails customUserDetails) {
-        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
-
-        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
-
-        Optional<AccountClubRelation> optional
-                = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
-        if(optional.isPresent()){
-            optional.get().toggleGuest();
-            if (optional.get().getIsGuest()) return new CrewResultRes(true);
-            else return new CrewResultRes(false);
-        }
-        else{
-            AccountClubRelation build = AccountClubRelation.builder()
-                    .status(VALID)
-                    .account(account)
-                    .club(club)
-                    .isGuest(true)
-                    .build();
-            accountClubRelationRepository.save(build);
-            return new CrewResultRes(true);
-        }
-    }
 
     public GuestInfoRes getClubGuestInfo(Long clubId) {
         Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
         return new GuestInfoRes(club);
+    }
+
+    @Transactional
+    public void createGuestInfo(CrewGuestJoinReq dto, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(dto.getCrewId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        GuestInfo guestInfo = new GuestInfo(account, club, dto.getDate());
+
+        guestInfoRepository.save(guestInfo);
     }
 }
