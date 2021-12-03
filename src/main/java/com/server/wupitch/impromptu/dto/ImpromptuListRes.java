@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -13,7 +14,7 @@ import java.time.Period;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImpromptuListRes {
+public class ImpromptuListRes implements Comparable<ImpromptuListRes>{
 
     private Long impromptuId;
 
@@ -65,4 +66,9 @@ public class ImpromptuListRes {
 
     }
 
+    @Override
+    public int compareTo(@NotNull ImpromptuListRes other) {
+        if(this.isPinUp) return -1;
+        else return 0;
+    }
 }

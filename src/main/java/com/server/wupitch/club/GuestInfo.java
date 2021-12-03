@@ -1,7 +1,7 @@
-package com.server.wupitch.club.accountClubRelation;
+package com.server.wupitch.club;
+
 
 import com.server.wupitch.account.entity.Account;
-import com.server.wupitch.club.Club;
 import com.server.wupitch.configure.entity.BaseTimeEntity;
 import com.server.wupitch.configure.entity.Status;
 import lombok.AllArgsConstructor;
@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.time.LocalDate;
+
+import static com.server.wupitch.configure.entity.Status.*;
 import static javax.persistence.FetchType.*;
 
 @Getter
@@ -18,11 +21,11 @@ import static javax.persistence.FetchType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class AccountClubRelation extends BaseTimeEntity {
+public class GuestInfo extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long relationId;
+    private Long guestInfoId;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -35,25 +38,13 @@ public class AccountClubRelation extends BaseTimeEntity {
     @JoinColumn(name = "clubId")
     private Club club;
 
-    private Boolean isPinUp;
+    private LocalDate selectedDate;
 
-    private Boolean isSelect;
-
-    private Boolean isGuest;
-
-    public void togglePinUp() {
-        if (this.isPinUp == null) this.isPinUp = true;
-        else this.isPinUp = !this.isPinUp;
-    }
-
-    public void toggleSelect() {
-        if(this.isSelect == null) this.isSelect = true;
-        else this.isSelect = !this.isSelect;
-    }
-
-    public void toggleGuest() {
-        if(this.isGuest == null) this.isGuest = true;
-        else this.isGuest = !this.isGuest;
+    public GuestInfo(Account account, Club club, LocalDate selectedDate) {
+        this.status = VALID;
+        this.account = account;
+        this.club = club;
+        this.selectedDate = selectedDate;
     }
 
 }

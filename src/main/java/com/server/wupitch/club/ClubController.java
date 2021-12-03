@@ -57,6 +57,30 @@ public class ClubController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
+    @Operation(summary = "크루 타이틀로 조회 API", description = "문자열을 기준으로 크루 조회")
+    @GetMapping(value = "/clubs/title")
+    public DataResponse<Page<ClubListRes>> getAllClubListByClubTitle(
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "isAsc", required = false) Boolean isAsc,
+            @RequestParam(name = "areaId", required = false) Long areaId,
+            @RequestParam(name = "crewTitle", required = false) String crewTitle,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+
+        if (page == null) page = 1;
+        page = page - 1;
+        if (size == null) size = 10;
+        if (isAsc == null) isAsc = true;
+        if (sortBy == null) sortBy = "updatedAt";
+        Page<ClubListRes> result = clubService.getAllClubListByClubTitle(page, size, sortBy, isAsc, areaId, crewTitle, customUserDetails);
+        return responseService.getDataResponse(result);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "크루 생성 API", description = "생성 DTO를 기준으로 크루 생성")
     @PostMapping("/clubs")
     public DataResponse<ClubIdRes> createClub(@RequestBody CreateClubReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
@@ -118,5 +142,25 @@ public class ClubController {
         return responseService.getDataResponse(dto);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 게스트로 참여 요청 API", description = "크루 ID, JWT토큰을 기준으로 크루 게스트로 참여 요청")
+    @PostMapping(value = "/clubs/guest-info")
+    public CommonResponse createGuestInfo(@RequestBody CrewGuestJoinReq dto,
+                                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        clubService.createGuestInfo(dto, customUserDetails);
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 게스트로 참여 필요 정보 API", description = "크루 ID를 기준으로 크루 게스트로 참여 정보 요청")
+    @GetMapping(value = "/clubs/{clubId}/guest-info")
+    public DataResponse<GuestInfoRes> getClubGuestInfo(@PathVariable Long clubId){
+        GuestInfoRes dto = clubService.getClubGuestInfo(clubId);
+        return responseService.getDataResponse(dto);
+    }
 
 }

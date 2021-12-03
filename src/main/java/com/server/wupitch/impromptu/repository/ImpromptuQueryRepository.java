@@ -63,7 +63,7 @@ public class ImpromptuQueryRepository implements ImpromptuRepositoryCustom{
     }
 
     private BooleanExpression afterBoolean(QImpromptu qImpromptu) {
-        return qImpromptu.date.after(LocalDate.now());
+        return qImpromptu.date.after(LocalDate.now().minusDays(1));
     }
 
     private BooleanExpression areaEq(QImpromptu qImpromptu, Area area) {

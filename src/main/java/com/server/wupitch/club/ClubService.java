@@ -9,6 +9,7 @@ import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository
 import com.server.wupitch.club.dto.*;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.club.repository.ClubRepositoryCustom;
+import com.server.wupitch.club.repository.GuestInfoRepository;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -18,9 +19,12 @@ import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
 import com.server.wupitch.extra.repository.ExtraRepository;
 import com.server.wupitch.extra.entity.Extra;
 import com.server.wupitch.fcm.FirebaseCloudMessageService;
+import com.server.wupitch.sports.entity.AccountSportsRelation;
 import com.server.wupitch.sports.entity.Sports;
+import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.server.wupitch.configure.entity.Status.*;
@@ -51,6 +58,8 @@ public class ClubService {
     private final S3Uploader s3Uploader;
     private final AccountClubRelationRepository accountClubRelationRepository;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final GuestInfoRepository guestInfoRepository;
+    private final AccountSportsRelationRepository accountSportsRelationRepository;
 
     @Transactional
     public Page<ClubListRes> getAllClubList(
@@ -89,7 +98,90 @@ public class ClubService {
             }
         }
 
-        return dtoPage;
+
+        Page<ClubListRes> result = new Page<ClubListRes>() {
+            @Override
+            public int getTotalPages() {
+                return dtoPage.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return dtoPage.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ClubListRes, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return dtoPage.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return dtoPage.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return dtoPage.getNumberOfElements();
+            }
+
+            @Override
+            public List<ClubListRes> getContent() {
+                return dtoPage.getContent().stream().sorted().collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean hasContent() {
+                return dtoPage.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return dtoPage.getSort();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return dtoPage.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return dtoPage.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return dtoPage.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return dtoPage.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return dtoPage.nextPageable();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return dtoPage.previousPageable();
+            }
+
+            @NotNull
+            @Override
+            public Iterator<ClubListRes> iterator() {
+                return dtoPage.iterator();
+            }
+        };
+        return result;
 
     }
 
@@ -187,6 +279,11 @@ public class ClubService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
+        List<AccountSportsRelation> sportsList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        if (sportsList.isEmpty() || account.getAgeNum() == null || account.getNickname() == null || account.getPhoneNumber() == null) {
+            throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        }
+
         Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
@@ -225,5 +322,143 @@ public class ClubService {
         Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getCrewPickAreaId(), VALID);
         if (optional.isEmpty()) return new CrewFilterRes(account, null);
         else return new CrewFilterRes(account, optional.get());
+    }
+
+    public Page<ClubListRes> getAllClubListByClubTitle
+            (Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, String crewTitle, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Area area = null;
+        if (areaId != null) {
+            Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
+            if (optionalArea.isPresent()) area = optionalArea.get();
+        }
+        if(crewTitle == null) crewTitle = "";
+        Page<Club> allClub = null;
+        if(area == null) allClub = clubRepository.findByStatusAndTitleContaining(pageable, VALID, crewTitle);
+        else allClub = clubRepository.findByStatusAndTitleContainingAndArea(pageable, VALID, crewTitle, area);
+        Page<ClubListRes> dtoPage = allClub.map(ClubListRes::new);
+        for (ClubListRes clubListRes : dtoPage) {
+            Club club = clubRepository.findById(clubListRes.getClubId()).get();
+            Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+            if (optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()){
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.FALSE);
+                else clubListRes.setIsPinUp(false);
+            }
+            else{
+                if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.TRUE);
+                clubListRes.setIsPinUp(true);
+            }
+        }
+        Page<ClubListRes> result = new Page<ClubListRes>() {
+            @Override
+            public int getTotalPages() {
+                return dtoPage.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return dtoPage.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ClubListRes, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return dtoPage.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return dtoPage.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return dtoPage.getNumberOfElements();
+            }
+
+            @Override
+            public List<ClubListRes> getContent() {
+                return dtoPage.getContent().stream().sorted().collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean hasContent() {
+                return dtoPage.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return dtoPage.getSort();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return dtoPage.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return dtoPage.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return dtoPage.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return dtoPage.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return dtoPage.nextPageable();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return dtoPage.previousPageable();
+            }
+
+            @NotNull
+            @Override
+            public Iterator<ClubListRes> iterator() {
+                return dtoPage.iterator();
+            }
+        };
+        return result;
+    }
+
+
+    public GuestInfoRes getClubGuestInfo(Long clubId) {
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        return new GuestInfoRes(club);
+    }
+
+    @Transactional
+    public void createGuestInfo(CrewGuestJoinReq dto, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(dto.getCrewId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        GuestInfo guestInfo = new GuestInfo(account, club, dto.getDate());
+
+        guestInfoRepository.save(guestInfo);
     }
 }

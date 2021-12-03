@@ -4,6 +4,9 @@ import com.server.wupitch.account.AccountRepository;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
+import com.server.wupitch.club.Club;
+import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
+import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
@@ -17,6 +20,7 @@ import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
 import com.server.wupitch.impromptu.repository.ImpromptuRepositoryCustom;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.server.wupitch.configure.entity.Status.VALID;
 
@@ -98,11 +107,93 @@ public class ImpromptuService {
             Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
             Optional<AccountImpromptuRelation> optional
                     = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
-            if(optional.isEmpty() || (optional.get().getIsPinUp() != null && optional.get().getIsPinUp())) impromptuListRes.isPinUp = false;
+            if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
         }
 
-        return dtoPage;
+        Page<ImpromptuListRes> result = new Page<ImpromptuListRes>() {
+            @Override
+            public int getTotalPages() {
+                return dtoPage.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return dtoPage.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ImpromptuListRes, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return dtoPage.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return dtoPage.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return dtoPage.getNumberOfElements();
+            }
+
+            @Override
+            public List<ImpromptuListRes> getContent() {
+                return dtoPage.getContent().stream().sorted().collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean hasContent() {
+                return dtoPage.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return dtoPage.getSort();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return dtoPage.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return dtoPage.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return dtoPage.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return dtoPage.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return dtoPage.nextPageable();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return dtoPage.previousPageable();
+            }
+
+            @NotNull
+            @Override
+            public Iterator<ImpromptuListRes> iterator() {
+                return dtoPage.iterator();
+            }
+        };
+        return result;
 
     }
 
@@ -203,5 +294,118 @@ public class ImpromptuService {
         Optional<Area> optional = areaRepository.findByAreaIdAndStatus(account.getImpromptuPickAreaId(), VALID);
         if (optional.isEmpty()) return new ImpromptuFilterRes(account, null);
         else return new ImpromptuFilterRes(account, optional.get());
+    }
+
+    public Page<ImpromptuListRes> getAllImpromptuListByTitle
+            (Integer page, Integer size, String sortBy, Boolean isAsc, Long areaId, String title, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Area area = null;
+        if (areaId != null) {
+            Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
+            if (optionalArea.isPresent()) area = optionalArea.get();
+        }
+        if(title == null) title = "";
+        Page<Impromptu> allImpromptu = null;
+        if(area == null) allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndDateAfter(pageable, VALID, title, LocalDate.now().minusDays(1));
+        else allImpromptu = impromptuRepository.findByStatusAndTitleContainingAndAreaAndDateAfter(pageable, VALID, title, area, LocalDate.now().minusDays(1));
+        Page<ImpromptuListRes> dtoPage = allImpromptu.map(ImpromptuListRes::new);
+        for (ImpromptuListRes impromptuListRes : dtoPage) {
+            Impromptu impromptu = impromptuRepository.findById(impromptuListRes.getImpromptuId()).get();
+            Optional<AccountImpromptuRelation> optional
+                    = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
+            if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
+            else impromptuListRes.setIsPinUp(true);
+        }
+        Page<ImpromptuListRes> result = new Page<ImpromptuListRes>() {
+            @Override
+            public int getTotalPages() {
+                return dtoPage.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return dtoPage.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ImpromptuListRes, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return dtoPage.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return dtoPage.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return dtoPage.getNumberOfElements();
+            }
+
+            @Override
+            public List<ImpromptuListRes> getContent() {
+                return dtoPage.getContent().stream().sorted().collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean hasContent() {
+                return dtoPage.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return dtoPage.getSort();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return dtoPage.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return dtoPage.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return dtoPage.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return dtoPage.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return dtoPage.nextPageable();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return dtoPage.previousPageable();
+            }
+
+            @NotNull
+            @Override
+            public Iterator<ImpromptuListRes> iterator() {
+                return dtoPage.iterator();
+            }
+        };
+        return result;
     }
 }

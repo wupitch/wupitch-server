@@ -67,6 +67,29 @@ public class ImpromptuController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
+    @Operation(summary = "번개 타이틀로 조회 API", description = "문자열을 기준으로 번개 조회")
+    @GetMapping(value = "/impromptus/title")
+    public DataResponse<Page<ImpromptuListRes>> getAllImpromptuListByTitle(
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "isAsc", required = false) Boolean isAsc,
+            @RequestParam(name = "areaId", required = false) Long areaId,
+            @RequestParam(name = "title", required = false) String title,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        if (page == null) page = 1;
+        page = page - 1;
+        if (size == null) size = 10;
+        if (isAsc == null) isAsc = true;
+        if (sortBy == null) sortBy = "updatedAt";
+        Page<ImpromptuListRes> result = impromptuService.getAllImpromptuListByTitle(page, size, sortBy, isAsc, areaId, title, customUserDetails);
+        return responseService.getDataResponse(result);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "번개 이미지 추가 API", description = "번개 ID를 기준으로 번개 이미지 추가")
     @PatchMapping(value = "/impromptu/image")
     public CommonResponse uploadImpromptusImage(@RequestParam("images") MultipartFile multipartFile,

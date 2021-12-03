@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClubListRes {
+public class ClubListRes implements Comparable<ClubListRes>{
 
     private Long clubId;
 
@@ -126,4 +127,9 @@ public class ClubListRes {
 
     }
 
+    @Override
+    public int compareTo(@NotNull ClubListRes other) {
+        if(this.getIsPinUp()) return -1;
+        else return 0;
+    }
 }
