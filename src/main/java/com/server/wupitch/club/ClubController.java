@@ -148,10 +148,19 @@ public class ClubController {
     @Operation(summary = "크루 게스트로 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 게스트로 참여 토글")
     @PostMapping(value = "/clubs/{clubId}/guest-toggle")
     public DataResponse<CrewResultRes> clubGuestToggleByAuth(@PathVariable Long clubId,
-                                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+                                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CrewResultRes crewResultRes = clubService.clubGuestToggleByAuth(clubId, customUserDetails);
         return responseService.getDataResponse(crewResultRes);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 게스트로 참여 필요 정보 API", description = "크루 ID를 기준으로 크루 게스트로 참여 정보 요청")
+    @GetMapping(value = "/clubs/{clubId}/guest-info")
+    public DataResponse<GuestInfoRes> getClubGuestInfo(@PathVariable Long clubId){
+        GuestInfoRes dto = clubService.getClubGuestInfo(clubId);
+        return responseService.getDataResponse(dto);
+    }
 
 }

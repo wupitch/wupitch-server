@@ -457,4 +457,10 @@ public class ClubService {
             return new CrewResultRes(true);
         }
     }
+
+    public GuestInfoRes getClubGuestInfo(Long clubId) {
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        return new GuestInfoRes(club);
+    }
 }
