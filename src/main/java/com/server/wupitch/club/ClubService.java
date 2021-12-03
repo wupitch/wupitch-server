@@ -19,7 +19,9 @@ import com.server.wupitch.extra.repository.ClubExtraRelationRepository;
 import com.server.wupitch.extra.repository.ExtraRepository;
 import com.server.wupitch.extra.entity.Extra;
 import com.server.wupitch.fcm.FirebaseCloudMessageService;
+import com.server.wupitch.sports.entity.AccountSportsRelation;
 import com.server.wupitch.sports.entity.Sports;
+import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +59,7 @@ public class ClubService {
     private final AccountClubRelationRepository accountClubRelationRepository;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final GuestInfoRepository guestInfoRepository;
+    private final AccountSportsRelationRepository accountSportsRelationRepository;
 
     @Transactional
     public Page<ClubListRes> getAllClubList(
@@ -275,6 +278,11 @@ public class ClubService {
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        List<AccountSportsRelation> sportsList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        if (sportsList.isEmpty() || account.getAgeNum() == null || account.getNickname() == null || account.getPhoneNumber() == null) {
+            throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        }
 
         Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
