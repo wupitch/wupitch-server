@@ -454,6 +454,11 @@ public class ClubService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
+        List<AccountSportsRelation> sportsList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        if (sportsList.isEmpty() || account.getAgeNum() == null || account.getNickname() == null || account.getPhoneNumber() == null) {
+            throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        }
+
         Club club = clubRepository.findByClubIdAndStatus(dto.getCrewId(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
