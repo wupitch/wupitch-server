@@ -34,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -465,5 +462,19 @@ public class ClubService {
         GuestInfo guestInfo = new GuestInfo(account, club, dto.getDate());
 
         guestInfoRepository.save(guestInfo);
+    }
+
+    public List<ClubListRes> getClubListByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        List<AccountClubRelation> allByStatusAndAccount = accountClubRelationRepository.findAllByStatusAndAccountAndIsSelect(VALID, account, true);
+        List<ClubListRes> list = new ArrayList<>();
+        for (AccountClubRelation accountClubRelation : allByStatusAndAccount) {
+            Optional<Club> optionalClub = clubRepository.findByClubIdAndStatus(accountClubRelation.getClub().getClubId(), VALID);
+            if (optionalClub.isPresent()) {
+                list.add(new ClubListRes(optionalClub.get()));
+            }
+        }
+        return list;
     }
 }
