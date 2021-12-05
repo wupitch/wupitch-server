@@ -31,10 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -407,5 +404,21 @@ public class ImpromptuService {
             }
         };
         return result;
+    }
+
+    public List<ProfileImpromptuListRes> getImpromptuListByAuth(CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        List<AccountImpromptuRelation> allByStatusAndAccount = accountImpromptuRelationRepository.findAllByStatusAndAccountAndIsSelect(VALID, account, true);
+        List<ProfileImpromptuListRes> list = new ArrayList<>();
+        for (AccountImpromptuRelation accountImpromptuRelation : allByStatusAndAccount) {
+            Optional<Impromptu> optionalImpromptu = impromptuRepository.findByImpromptuIdAndStatus(accountImpromptuRelation.getImpromptu().getImpromptuId(), VALID);
+            if (optionalImpromptu.isPresent()) {
+                list.add(new ProfileImpromptuListRes(optionalImpromptu.get()));
+            }
+        }
+        Collections.sort(list);
+        return list;
     }
 }

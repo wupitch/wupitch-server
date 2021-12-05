@@ -141,4 +141,14 @@ public class ImpromptuController {
         return responseService.getDataResponse(dto);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "참여한 번개 조회 API", description = "JWT를 기준으로 참여한 번개 조회")
+    @GetMapping(value = "/impromptus/accounts/auth")
+    public DataResponse<List<ProfileImpromptuListRes>> getImpromptuListByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        List<ProfileImpromptuListRes> list = impromptuService.getImpromptuListByAuth(customUserDetails);
+        return responseService.getDataResponse(list);
+    }
+
 }
