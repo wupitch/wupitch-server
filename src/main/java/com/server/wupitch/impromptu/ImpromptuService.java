@@ -265,7 +265,7 @@ public class ImpromptuService {
             if(optional.get().getIsSelect() == null  || !optional.get().getIsSelect()){
                 impromptu.addMemberCount();
                 optional.get().toggleSelect();
-                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "번개 참여", "번개에 참여하였습니다!");
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "번개 참여 수락", "'"+impromptu.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
                 return new ImpromptuResultRes(true);
             }
             else{

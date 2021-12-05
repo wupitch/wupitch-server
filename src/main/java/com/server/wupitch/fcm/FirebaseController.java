@@ -32,10 +32,13 @@ public class FirebaseController {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final FirebaseService firebaseService;
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "fcm test API", description = "호출 시 'test'라는 메세지 전송")
     @PostMapping("/fcm/test")
-    public CommonResponse fcmTest(@RequestBody FcmSendReq dto) throws IOException {
-//        firebaseCloudMessageService.sendMessageTo(dto.getTargetToken(), dto.getTitle(), dto.getContents());
+    public CommonResponse fcmTest(@RequestBody FcmSendReq dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        firebaseCloudMessageService.sendMessageTo(customUserDetails.getAccount() ,dto.getTargetToken(), dto.getTitle(), dto.getContents());
         return responseService.getSuccessResponse();
     }
 

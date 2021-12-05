@@ -289,7 +289,7 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
-                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
                 optional.get().toggleSelect();
                 return new CrewResultRes(true);
             } else{
@@ -307,7 +307,7 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
-            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
             return new CrewResultRes(true);
         }
 
