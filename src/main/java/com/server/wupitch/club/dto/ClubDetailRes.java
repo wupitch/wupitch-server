@@ -34,6 +34,10 @@ public class ClubDetailRes {
 
     private Long memberCount;
 
+    private Long creatorAccountId;
+
+    private String creatorAccountNickname;
+
     private List<String> extraList;
 
     private List<String> ageTable = new ArrayList<>();
@@ -80,6 +84,10 @@ public class ClubDetailRes {
         this.inquiries = club.getInquiries();
 
         this.materials = club.getMaterials();
+
+        this.creatorAccountId = club.getAccount().getAccountId();
+
+        this.creatorAccountNickname = club.getAccount().getNickname();
 
 
         if (club.getMonday() != null && club.getMonday()) {
