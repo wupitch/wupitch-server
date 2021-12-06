@@ -34,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -292,7 +289,7 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
-                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
                 optional.get().toggleSelect();
                 return new CrewResultRes(true);
             } else{
@@ -310,7 +307,7 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
-            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여", "크루에 참여하였습니다!");
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
             return new CrewResultRes(true);
         }
 
@@ -454,11 +451,30 @@ public class ClubService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
+        List<AccountSportsRelation> sportsList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        if (sportsList.isEmpty() || account.getAgeNum() == null || account.getNickname() == null || account.getPhoneNumber() == null) {
+            throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        }
+
         Club club = clubRepository.findByClubIdAndStatus(dto.getCrewId(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
         GuestInfo guestInfo = new GuestInfo(account, club, dto.getDate());
 
         guestInfoRepository.save(guestInfo);
+    }
+
+    public List<ClubListRes> getClubListByAuth(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+        List<AccountClubRelation> allByStatusAndAccount = accountClubRelationRepository.findAllByStatusAndAccountAndIsSelect(VALID, account, true);
+        List<ClubListRes> list = new ArrayList<>();
+        for (AccountClubRelation accountClubRelation : allByStatusAndAccount) {
+            Optional<Club> optionalClub = clubRepository.findByClubIdAndStatus(accountClubRelation.getClub().getClubId(), VALID);
+            if (optionalClub.isPresent()) {
+                list.add(new ClubListRes(optionalClub.get()));
+            }
+        }
+        return list;
     }
 }

@@ -163,4 +163,14 @@ public class ClubController {
         return responseService.getDataResponse(dto);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "참여한 크루 조회 API", description = "JWT를 기준으로 참여한 크루 조회")
+    @GetMapping(value = "/clubs/accounts/auth")
+    public DataResponse<List<ClubListRes>> getClubListByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        List<ClubListRes> list = clubService.getClubListByAuth(customUserDetails);
+        return responseService.getDataResponse(list);
+    }
+
 }

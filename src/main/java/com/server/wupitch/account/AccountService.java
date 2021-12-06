@@ -118,7 +118,7 @@ public class AccountService {
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
         dto.setJwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()));
-        firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입", "회원가입에 성공했습니다.");
+        firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입 완료", "신분증 인증이 완료됐습니다.\uD83C\uDF89\n우피치와 신나고 건강하게 땀흘려요!");
         return dto;
     }
 

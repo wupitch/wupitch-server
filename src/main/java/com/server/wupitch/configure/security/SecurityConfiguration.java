@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/accounts/kakao","/app/accounts/apple","/app/accounts/nickname/validation", "/app/accounts/email/validation", "/app/accounts/password/validation","/app/fcm/test").permitAll()
+                .antMatchers(HttpMethod.POST, "/app/sign-in", "/app/sign-up","/app/accounts/kakao","/app/accounts/apple","/app/accounts/nickname/validation", "/app/accounts/email/validation", "/app/accounts/password/validation").permitAll()
                 .antMatchers(HttpMethod.GET, "/errors/**","/app/areas", "/app/sports", "/app/extras").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/invalid-status/{email}").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/app/accounts/role").hasRole("ADMIN")
