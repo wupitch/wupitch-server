@@ -197,7 +197,7 @@ public class AccountService {
         Integer ageIdx = account.getAgeNum();
         String age;
         if (ageIdx == null){
-            age = "나이를 등록하지 않았습니다.";
+            age = null;
         }
         else if (ageIdx == 1) age = "10대";
         else if (ageIdx == 2) age = "20대";

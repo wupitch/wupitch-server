@@ -19,7 +19,7 @@ public class AccountAreaRes {
     public AccountAreaRes(Area area) {
         if (area == null) {
             this.areaId = null;
-            this.areaName = "지역을 선택하지 않았습니다.";
+            this.areaName = null;
         }
         else{
             this.areaId = area.getAreaId();
