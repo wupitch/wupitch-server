@@ -63,6 +63,12 @@ dependencies {
 
     // querydsl
     implementation 'com.querydsl:querydsl-jpa'
+
+    // SMTP
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.1'
+    implementation'com.sun.mail:javax.mail:1.6.2'
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.13'
+
 }
 
 //querydsl

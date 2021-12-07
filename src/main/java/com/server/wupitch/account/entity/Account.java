@@ -94,6 +94,8 @@ public class Account extends BaseTimeEntity {
 
     private Integer impromptuPickMemberCountValue;
 
+    private Boolean isChecked;
+
     public void saveFilterInfo(
             List<Integer> ageList, Long crewPickAreaId, List<Integer> days, Integer crewPickMemberCountValue, List<Long> sportsList
     ) {
@@ -173,6 +175,7 @@ public class Account extends BaseTimeEntity {
                 .role(ROLE_USER)
                 .password(dto.getPassword())
                 .oAuth(oAuth)
+                .isChecked(false)
                 .build();
     }
 
