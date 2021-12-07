@@ -217,7 +217,7 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Area area = account.getArea();
-        return new AccountAreaRes(area.getAreaId(), area.getName());
+        return new AccountAreaRes(area);
     }
 
 
