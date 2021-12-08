@@ -1,6 +1,7 @@
 package com.server.wupitch.configure.security.jwt;
 
 import com.server.wupitch.account.entity.enumtypes.RoleType;
+import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String email, RoleType role){
+        if(email == null || email.equals(""))throw new CustomException(CustomExceptionStatus.POST_USERS_INVALID_EMAIL);
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role",role);
         Date now = new Date();
