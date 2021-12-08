@@ -34,7 +34,6 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String email, RoleType role){
-        if(email == null || email.equals(""))throw new CustomException(CustomExceptionStatus.POST_USERS_INVALID_EMAIL);
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role",role);
         Date now = new Date();

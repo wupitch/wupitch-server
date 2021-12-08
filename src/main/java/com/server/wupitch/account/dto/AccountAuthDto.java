@@ -31,7 +31,6 @@ public class AccountAuthDto {
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]{3,20}$")
     private String nickname;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String jwt;
 
     private String introduce;
