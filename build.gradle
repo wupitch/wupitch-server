@@ -69,6 +69,9 @@ dependencies {
     implementation'com.sun.mail:javax.mail:1.6.2'
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.13'
 
+    // thymeleaf
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
+
 }
 
 //querydsl
