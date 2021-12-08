@@ -19,6 +19,8 @@ import com.server.wupitch.impromptu.dto.*;
 import com.server.wupitch.impromptu.entity.Impromptu;
 import com.server.wupitch.impromptu.repository.ImpromptuRepository;
 import com.server.wupitch.impromptu.repository.ImpromptuRepositoryCustom;
+import com.server.wupitch.sports.entity.AccountSportsRelation;
+import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,7 @@ public class ImpromptuService {
     private final S3Uploader s3Uploader;
     private final AccountImpromptuRelationRepository accountImpromptuRelationRepository;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final AccountSportsRelationRepository accountSportsRelationRepository;
 
     @Transactional
     public void uploadImpromptusImage(MultipartFile multipartFile, Long impromptuId) throws IOException {
@@ -92,7 +95,7 @@ public class ImpromptuService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Area area = null;
-        if(areaId != null){
+        if(areaId != null && areaId != 1){
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
             if(optionalArea.isPresent()) area = optionalArea.get();
         }
@@ -253,8 +256,14 @@ public class ImpromptuService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
 
+        List<AccountSportsRelation> sportsList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        if (sportsList.isEmpty() || account.getAgeNum() == null || account.getNickname() == null || account.getPhoneNumber() == null) {
+            throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID_INFORM);
+        }
+
         Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
 
         Optional<AccountImpromptuRelation> optional
                 = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu);
@@ -305,7 +314,7 @@ public class ImpromptuService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Area area = null;
-        if (areaId != null) {
+        if (areaId != null && areaId != 1) {
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
             if (optionalArea.isPresent()) area = optionalArea.get();
         }

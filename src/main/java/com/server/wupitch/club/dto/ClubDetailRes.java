@@ -56,6 +56,10 @@ public class ClubDetailRes {
 
     private Boolean isSelect;
 
+    private Long creatorAccountId;
+
+    private String creatorAccountNickname;
+
     public ClubDetailRes(Club club) {
         this.clubId = club.getClubId();
 

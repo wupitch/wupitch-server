@@ -46,6 +46,8 @@ public class AccountService {
 
     @Transactional
     public SignInRes signIn(SignInReq req) {
+        if (req.getEmail() == null || req.getEmail().equals(""))
+            throw new CustomException(CustomExceptionStatus.POST_USERS_INVALID_EMAIL);
         Account account = accountRepository.findByEmailAndStatus(req.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.FAILED_TO_LOGIN));
         if (!passwordEncoder.matches(req.getPassword(), account.getPassword())) {
@@ -55,7 +57,7 @@ public class AccountService {
         SignInRes res = SignInRes.builder()
                 .accountId(account.getAccountId())
                 .email(account.getEmail())
-                .jwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()))
+                .jwt(jwtTokenProvider.createToken(req.getEmail(), account.getRole()))
                 .build();
 
         return res;
@@ -117,13 +119,13 @@ public class AccountService {
         Account account = Account.createAccount(dto);
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
-        dto.setJwt(jwtTokenProvider.createToken(account.getEmail(), account.getRole()));
+        dto.setJwt(jwtTokenProvider.createToken(dto.getEmail(), account.getRole()));
         firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입 완료", "신분증 인증이 완료됐습니다.\uD83C\uDF89\n우피치와 신나고 건강하게 땀흘려요!");
         return dto;
     }
 
     public void getEmailValidation(String email) {
-        Optional<Account> accountOptional = accountRepository.findByEmailAndStatus(email, VALID);
+        Optional<Account> accountOptional = accountRepository.findByEmail(email);
         if (accountOptional.isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
     }
 
@@ -197,7 +199,7 @@ public class AccountService {
         Integer ageIdx = account.getAgeNum();
         String age;
         if (ageIdx == null){
-            age = "나이를 등록하지 않았습니다.";
+            age = null;
         }
         else if (ageIdx == 1) age = "10대";
         else if (ageIdx == 2) age = "20대";
@@ -217,7 +219,7 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         Area area = account.getArea();
-        return new AccountAreaRes(area.getAreaId(), area.getName());
+        return new AccountAreaRes(area);
     }
 
 

@@ -1,6 +1,7 @@
 package com.server.wupitch.configure.security.jwt;
 
 import com.server.wupitch.account.entity.enumtypes.RoleType;
+import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
