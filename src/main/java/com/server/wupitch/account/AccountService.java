@@ -123,7 +123,7 @@ public class AccountService {
     }
 
     public void getEmailValidation(String email) {
-        Optional<Account> accountOptional = accountRepository.findByEmailAndStatus(email, VALID);
+        Optional<Account> accountOptional = accountRepository.findByEmail(email);
         if (accountOptional.isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
     }
 
