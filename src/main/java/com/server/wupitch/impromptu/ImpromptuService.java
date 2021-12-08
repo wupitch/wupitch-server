@@ -95,7 +95,7 @@ public class ImpromptuService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Area area = null;
-        if(areaId != null){
+        if(areaId != null && areaId != 1){
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
             if(optionalArea.isPresent()) area = optionalArea.get();
         }
@@ -314,7 +314,7 @@ public class ImpromptuService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Area area = null;
-        if (areaId != null) {
+        if (areaId != null && areaId != 1) {
             Optional<Area> optionalArea = areaRepository.findByAreaIdAndStatus(areaId, VALID);
             if (optionalArea.isPresent()) area = optionalArea.get();
         }
