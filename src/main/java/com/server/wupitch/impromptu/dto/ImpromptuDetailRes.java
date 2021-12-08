@@ -49,6 +49,10 @@ public class ImpromptuDetailRes {
 
     private Boolean isSelect;
 
+    private Long creatorAccountId;
+
+    private String creatorAccountNickname;
+
     public ImpromptuDetailRes(Impromptu impromptu) {
         this.impromptuId = impromptu.getImpromptuId();
         this.impromptuImage = impromptu.getImpromptuImage();
@@ -68,6 +72,8 @@ public class ImpromptuDetailRes {
         this.inquiries = impromptu.getInquiries();
         this.startTime = impromptu.getStartTime();
         this.endTime = impromptu.getEndTime();
+        this.creatorAccountId = impromptu.getAccount().getAccountId();
+        this.creatorAccountNickname = impromptu.getAccount().getNickname();
         if(impromptu.getDayIdx() == 1) day = "월요일";
         else if(impromptu.getDayIdx() == 2) day = "화요일";
         else if(impromptu.getDayIdx() == 3) day = "수요일";

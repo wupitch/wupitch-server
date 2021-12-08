@@ -52,6 +52,10 @@ public class ClubDetailRes {
 
     private Boolean isSelect;
 
+    private Long creatorAccountId;
+
+    private String creatorAccountNickname;
+
     public ClubDetailRes(Club club) {
         this.clubId = club.getClubId();
 
@@ -80,6 +84,10 @@ public class ClubDetailRes {
         this.inquiries = club.getInquiries();
 
         this.materials = club.getMaterials();
+
+        this.creatorAccountId = club.getAccount().getAccountId();
+
+        this.creatorAccountNickname = club.getAccount().getNickname();
 
 
         if (club.getMonday() != null && club.getMonday()) {
