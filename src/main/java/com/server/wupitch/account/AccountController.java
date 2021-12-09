@@ -16,6 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -107,7 +108,7 @@ public class AccountController {
     @Operation(summary = "신분증 사진등록 API", description = "JWT 토큰을 기준으로 현재 회원의 신분증 이미지 등록")
     @PostMapping(value = "/accounts/identification")
     public CommonResponse uploadIdentification(@RequestParam("images") MultipartFile multipartFile,
-                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException, MessagingException {
         accountService.uploadIdentification(multipartFile, customUserDetails);
 
         return responseService.getSuccessResponse();
