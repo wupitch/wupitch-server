@@ -102,6 +102,16 @@ public class ClubController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
+    @Operation(summary = "크루 이미지 null 처리 API", description = "크루 ID를 기준으로 크루 이미지 null 처리")
+    @PatchMapping(value = "/clubs/image/empty")
+    public CommonResponse uploadCrewImageEmpty(@RequestParam("crewId") Long crewId)  {
+        clubService.uploadCrewImageEmpty( crewId);
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "크루 세부 조회 API", description = "크루 ID를 기준으로 크루 세부 조회")
     @GetMapping(value = "/clubs/{clubId}")
     public DataResponse<ClubDetailRes> getDetailClubById(@PathVariable Long clubId,

@@ -477,4 +477,11 @@ public class ClubService {
         }
         return list;
     }
+
+    @Transactional
+    public void uploadCrewImageEmpty(Long crewId) {
+        Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+        club.setImageUrl(null);
+    }
 }
