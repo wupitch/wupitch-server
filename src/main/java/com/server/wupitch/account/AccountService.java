@@ -239,4 +239,10 @@ public class AccountService {
         account.changeDeviceToken(deviceTokenReq.getDeviceToken());
     }
 
+    @Transactional
+    public void deleteProfileImage(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.registerProfileImage(null);
+    }
 }

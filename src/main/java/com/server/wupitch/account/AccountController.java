@@ -105,6 +105,17 @@ public class AccountController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
+    @Operation(summary = "프로필 사진 삭제 api API", description = "JWT 토큰을 기준으로 현재 회원의 프로필 사진 삭제")
+    @PatchMapping(value = "/accounts/image/empty")
+    public CommonResponse deleteProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        accountService.deleteProfileImage(customUserDetails);
+
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "신분증 사진등록 API", description = "JWT 토큰을 기준으로 현재 회원의 신분증 이미지 등록")
     @PostMapping(value = "/accounts/identification")
     public CommonResponse uploadIdentification(@RequestParam("images") MultipartFile multipartFile,
