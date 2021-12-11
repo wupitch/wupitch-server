@@ -29,6 +29,7 @@
 ## Access App Store
 
 ### 🏬 [Google App Store](https://play.google.com/store/apps/details?id=wupitch.android)
+### 🍎 [Apple App Store](https://apps.apple.com/app/id1590732671)
 
 ## 기술스택
 
