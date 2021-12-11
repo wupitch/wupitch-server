@@ -225,4 +225,18 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "회원 가입 승인 API", description = "AccountId를 기준으로 인증된 회원 가입 처리 및 FCM 전달")
+    @PatchMapping(value = "/accounts/auth/{accountId}/enrollment-agree")
+    public CommonResponse enrollmentAgree(@PathVariable(name = "accountId") Long accountId) throws IOException {
+        accountService.enrollmentAgree(accountId);
+        return responseService.getSuccessResponse();
+    }
+
+    @Operation(summary = "회원 가입 보류 API", description = "AccountId를 기준으로 인증된 회원 가입 보류 및 FCM 전달")
+    @PatchMapping(value = "/accounts/auth/{accountId}/enrollment-deny")
+    public CommonResponse enrollmentDeny(@PathVariable(name = "accountId") Long accountId) throws IOException {
+        accountService.enrollmentDeny(accountId);
+        return responseService.getSuccessResponse();
+    }
+
 }

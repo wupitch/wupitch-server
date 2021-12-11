@@ -96,6 +96,10 @@ public class Account extends BaseTimeEntity {
 
     private Boolean isChecked;
 
+    public void setCheckInfo(Boolean chk){
+        this.isChecked = chk;
+    }
+
     public void saveFilterInfo(
             List<Integer> ageList, Long crewPickAreaId, List<Integer> days, Integer crewPickMemberCountValue, List<Long> sportsList
     ) {
@@ -214,10 +218,11 @@ public class Account extends BaseTimeEntity {
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
                 .status(VALID)
-                .role(RoleType.ROLE_USER)
+                .role(ROLE_USER)
                 .introduction(dto.getIntroduce())
                 .isPushAgree(dto.getIsPushAgree())
                 .deviceToken(dto.getDeviceToken())
+                .isChecked(false)
                 .build();
     }
 
