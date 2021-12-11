@@ -10,6 +10,7 @@ import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.configure.security.jwt.JwtTokenProvider;
+import com.server.wupitch.email.EmailService;
 import com.server.wupitch.fcm.FirebaseCloudMessageService;
 import com.server.wupitch.sports.entity.AccountSportsRelation;
 import com.server.wupitch.sports.entity.Sports;
@@ -21,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +45,7 @@ public class AccountService {
     private final AccountSportsRelationRepository accountSportsRelationRepository;
     private final S3Uploader s3Uploader;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final EmailService emailService;
 
 
     @Transactional
@@ -138,10 +142,15 @@ public class AccountService {
     }
 
     @Transactional
-    public void uploadIdentification(MultipartFile multipartFile, CustomUserDetails customUserDetails) throws IOException {
+    public void uploadIdentification(MultipartFile multipartFile, CustomUserDetails customUserDetails) throws IOException, MessagingException {
         String identificationImage = s3Uploader.upload(multipartFile, "identification");
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("accountId", account.getAccountId());
+        variables.put("accountEmail", account.getEmail());
+        variables.put("imageUrl", identificationImage);
+        emailService.sendRegisterCheckEmail(variables);
         account.registerIdentification(identificationImage);
     }
 
@@ -230,4 +239,10 @@ public class AccountService {
         account.changeDeviceToken(deviceTokenReq.getDeviceToken());
     }
 
+    @Transactional
+    public void deleteProfileImage(CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.registerProfileImage(null);
+    }
 }

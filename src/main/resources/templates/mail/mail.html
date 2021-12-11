@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>회원 인증</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+
+    <div class="container mt-5" id="app">
+        <div><span style="font-weight: bold;" th:text="${accountId}"></span>번 회원 (<span style="color: blue;"
+                th:text="${accountEmail}"></span>) 인증요청</div>
+        <div>
+            <img th:src="${imageUrl}" />
+        </div>
+        <button type="button" class="btn btn-primary" @click="accept()">수락</button>
+        <button type="button" class="btn btn-danger" @click="refuse()">거절</button>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            },
+            methods: {
+                accept() {
+                    console.log("test")
+                },
+                refuse() {
+                    console.log("refuse")
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
