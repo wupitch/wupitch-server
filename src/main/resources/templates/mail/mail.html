@@ -22,8 +22,10 @@
         <div>
             <img th:src="${imageUrl}" />
         </div>
-        <button type="button" class="btn btn-primary" onclick="agreeFunc()">수락</button>
-        <button type="button" class="btn btn-danger" onclick="denyFunc()">거절</button>
+        <a th:href="@{'https://prod.wupitch.site/app/accounts/auth/'+${accountId}+'/enrollment-agree'}">수락</a>
+        <a th:href="@{'https://prod.wupitch.site/app/accounts/auth/'+${accountId}+'/enrollment-deny'}">거절</a>
+        <!-- <button type="button" class="btn btn-primary" onclick="agreeFunc()">수락</button>
+        <button type="button" class="btn btn-danger" onclick="denyFunc()">거절</button> -->
     </div>
 
     <script>
