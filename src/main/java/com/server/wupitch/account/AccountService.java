@@ -124,7 +124,6 @@ public class AccountService {
         Account save = accountRepository.save(account);
         dto.setAccountId(save.getAccountId());
         dto.setJwt(jwtTokenProvider.createToken(dto.getEmail(), account.getRole()));
-        firebaseCloudMessageService.sendMessageTo(save, dto.getDeviceToken(), "회원가입 완료", "신분증 인증이 완료됐습니다.\uD83C\uDF89\n우피치와 신나고 건강하게 땀흘려요!");
         return dto;
     }
 
@@ -244,5 +243,21 @@ public class AccountService {
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
         account.registerProfileImage(null);
+    }
+
+    @Transactional
+    public void enrollmentAgree(Long accountId) throws IOException {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.setCheckInfo(true);
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "회원가입 완료", "신분증 인증이 완료됐습니다.\uD83C\uDF89\n우피치와 신나고 건강하게 땀흘려요!");
+    }
+
+    @Transactional
+    public void enrollmentDeny(Long accountId) throws IOException  {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        account.setCheckInfo(false);
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "회원가입 보류", "회원가입이 보류됐습니다.\uD83D\uDE22\n전송한 신분증을 확인해주세요!");
     }
 }

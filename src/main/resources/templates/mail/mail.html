@@ -4,34 +4,82 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>회원 인증</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <script src="https://unpkg.com/vue"></script>
+
 </head>
 
 <body>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <div class="container mt-5" id="app">
+
+        <input type="hidden" name="accountInfo" th:value="${accountId}">
         <div><span style="font-weight: bold;" th:text="${accountId}"></span>번 회원 (<span style="color: blue;"
                 th:text="${accountEmail}"></span>) 인증요청</div>
         <div>
             <img th:src="${imageUrl}" />
         </div>
-        <button type="button" class="btn btn-primary" @click="accept()">수락</button>
-        <button type="button" class="btn btn-danger" @click="refuse()">거절</button>
+        <a th:href="@{'https://prod.wupitch.site/app/accounts/auth/'+${accountId}+'/enrollment-agree'}">수락</a>
+        <a th:href="@{'https://prod.wupitch.site/app/accounts/auth/'+${accountId}+'/enrollment-deny'}">거절</a>
+        <!-- <button type="button" class="btn btn-primary" onclick="agreeFunc()">수락</button>
+        <button type="button" class="btn btn-danger" onclick="denyFunc()">거절</button> -->
     </div>
 
     <script>
+        function agreeFunc() {
+            var data = {
+                accountValue: $("#accountInfo").val(),
+            };
+            console.log(data.accountValue)
+            $.ajax({
+                url: `https://prod.wupitch.site/app/accounts/auth/${data.accountValue}/enrollment-agree`,
+                type: "PATCH",
+            })
+            .done(
+                alert("수락 처리 완료")
+            )
+        }
+        function denyFunc() {
+            var data = {
+                accountValue: $("#accountInfo").val(),
+            };
+            console.log(data.accountValue)
+            $.ajax({
+                url: `https://prod.wupitch.site/app/accounts/auth/${data.accountValue}/enrollment-deny`,
+                type: "PATCH",
+            })
+            .done(
+                alert("수락 보류 완료")
+            )
+        }
+    
         var app = new Vue({
             el: '#app',
             data: {
-                message: 'Hello Vue!'
+                requireAccountId: null
+            },
+            created() {
             },
             methods: {
                 accept() {
-                    console.log("test")
+                    console.log(this.requireAccountId)
+                    // console.log(accoutId)
+                    // axios.patch(`https://prod.wupitch.site/app/accounts/auth/${"${accountId}"}}/enrollment-agree`)
+                    //     .catch((err) => {
+                    //         alert(err.response.data.message)
+                    //     })
+                    // alert("수락 처리 완료")
                 },
-                refuse() {
-                    console.log("refuse")
+                refuse(accountId) {
+                    console.log(accoutId)
+                    axios.patch(`https://prod.wupitch.site/app/accounts/auth/${accoutId}/enrollment-deny`)
+                        .catch((err) => {
+                            alert(err.response.data.message)
+                        })
+                    alert("수락 보류 완료")
                 }
             }
         })

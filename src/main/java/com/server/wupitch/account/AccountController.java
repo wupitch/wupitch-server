@@ -225,4 +225,19 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
+    @Operation(summary = "회원 가입 승인 API", description = "AccountId를 기준으로 인증된 회원 가입 처리 및 FCM 전달")
+    @GetMapping(value = "/accounts/auth/{accountId}/enrollment-agree")
+    public DataResponse<ResultDto> enrollmentAgree(@PathVariable(name = "accountId") Long accountId) throws IOException {
+        accountService.enrollmentAgree(accountId);
+        ResultDto resultDto = new ResultDto(accountId + "번의 회원 가입 승인이 완료됐습니다.");
+        return responseService.getDataResponse(resultDto);
+    }
+
+    @Operation(summary = "회원 가입 보류 API", description = "AccountId를 기준으로 인증된 회원 가입 보류 및 FCM 전달")
+    @GetMapping(value = "/accounts/auth/{accountId}/enrollment-deny")
+    public DataResponse<ResultDto> enrollmentDeny(@PathVariable(name = "accountId") Long accountId) throws IOException {
+        ResultDto resultDto = new ResultDto(accountId + "번의 회원 가입 보류가 완료됐습니다.");
+        return responseService.getDataResponse(resultDto);
+    }
+
 }

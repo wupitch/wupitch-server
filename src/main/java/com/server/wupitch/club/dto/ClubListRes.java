@@ -40,9 +40,11 @@ public class ClubListRes implements Comparable<ClubListRes>{
 
         Sports sports = club.getSports();
 
-        this.sportsId = sports.getSportsId();
+        if(sports != null){
+            this.sportsId = sports.getSportsId();
 
-        this.sportsName = sports.getName();
+            this.sportsName = sports.getName();
+        }
 
         this.areaName = club.getLocation();
 
