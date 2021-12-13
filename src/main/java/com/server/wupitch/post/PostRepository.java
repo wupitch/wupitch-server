@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long>{
 
-    List<Post> findAllByClubAndStatus(Club club, Status status);
+    List<Post> findAllByClubAndStatusOrderByUpdatedAtDesc(Club club, Status status);
 
 }

@@ -26,6 +26,10 @@ public class PostRes {
 
     private Boolean isCreator;
 
+    private Boolean isNotice;
+
+    private String noticeTitle;
+
     public PostRes(Post post) {
         Account account = post.getAccount();
         Club club = post.getClub();
@@ -36,6 +40,8 @@ public class PostRes {
         this.date = post.getUpdatedAt().toLocalDate();
         if(club.getAccount().equals(account)) this.isCreator = true;
         else this.isCreator = false;
+        this.isNotice = post.getIsNotice();
+        if(isNotice) this.noticeTitle = post.getNoticeTitle();
     }
 
 }
