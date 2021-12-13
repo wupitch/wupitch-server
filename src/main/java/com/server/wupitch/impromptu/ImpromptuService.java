@@ -76,6 +76,14 @@ public class ImpromptuService {
 
         firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"번개 생성", "번개 생성이 완료되었습니다!");
 
+        AccountImpromptuRelation build = AccountImpromptuRelation.builder()
+                .status(VALID)
+                .account(account)
+                .impromptu(impromptu)
+                .isSelect(true)
+                .build();
+        accountImpromptuRelationRepository.save(build);
+
         return save.getImpromptuId();
 
     }
@@ -109,6 +117,7 @@ public class ImpromptuService {
                     = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
             if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
+            if(impromptu.getAccount().equals(account)) impromptuListRes.setIsCreate(true);
         }
 
         Page<ImpromptuListRes> result = new Page<ImpromptuListRes>() {
@@ -329,6 +338,7 @@ public class ImpromptuService {
                     = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID ,account, impromptu);
             if(optional.isEmpty() || optional.get().getIsPinUp() == null || !optional.get().getIsPinUp()) impromptuListRes.isPinUp = false;
             else impromptuListRes.setIsPinUp(true);
+            if(impromptu.getAccount().equals(account)) impromptuListRes.setIsCreate(true);
         }
         Page<ImpromptuListRes> result = new Page<ImpromptuListRes>() {
             @Override

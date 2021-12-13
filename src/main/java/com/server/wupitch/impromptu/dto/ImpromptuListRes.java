@@ -40,6 +40,8 @@ public class ImpromptuListRes implements Comparable<ImpromptuListRes>{
 
     public Boolean isPinUp;
 
+    private Boolean isCreate;
+
     public ImpromptuListRes(Impromptu impromptu) {
         this.impromptuId = impromptu.getImpromptuId();
         this.impromptuImage = impromptu.getImpromptuImage();

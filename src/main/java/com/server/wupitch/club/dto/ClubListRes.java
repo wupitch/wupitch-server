@@ -35,6 +35,8 @@ public class ClubListRes implements Comparable<ClubListRes>{
 
     private String areaName;
 
+    private Boolean isCreate;
+
     public ClubListRes(Club club) {
         this.clubId = club.getClubId();
 
