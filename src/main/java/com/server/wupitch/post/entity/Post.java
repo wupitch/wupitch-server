@@ -71,4 +71,16 @@ public class Post extends BaseTimeEntity {
         this.isPhotoPost = isPhotoPost;
     }
 
+    public Post(Account account, Club club, String imageUrl, Boolean isPhotoPost) {
+        this.status = VALID;
+        this.account = account;
+        this.club = club;
+        this.contents = imageUrl;
+        this.likeCount = 0L;
+        this.reportCount = 0L;
+        this.isNotice = false;
+        this.noticeTitle = null;
+        this.isPhotoPost = isPhotoPost;
+    }
+
 }

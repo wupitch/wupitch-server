@@ -15,7 +15,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"Post API"})
@@ -30,7 +32,7 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
-    @Operation(summary = "크루 게시판 조회 API", description = "크루 ID를 기준으로 게시판 조회")
+    @Operation(summary = "크루 게시물 조회 API", description = "크루 ID를 기준으로 게시판 조회")
     @GetMapping("/posts/crew/{crewId}")
     public DataResponse<List<PostRes>> getPostListByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@PathVariable(name = "crewId") Long crewId) {
         List<PostRes> list = postService.getPostListByCrewId(customUserDetails, crewId);
@@ -40,10 +42,30 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
+    @Operation(summary = "크루 사진 게시판 조회 API", description = "크루 ID를 기준으로 사진 게시판 조회")
+    @GetMapping("/photo-posts/crew/{crewId}")
+    public DataResponse<List<PostRes>> getPhotoPostListByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@PathVariable(name = "crewId") Long crewId) {
+        List<PostRes> list = postService.getPhotoPostListByCrewId(customUserDetails, crewId);
+        return responseService.getDataResponse(list);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
     @Operation(summary = "크루 게시판 게시물 생성 API", description = "크루 ID를 기준으로 게시물 생성")
     @PostMapping("/posts/crew/{crewId}")
-    public CommonResponse createPostByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "crewId") Long crewId, @RequestBody CreatePostReq dto) {
+    public CommonResponse createPostByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "crewId") Long crewId, @RequestBody CreatePostReq dto ){
         postService.createPostByCrewId(customUserDetails, crewId, dto);
+        return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 사진 게시물 게시물 생성 API", description = "크루 ID를 기준으로 사진 게시물 생성")
+    @PostMapping("/photo-posts/crew/{crewId}")
+    public CommonResponse createPostByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "crewId") Long crewId, @RequestParam("images") MultipartFile multipartFile) throws IOException  {
+        postService.createPhotoPostByCrewId(customUserDetails, crewId, multipartFile);
         return responseService.getSuccessResponse();
     }
 
