@@ -13,7 +13,7 @@ spring:
       max-request-size: 10MB
   profiles:
     include: key
-    active: dev
+    active: prod
   devtools:
     livereload:
       enabled: true
