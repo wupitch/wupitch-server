@@ -192,6 +192,7 @@ public class Account extends BaseTimeEntity {
                 .introduce(this.introduction)
                 .isPushAgree(this.isPushAgree)
                 .profileImageUrl(this.profileImage)
+                .isChecked(this.isChecked)
                 .build();
     }
 

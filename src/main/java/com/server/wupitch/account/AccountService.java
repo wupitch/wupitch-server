@@ -17,6 +17,7 @@ import com.server.wupitch.sports.entity.Sports;
 import com.server.wupitch.sports.repository.AccountSportsRelationRepository;
 import com.server.wupitch.sports.repository.SportsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ public class AccountService {
     private final S3Uploader s3Uploader;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final EmailService emailService;
+
+    @Value("${site.address}")
+    private String SITE_ADDRESS;
 
 
     @Transactional
@@ -111,7 +115,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountAuthDto signUp(AccountAuthDto dto) throws IOException {
+    public AccountAuthDto signUp(AccountAuthDto dto) {
         if (accountRepository.findByEmail(dto.getEmail()).isPresent())
             throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
         if (dto.getNickname() != null) {
@@ -149,6 +153,7 @@ public class AccountService {
         variables.put("accountId", account.getAccountId());
         variables.put("accountEmail", account.getEmail());
         variables.put("imageUrl", identificationImage);
+        variables.put("url", SITE_ADDRESS);
         emailService.sendRegisterCheckEmail(variables);
         account.registerIdentification(identificationImage);
     }

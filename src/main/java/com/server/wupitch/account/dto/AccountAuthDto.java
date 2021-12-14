@@ -40,4 +40,6 @@ public class AccountAuthDto {
     private String profileImageUrl;
 
     private String deviceToken;
+
+    private Boolean isChecked;
 }

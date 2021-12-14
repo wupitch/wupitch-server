@@ -93,6 +93,7 @@ public class ClubService {
                 if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.TRUE);
                 clubListRes.setIsPinUp(true);
             }
+            if(account.equals(club.getAccount())) clubListRes.setIsCreate(true);
         }
 
 
@@ -207,6 +208,13 @@ public class ClubService {
             }
         }
         firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 생성", "크루 생성이 완료되었습니다!");
+        AccountClubRelation build = AccountClubRelation.builder()
+                .status(VALID)
+                .account(account)
+                .club(club)
+                .isSelect(true)
+                .build();
+        accountClubRelationRepository.save(build);
         return save.getClubId();
     }
 
@@ -352,6 +360,7 @@ public class ClubService {
                 if (clubListRes.getIsPinUp() == null) clubListRes.setIsPinUp(Boolean.TRUE);
                 clubListRes.setIsPinUp(true);
             }
+            if(account.equals(club.getAccount())) clubListRes.setIsCreate(true);
         }
         Page<ClubListRes> result = new Page<ClubListRes>() {
             @Override

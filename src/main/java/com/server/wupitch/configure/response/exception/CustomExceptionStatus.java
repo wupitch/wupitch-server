@@ -86,12 +86,16 @@ public enum CustomExceptionStatus {
 
     // Club
     CREW_NOT_FOUND(false, 3100, "크루를 찾을 수 없습니다."),
+    CREW_NOT_BELONG(false, 3101, "크루에 속해있지 않습니다."),
 
     // impromptus
     IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),
 
     // FCM
-    FCM_NOT_FOUND(false, 3200, "알림을 찾을 수 없습니다."),
+    FCM_NOT_FOUND(false, 3300, "알림을 찾을 수 없습니다."),
+
+    // 게시글
+    POST_NOT_FOUND(false, 3400, "게시글을 찾을 수 없습니다."),
 
 
     /**
