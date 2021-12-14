@@ -18,7 +18,7 @@ import java.util.List;
 public class AccountInformReq {
 
     private Long areaId;
-    private List<Long> sportsList = new ArrayList<>();
+    private List<Long> sportsList;
     private String otherSports;
     private Integer ageNum;
 
