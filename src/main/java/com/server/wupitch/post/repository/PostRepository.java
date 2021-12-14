@@ -1,13 +1,14 @@
-package com.server.wupitch.post;
+package com.server.wupitch.post.repository;
 
 import com.server.wupitch.club.Club;
 import com.server.wupitch.configure.entity.Status;
+import com.server.wupitch.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long>{
 
-    List<Post> findAllByClubAndStatusOrderByUpdatedAtDesc(Club club, Status status);
+    List<Post> findAllByClubAndStatusAndIsPhotoPostOrderByUpdatedAtDesc(Club club, Status status, Boolean isPhotoPost);
 
 }

@@ -1,4 +1,4 @@
-package com.server.wupitch.post;
+package com.server.wupitch.post.entity;
 
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.club.Club;
@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static com.server.wupitch.configure.entity.Status.*;
-import static javax.persistence.FetchType.*;
+import static com.server.wupitch.configure.entity.Status.VALID;
+import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Builder
@@ -45,7 +45,9 @@ public class Post extends BaseTimeEntity {
 
     private String noticeTitle;
 
-    public Post(Account account, Club club, CreatePostReq dto) {
+    private Boolean isPhotoPost;
+
+    public Post(Account account, Club club, CreatePostReq dto, Boolean isPhotoPost) {
         this.status = VALID;
         this.account = account;
         this.club = club;
@@ -53,6 +55,7 @@ public class Post extends BaseTimeEntity {
         this.likeCount = 0L;
         this.isNotice = dto.getIsNotice();
         if(isNotice) this.noticeTitle = dto.getNoticeTitle();
+        this.isPhotoPost = isPhotoPost;
     }
 
 }

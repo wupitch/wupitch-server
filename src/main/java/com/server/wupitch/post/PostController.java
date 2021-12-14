@@ -30,8 +30,8 @@ public class PostController {
     })
     @Operation(summary = "크루 게시판 조회 API", description = "크루 ID를 기준으로 게시판 조회")
     @GetMapping("/posts/crew/{crewId}")
-    public DataResponse<List<PostRes>> getPostListByCrewId(@PathVariable(name = "crewId") Long crewId) {
-        List<PostRes> list = postService.getPostListByCrewId(crewId);
+    public DataResponse<List<PostRes>> getPostListByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@PathVariable(name = "crewId") Long crewId) {
+        List<PostRes> list = postService.getPostListByCrewId(customUserDetails, crewId);
         return responseService.getDataResponse(list);
     }
 
