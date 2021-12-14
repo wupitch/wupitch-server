@@ -41,11 +41,23 @@ public class Post extends BaseTimeEntity {
 
     private Long likeCount;
 
+    private Long reportCount;
+
     private Boolean isNotice;
 
     private String noticeTitle;
 
     private Boolean isPhotoPost;
+
+    public void adjustPostLikeCount(Boolean boolArg){
+        if(boolArg) this.likeCount++;
+        else this.likeCount--;
+    }
+
+    public void adjustPostReportCount(Boolean boolArg){
+        if(boolArg) this.reportCount++;
+        else this.reportCount--;
+    }
 
     public Post(Account account, Club club, CreatePostReq dto, Boolean isPhotoPost) {
         this.status = VALID;
@@ -53,6 +65,7 @@ public class Post extends BaseTimeEntity {
         this.club = club;
         this.contents = dto.getContents();
         this.likeCount = 0L;
+        this.reportCount = 0L;
         this.isNotice = dto.getIsNotice();
         if(isNotice) this.noticeTitle = dto.getNoticeTitle();
         this.isPhotoPost = isPhotoPost;

@@ -92,7 +92,10 @@ public enum CustomExceptionStatus {
     IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),
 
     // FCM
-    FCM_NOT_FOUND(false, 3200, "알림을 찾을 수 없습니다."),
+    FCM_NOT_FOUND(false, 3300, "알림을 찾을 수 없습니다."),
+
+    // 게시글
+    POST_NOT_FOUND(false, 3400, "게시글을 찾을 수 없습니다."),
 
 
     /**

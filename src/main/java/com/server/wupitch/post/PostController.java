@@ -1,11 +1,13 @@
 package com.server.wupitch.post;
 
+import com.server.wupitch.club.dto.CrewResultRes;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.post.dto.CreatePostReq;
 import com.server.wupitch.post.dto.PostRes;
+import com.server.wupitch.post.dto.PostResultRes;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,6 +45,28 @@ public class PostController {
     public CommonResponse createPostByCrewId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "crewId") Long crewId, @RequestBody CreatePostReq dto) {
         postService.createPostByCrewId(customUserDetails, crewId, dto);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "게시글 좋아요 토글 API", description = "게시글 ID, JWT토큰을 기준으로 게시글 좋아요 토글")
+    @PatchMapping(value = "/posts/{postId}/like-toggle")
+    public DataResponse<PostResultRes> postLikeToggleByAuth(@PathVariable Long postId,
+                                                            @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        PostResultRes postResultRes = postService.postLikeToggleByAuth(postId, customUserDetails);
+        return responseService.getDataResponse(postResultRes);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "게시글 신고 토글 API", description = "게시글 ID, JWT토큰을 기준으로 게시글 신고 토글")
+    @PatchMapping(value = "/posts/{postId}/report-toggle")
+    public DataResponse<PostResultRes> postReportToggleByAuth(@PathVariable Long postId,
+                                                            @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
+        PostResultRes postResultRes = postService.postReportToggleByAuth(postId, customUserDetails);
+        return responseService.getDataResponse(postResultRes);
     }
 
 }

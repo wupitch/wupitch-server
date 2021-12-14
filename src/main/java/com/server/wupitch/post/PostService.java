@@ -5,12 +5,14 @@ import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.club.Club;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelationRepository;
+import com.server.wupitch.club.dto.CrewResultRes;
 import com.server.wupitch.club.repository.ClubRepository;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.post.dto.CreatePostReq;
 import com.server.wupitch.post.dto.PostRes;
+import com.server.wupitch.post.dto.PostResultRes;
 import com.server.wupitch.post.entity.AccountPostRelation;
 import com.server.wupitch.post.entity.Post;
 import com.server.wupitch.post.repository.AccountPostRelationRepository;
@@ -83,5 +85,76 @@ public class PostService {
         Post post = new Post(account, club, dto, false);
         postRepository.save(post);
 
+    }
+
+    @Transactional
+    public PostResultRes postLikeToggleByAuth(Long postId, CustomUserDetails customUserDetails) {
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Post post = postRepository.findByPostIdAndStatus(postId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.POST_NOT_FOUND));
+
+        Optional<AccountPostRelation> optional
+                = accountPostRelationRepository.findByAccountAndPostAndStatus(account, post, VALID);
+        if(optional.isPresent()){
+            optional.get().toggleLike();
+            if (optional.get().getIsLike()){
+                post.adjustPostLikeCount(true);
+                return new PostResultRes(true);
+            }
+            else{
+                post.adjustPostLikeCount(false);
+                return new PostResultRes(false);
+            }
+        }
+        else{
+            AccountPostRelation build = AccountPostRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .post(post)
+                    .isLike(true)
+                    .isReport(false)
+                    .build();
+            accountPostRelationRepository.save(build);
+            post.adjustPostLikeCount(true);
+            return new PostResultRes(true);
+        }
+    }
+
+    @Transactional
+    public PostResultRes postReportToggleByAuth(Long postId, CustomUserDetails customUserDetails) {
+
+        Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Post post = postRepository.findByPostIdAndStatus(postId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.POST_NOT_FOUND));
+
+        Optional<AccountPostRelation> optional
+                = accountPostRelationRepository.findByAccountAndPostAndStatus(account, post, VALID);
+        if(optional.isPresent()){
+            optional.get().toggleReport();
+            if (optional.get().getIsReport()){
+                post.adjustPostReportCount(true);
+                return new PostResultRes(true);
+            }
+            else{
+                post.adjustPostReportCount(false);
+                return new PostResultRes(false);
+            }
+        }
+        else{
+            AccountPostRelation build = AccountPostRelation.builder()
+                    .status(VALID)
+                    .account(account)
+                    .post(post)
+                    .isLike(false)
+                    .isReport(true)
+                    .build();
+            accountPostRelationRepository.save(build);
+            post.adjustPostReportCount(true);
+            return new PostResultRes(true);
+        }
     }
 }

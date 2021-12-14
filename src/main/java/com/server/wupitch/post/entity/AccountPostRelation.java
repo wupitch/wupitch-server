@@ -38,4 +38,14 @@ public class AccountPostRelation extends BaseTimeEntity {
 
     private Boolean isReport = false;
 
+    public void toggleLike(){
+        if(this.isLike == null) this.isLike = true;
+        else this.isLike = !this.isLike;
+    }
+
+    public void toggleReport(){
+        if(this.isReport == null) this.isReport = true;
+        else this.isReport = !this.isReport;
+    }
+
 }
