@@ -18,6 +18,8 @@ public class ProfileRes {
 
     private String accountNickname;
 
+    private String profileImage;
+
     private Integer ageNum;
 
     private String area;
@@ -31,6 +33,7 @@ public class ProfileRes {
     public ProfileRes(Account account, List<String> sportsList) {
         this.accountId = account.getAccountId();
         this.accountNickname = account.getNickname();
+        this.profileImage = account.getProfileImage();
         this.ageNum = account.getAgeNum();
         if (account.getArea() != null) this.area = account.getArea().getName();
         this.phoneNumber = account.getPhoneNumber();
