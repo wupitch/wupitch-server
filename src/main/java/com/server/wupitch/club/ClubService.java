@@ -281,7 +281,7 @@ public class ClubService {
     }
 
     @Transactional
-    public CrewResultRes clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails) throws IOException {
+    public CrewResultRes clubParticipationToggleByAuth(Long clubId, CustomUserDetails customUserDetails){
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -299,7 +299,6 @@ public class ClubService {
         if(optional.isPresent()){
             if(optional.get().getIsSelect() == null || !optional.get().getIsSelect()){
                 club.addMemberCount();
-                firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
                 optional.get().toggleSelect();
                 return new CrewResultRes(true);
             } else{
@@ -317,7 +316,6 @@ public class ClubService {
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();
-            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
             return new CrewResultRes(true);
         }
 
@@ -471,7 +469,7 @@ public class ClubService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
         List<GuestInfo> data
-                = guestInfoRepository.findAllByAccountAndClubAndStatusAndSelectedDateAfter(account, club, VALID, LocalDate.now());
+                = guestInfoRepository.findAllByAccountAndClubAndStatusAndSelectedDateAfter(account, club, VALID, LocalDate.now().minusDays(1));
         if(data == null || data.size() >0) throw new CustomException(CustomExceptionStatus.CREW_ALREADY_BELONG);
         Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
         if (optional.isPresent()) {
@@ -503,5 +501,55 @@ public class ClubService {
         Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
         club.setImageUrl(null);
+    }
+
+    public List<MemberListRes> getClubMemberList(Long clubId) {
+
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        List<MemberListRes> result = new ArrayList<>();
+
+        List<AccountClubRelation> memberList
+                = accountClubRelationRepository.findAllByStatusAndClubAndIsSelect(VALID, club, true);
+
+        for (AccountClubRelation accountClubRelation : memberList) {
+            result.add(new MemberListRes(accountClubRelation));
+        }
+
+        List<GuestInfo> guestInfos
+                = guestInfoRepository.findAllByClubAndStatusAndSelectedDateAfter(club, VALID, LocalDate.now().minusDays(1));
+
+        for (GuestInfo guestInfo : guestInfos) {
+            result.add(new MemberListRes(guestInfo));
+        }
+
+        Collections.sort(result);
+
+        return result;
+
+    }
+
+    @Transactional
+    public void enrollCrewMember(EnrollMemberReq dto) throws IOException {
+
+        Account account = accountRepository.findByAccountIdAndStatus(dto.getAccountId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(dto.getClubId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        if (!dto.getIsGuest()) {
+            AccountClubRelation accountClubRelation = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club)
+                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
+            accountClubRelation.enroll();
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 신청이 수락되었습니다.");
+        }
+        else {
+            GuestInfo guestInfo = guestInfoRepository.findByStatusAndAccountAndClubAndSelectedDateAfter(VALID, account, club, LocalDate.now().minusDays(1))
+                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
+            guestInfo.enroll();
+        }
+
     }
 }

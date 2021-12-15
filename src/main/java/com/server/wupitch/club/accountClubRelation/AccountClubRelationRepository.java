@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AccountClubRelationRepository extends JpaRepository<AccountClubRelation, Long> {
     Optional<AccountClubRelation> findByStatusAndAccountAndClub(Status status, Account account, Club club);
     List<AccountClubRelation> findAllByStatusAndAccountAndIsSelect(Status status, Account account, Boolean isSelect);
+    List<AccountClubRelation> findAllByStatusAndClubAndIsSelect(Status status, Club club, Boolean isSelect);
 }

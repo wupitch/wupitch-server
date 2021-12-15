@@ -87,6 +87,8 @@ public enum CustomExceptionStatus {
     // Club
     CREW_NOT_FOUND(false, 3100, "크루를 찾을 수 없습니다."),
     CREW_NOT_BELONG(false, 3101, "크루에 속해있지 않습니다."),
+    CREW_ALREADY_BELONG(false, 3102, "이미 크루에 지원했습니다."),
+    CREW_RELATION_INVALID(false, 3103, "잘 못 된 크루나 회원 정보입니다."),
 
     // impromptus
     IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),

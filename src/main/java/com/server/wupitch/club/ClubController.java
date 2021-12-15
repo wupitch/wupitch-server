@@ -137,7 +137,7 @@ public class ClubController {
     @Operation(summary = "크루 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여 토글")
     @PostMapping(value = "/clubs/{clubId}/participation-toggle")
     public DataResponse<CrewResultRes> clubParticipationToggleByAuth(@PathVariable Long clubId,
-                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CrewResultRes crewResultRes = clubService.clubParticipationToggleByAuth(clubId, customUserDetails);
         return responseService.getDataResponse(crewResultRes);
     }
@@ -182,5 +182,27 @@ public class ClubController {
         List<ClubListRes> list = clubService.getClubListByAuth(customUserDetails);
         return responseService.getDataResponse(list);
     }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 멤버 조회 API", description = "crewId를 기준으로 크루 조회")
+    @GetMapping(value = "/clubs/{clubId}/members")
+    public DataResponse<List<MemberListRes>> getClubMemberList(@PathVariable(name = "clubId") Long clubId){
+        List<MemberListRes> list = clubService.getClubMemberList(clubId);
+        return responseService.getDataResponse(list);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루원 수락 API", description = "accountId, crewId, isGuest를 기준으로 크루원 수락")
+    @PatchMapping(value = "/clubs/enroll-member")
+    public CommonResponse enrollCrewMember(@RequestBody EnrollMemberReq dto) throws IOException {
+        clubService.enrollCrewMember(dto);
+        return responseService.getSuccessResponse();
+    }
+
+
 
 }
