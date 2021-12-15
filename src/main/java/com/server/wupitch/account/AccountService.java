@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -264,5 +265,17 @@ public class AccountService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
         account.setCheckInfo(false);
         firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "회원가입 보류", "회원가입이 보류됐습니다.\uD83D\uDE22\n전송한 신분증을 확인해주세요!");
+    }
+
+    public ProfileRes getAccountProfile(Long accountId) {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        List<AccountSportsRelation> entityList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        List<String> stringList = new ArrayList<>();
+        for (AccountSportsRelation accountSportsRelation : entityList) {
+            stringList.add(accountSportsRelation.getSports().getName());
+        }
+        return new ProfileRes(account, stringList);
     }
 }

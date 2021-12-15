@@ -241,4 +241,14 @@ public class AccountController {
         return responseService.getDataResponse(resultDto);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "회원 프로필 조회 API", description = "accountId를 기준으로 회원 프로필 조회")
+    @GetMapping(value = "/accounts/{accountId}/profile-info")
+    public DataResponse<ProfileRes> getAccountProfile(@PathVariable(name = "accountId") Long accountId) {
+        ProfileRes dto = accountService.getAccountProfile(accountId);
+        return responseService.getDataResponse(dto);
+    }
+
 }
