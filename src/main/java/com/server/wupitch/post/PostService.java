@@ -13,6 +13,7 @@ import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.post.dto.CreatePostReq;
 import com.server.wupitch.post.dto.PostRes;
 import com.server.wupitch.post.dto.PostResultRes;
+import com.server.wupitch.post.dto.ReportReq;
 import com.server.wupitch.post.entity.AccountPostRelation;
 import com.server.wupitch.post.entity.Post;
 import com.server.wupitch.post.repository.AccountPostRelationRepository;
@@ -48,7 +49,7 @@ public class PostService {
         Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
-        List<Post> entityList = postRepository.findAllByClubAndStatusAndIsPhotoPostOrderByUpdatedAtDesc(club, VALID, false);
+        List<Post> entityList = postRepository.findAllByClubAndStatusAndIsPhotoPostOrderByIsNoticeDescCreatedAtDesc(club, VALID, false);
         List<PostRes> list = entityList.stream().map(PostRes::new).collect(Collectors.toList());
         for (int i = 0; i < list.size(); i++) {
             Post post = entityList.get(i);
@@ -75,7 +76,7 @@ public class PostService {
         Club club = clubRepository.findByClubIdAndStatus(crewId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
-        List<Post> entityList = postRepository.findAllByClubAndStatusAndIsPhotoPostOrderByUpdatedAtDesc(club, VALID, true);
+        List<Post> entityList = postRepository.findAllByClubAndStatusAndIsPhotoPostOrderByIsNoticeDescCreatedAtDesc(club, VALID, true);
         List<PostRes> list = entityList.stream().map(PostRes::new).collect(Collectors.toList());
         for (int i = 0; i < list.size(); i++) {
             Post post = entityList.get(i);
@@ -177,7 +178,8 @@ public class PostService {
     }
 
     @Transactional
-    public PostResultRes postReportToggleByAuth(Long postId, CustomUserDetails customUserDetails) {
+    public PostResultRes postReportToggleByAuth(Long postId, CustomUserDetails customUserDetails, ReportReq dto) {
+        if(dto==null) dto = new ReportReq();
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -191,6 +193,7 @@ public class PostService {
             optional.get().toggleReport();
             if (optional.get().getIsReport()){
                 post.adjustPostReportCount(true);
+                optional.get().setReportContents(dto.getReportContents());
                 return new PostResultRes(true);
             }
             else{
@@ -205,6 +208,7 @@ public class PostService {
                     .post(post)
                     .isLike(false)
                     .isReport(true)
+                    .reportContents(dto.getReportContents())
                     .build();
             accountPostRelationRepository.save(build);
             post.adjustPostReportCount(true);

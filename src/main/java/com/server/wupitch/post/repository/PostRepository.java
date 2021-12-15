@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>{
 
-    List<Post> findAllByClubAndStatusAndIsPhotoPostOrderByUpdatedAtDesc(Club club, Status status, Boolean isPhotoPost);
+    List<Post> findAllByClubAndStatusAndIsPhotoPostOrderByIsNoticeDescCreatedAtDesc(Club club, Status status, Boolean isPhotoPost);
     Optional<Post> findByPostIdAndStatus(Long postId, Status status);
 
 }

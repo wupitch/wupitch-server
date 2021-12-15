@@ -38,6 +38,12 @@ public class AccountPostRelation extends BaseTimeEntity {
 
     private Boolean isReport = false;
 
+    private String reportContents;
+
+    public void setReportContents(String contents) {
+        this.reportContents = contents;
+    }
+
     public void toggleLike(){
         if(this.isLike == null) this.isLike = true;
         else this.isLike = !this.isLike;

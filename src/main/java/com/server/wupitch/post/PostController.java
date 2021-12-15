@@ -8,6 +8,7 @@ import com.server.wupitch.configure.security.authentication.CustomUserDetails;
 import com.server.wupitch.post.dto.CreatePostReq;
 import com.server.wupitch.post.dto.PostRes;
 import com.server.wupitch.post.dto.PostResultRes;
+import com.server.wupitch.post.dto.ReportReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -86,8 +87,8 @@ public class PostController {
     @Operation(summary = "게시글 신고 토글 API", description = "게시글 ID, JWT토큰을 기준으로 게시글 신고 토글")
     @PatchMapping(value = "/posts/{postId}/report-toggle")
     public DataResponse<PostResultRes> postReportToggleByAuth(@PathVariable Long postId,
-                                                            @AuthenticationPrincipal CustomUserDetails customUserDetails)  {
-        PostResultRes postResultRes = postService.postReportToggleByAuth(postId, customUserDetails);
+                                                              @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody(required = false) ReportReq dto)  {
+        PostResultRes postResultRes = postService.postReportToggleByAuth(postId, customUserDetails, dto);
         return responseService.getDataResponse(postResultRes);
     }
 
