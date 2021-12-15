@@ -274,6 +274,7 @@ public class ClubService {
                     .account(account)
                     .club(club)
                     .isPinUp(true)
+                    .isValid(false)
                     .build();
             accountClubRelationRepository.save(build);
             return new CrewResultRes(true);
@@ -313,6 +314,7 @@ public class ClubService {
                     .account(account)
                     .club(club)
                     .isSelect(true)
+                    .isValid(false)
                     .build();
             accountClubRelationRepository.save(build);
             club.addMemberCount();

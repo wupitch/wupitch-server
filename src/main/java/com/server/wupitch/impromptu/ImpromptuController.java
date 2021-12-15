@@ -2,6 +2,8 @@ package com.server.wupitch.impromptu;
 
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CrewFilterRes;
+import com.server.wupitch.club.dto.EnrollMemberReq;
+import com.server.wupitch.club.dto.MemberListRes;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
@@ -149,6 +151,26 @@ public class ImpromptuController {
     public DataResponse<List<ProfileImpromptuListRes>> getImpromptuListByAuth(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         List<ProfileImpromptuListRes> list = impromptuService.getImpromptuListByAuth(customUserDetails);
         return responseService.getDataResponse(list);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 멤버 조회 API", description = "impromptuId를 기준으로 번개 맴버 조회")
+    @GetMapping(value = "/impromptus/{impromptuId}/members")
+    public DataResponse<List<ImpromptuMemberListRes>> getImpromptuMemberList(@PathVariable(name = "impromptuId") Long impromptuId){
+        List<ImpromptuMemberListRes> list = impromptuService.getImpromptuMemberList(impromptuId);
+        return responseService.getDataResponse(list);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개원 수락 API", description = "accountId, impromptuId 기준으로 번개원 수락")
+    @PatchMapping(value = "/impromptus/{impromptuId}/enroll-member/{accountId}")
+    public CommonResponse enrollImpromptuMember(@PathVariable(name = "impromptuId") Long impromptuId, @PathVariable(name = "accountId") Long accountId) throws IOException {
+        impromptuService.enrollImpromptuMember(impromptuId, accountId);
+        return responseService.getSuccessResponse();
     }
 
 }

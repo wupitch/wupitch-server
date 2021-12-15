@@ -92,6 +92,7 @@ public enum CustomExceptionStatus {
 
     // impromptus
     IMPROMPTUS_NOT_FOUND(false, 3200, "번개를 찾을 수 없습니다."),
+    IMPROMPTUS_RELATION_INVALID(false, 3201, "잘 못 된 번개나 회원 정보입니다."),
 
     // FCM
     FCM_NOT_FOUND(false, 3300, "알림을 찾을 수 없습니다."),

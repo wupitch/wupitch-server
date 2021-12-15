@@ -39,6 +39,8 @@ public class AccountImpromptuRelation extends BaseTimeEntity {
 
     private Boolean isSelect;
 
+    private Boolean isValid = false;
+
     public void togglePinUp() {
         if (this.isPinUp == null) this.isPinUp = true;
         else this.isPinUp = !this.isPinUp;
@@ -49,4 +51,7 @@ public class AccountImpromptuRelation extends BaseTimeEntity {
         else this.isSelect = !this.isSelect;
     }
 
+    public void enroll() {
+        this.isValid = true;
+    }
 }

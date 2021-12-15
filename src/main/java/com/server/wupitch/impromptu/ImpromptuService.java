@@ -5,9 +5,11 @@ import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
 import com.server.wupitch.club.Club;
+import com.server.wupitch.club.GuestInfo;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.dto.ClubListRes;
 import com.server.wupitch.club.dto.CrewFilterRes;
+import com.server.wupitch.club.dto.MemberListRes;
 import com.server.wupitch.configure.response.exception.CustomException;
 import com.server.wupitch.configure.response.exception.CustomExceptionStatus;
 import com.server.wupitch.configure.s3.S3Uploader;
@@ -81,6 +83,7 @@ public class ImpromptuService {
                 .account(account)
                 .impromptu(impromptu)
                 .isSelect(true)
+                .isValid(true)
                 .build();
         accountImpromptuRelationRepository.save(build);
 
@@ -253,6 +256,7 @@ public class ImpromptuService {
                     .account(account)
                     .impromptu(impromptu)
                     .isPinUp(true)
+                    .isValid(false)
                     .build();
             accountImpromptuRelationRepository.save(build);
             return new ImpromptuResultRes(true);
@@ -295,6 +299,7 @@ public class ImpromptuService {
                     .account(account)
                     .impromptu(impromptu)
                     .isSelect(true)
+                    .isValid(false)
                     .build();
             accountImpromptuRelationRepository.save(build);
             impromptu.addMemberCount();
@@ -439,5 +444,38 @@ public class ImpromptuService {
         }
         Collections.sort(list);
         return list;
+    }
+
+    public List<ImpromptuMemberListRes> getImpromptuMemberList(Long impromptuId) {
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        List<ImpromptuMemberListRes> result = new ArrayList<>();
+
+        List<AccountImpromptuRelation> memberList
+                = accountImpromptuRelationRepository.findAllByStatusAndImpromptuAndIsSelect(VALID, impromptu, true);
+        for (AccountImpromptuRelation accountImpromptuRelation : memberList) {
+            result.add(new ImpromptuMemberListRes(accountImpromptuRelation));
+        }
+
+        Collections.sort(result);
+
+        return result;
+
+    }
+
+    @Transactional
+    public void enrollImpromptuMember(Long impromptuId, Long accountId) throws IOException {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        AccountImpromptuRelation accountImpromptuRelation = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID));
+        accountImpromptuRelation.enroll();
+        firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "번개 참여 수락", "'"+impromptu.getTitle()+"'"+" 번개에 대한 신청이 수락되었습니다.");
     }
 }

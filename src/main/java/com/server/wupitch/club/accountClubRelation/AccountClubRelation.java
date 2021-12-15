@@ -41,7 +41,7 @@ public class AccountClubRelation extends BaseTimeEntity {
 
     private Boolean isGuest;
 
-    private Boolean isValid;
+    private Boolean isValid = false;
 
     public void enroll() {
         this.isValid = true;
