@@ -203,6 +203,16 @@ public class ClubController {
         return responseService.getSuccessResponse();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루원 내보내기 API", description = "accountId, crewId, isGuest를 기준으로 크루원 내보내기")
+    @PatchMapping(value = "/clubs/disagree-enroll-member")
+    public CommonResponse disagreeEnrollCrewMember(@RequestBody EnrollMemberReq dto) throws IOException {
+        clubService.disagreeEnrollCrewMember(dto);
+        return responseService.getSuccessResponse();
+    }
+
 
 
 }

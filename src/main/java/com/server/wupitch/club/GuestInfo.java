@@ -46,6 +46,10 @@ public class GuestInfo extends BaseTimeEntity {
         this.isValid = true;
     }
 
+    public void disagreeEnroll() {
+        this.isValid = false;
+    }
+
     public GuestInfo(Account account, Club club, LocalDate selectedDate) {
         this.status = VALID;
         this.account = account;

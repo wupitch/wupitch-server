@@ -555,4 +555,25 @@ public class ClubService {
         }
 
     }
+
+    @Transactional
+    public void disagreeEnrollCrewMember(EnrollMemberReq dto) {
+
+        Account account = accountRepository.findByAccountIdAndStatus(dto.getAccountId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Club club = clubRepository.findByClubIdAndStatus(dto.getClubId(), VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        if (!dto.getIsGuest()) {
+            AccountClubRelation accountClubRelation = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club)
+                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
+            accountClubRelation.disagreeEnroll();
+        }
+        else {
+            GuestInfo guestInfo = guestInfoRepository.findByStatusAndAccountAndClubAndSelectedDateAfter(VALID, account, club, LocalDate.now().minusDays(1))
+                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
+            guestInfo.disagreeEnroll();
+        }
+    }
 }

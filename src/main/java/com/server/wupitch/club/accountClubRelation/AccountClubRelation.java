@@ -47,6 +47,10 @@ public class AccountClubRelation extends BaseTimeEntity {
         this.isValid = true;
     }
 
+    public void disagreeEnroll() {
+        this.isValid = false;
+    }
+
     public void togglePinUp() {
         if (this.isPinUp == null) this.isPinUp = true;
         else this.isPinUp = !this.isPinUp;
