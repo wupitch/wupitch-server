@@ -40,11 +40,14 @@ public class GuestInfo extends BaseTimeEntity {
 
     private LocalDate selectedDate;
 
+    private Boolean isValid;
+
     public GuestInfo(Account account, Club club, LocalDate selectedDate) {
         this.status = VALID;
         this.account = account;
         this.club = club;
         this.selectedDate = selectedDate;
+        this.isValid = false;
     }
 
 }

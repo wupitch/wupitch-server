@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -213,6 +214,7 @@ public class ClubService {
                 .account(account)
                 .club(club)
                 .isSelect(true)
+                .isValid(true)
                 .build();
         accountClubRelationRepository.save(build);
         return save.getClubId();
@@ -468,7 +470,16 @@ public class ClubService {
         Club club = clubRepository.findByClubIdAndStatus(dto.getCrewId(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
+        List<GuestInfo> data
+                = guestInfoRepository.findAllByAccountAndClubAndStatusAndSelectedDateAfter(account, club, VALID, LocalDate.now());
+        if(data == null || data.size() >0) throw new CustomException(CustomExceptionStatus.CREW_ALREADY_BELONG);
+        Optional<AccountClubRelation> optional = accountClubRelationRepository.findByStatusAndAccountAndClub(VALID, account, club);
+        if (optional.isPresent()) {
+            if (optional.get().getIsSelect()) throw new CustomException(CustomExceptionStatus.CREW_ALREADY_BELONG);
+        }
+
         GuestInfo guestInfo = new GuestInfo(account, club, dto.getDate());
+
 
         guestInfoRepository.save(guestInfo);
     }
