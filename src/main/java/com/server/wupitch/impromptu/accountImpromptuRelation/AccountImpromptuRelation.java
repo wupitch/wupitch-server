@@ -54,4 +54,8 @@ public class AccountImpromptuRelation extends BaseTimeEntity {
     public void enroll() {
         this.isValid = true;
     }
+
+    public void disagreeEnroll() {
+        this.isValid = false;
+    }
 }

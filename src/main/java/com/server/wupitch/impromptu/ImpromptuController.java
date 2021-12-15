@@ -173,4 +173,14 @@ public class ImpromptuController {
         return responseService.getSuccessResponse();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개원 수락 내보내기", description = "accountId, impromptuId 기준으로 번개원 내보내기")
+    @PatchMapping(value = "/impromptus/{impromptuId}/disagree-enroll-member/{accountId}")
+    public CommonResponse disagreeEnrollImpromptuMember(@PathVariable(name = "impromptuId") Long impromptuId, @PathVariable(name = "accountId") Long accountId)  {
+        impromptuService.disagreeEnrollImpromptuMember(impromptuId, accountId);
+        return responseService.getSuccessResponse();
+    }
+
 }

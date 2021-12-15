@@ -478,4 +478,17 @@ public class ImpromptuService {
         accountImpromptuRelation.enroll();
         firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(), "번개 참여 수락", "'"+impromptu.getTitle()+"'"+" 번개에 대한 신청이 수락되었습니다.");
     }
+
+    @Transactional
+    public void disagreeEnrollImpromptuMember(Long impromptuId, Long accountId) {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        AccountImpromptuRelation accountImpromptuRelation = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID));
+        accountImpromptuRelation.disagreeEnroll();
+    }
 }
