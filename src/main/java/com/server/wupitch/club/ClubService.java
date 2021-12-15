@@ -549,6 +549,7 @@ public class ClubService {
             GuestInfo guestInfo = guestInfoRepository.findByStatusAndAccountAndClubAndSelectedDateAfter(VALID, account, club, LocalDate.now().minusDays(1))
                     .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
             guestInfo.enroll();
+            firebaseCloudMessageService.sendMessageTo(account, account.getDeviceToken(),"크루 게스트 참여 수락", "'"+club.getTitle()+"'"+" 크루에 대한 게스트 신청이 수락되었습니다.");
         }
 
     }
