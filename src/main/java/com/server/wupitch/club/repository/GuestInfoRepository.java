@@ -14,4 +14,5 @@ public interface GuestInfoRepository extends JpaRepository<GuestInfo, Long> {
     List<GuestInfo> findAllByAccountAndClubAndStatusAndSelectedDateAfter(Account account, Club club, Status status, LocalDate date);
     List<GuestInfo> findAllByClubAndStatusAndSelectedDateAfter(Club club, Status status, LocalDate date);
     Optional<GuestInfo> findByStatusAndAccountAndClubAndSelectedDateAfter(Status status, Account account, Club club, LocalDate localDate);
+    Optional<GuestInfo> findByClubAndAccountAndStatusAndSelectedDateAfter(Club club, Account account, Status status, LocalDate date);
 }

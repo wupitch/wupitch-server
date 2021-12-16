@@ -100,6 +100,10 @@ public enum CustomExceptionStatus {
     // 게시글
     POST_NOT_FOUND(false, 3400, "게시글을 찾을 수 없습니다."),
 
+    // 신고
+    EMPTY_CONTENTS_REPORT(false, 3500, "내용을 입력해주세요."),
+    ALREADY_SET_REPORT(false, 3501, "이미 신고를 하셨습니다."),
+
 
     /**
      * 4000 : Database, Server 오류

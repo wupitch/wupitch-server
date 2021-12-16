@@ -1,5 +1,6 @@
 package com.server.wupitch.club;
 
+import com.server.wupitch.account.dto.ProfileRes;
 import com.server.wupitch.club.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
@@ -211,6 +212,17 @@ public class ClubController {
     public CommonResponse disagreeEnrollCrewMember(@RequestBody EnrollMemberReq dto) throws IOException {
         clubService.disagreeEnrollCrewMember(dto);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "크루 회원 프로필 조회 API", description = "accountId, clubId 기준으로 크루 회원 프로필 조회")
+    @GetMapping(value = "/clubs/{clubId}/accounts/{accountId}/profile-info")
+    public DataResponse<ClubProfileRes> getClubAccountProfile(@PathVariable(name = "accountId") Long accountId,
+                                                      @PathVariable(name = "clubId") Long clubId) {
+        ClubProfileRes dto = clubService.getClubAccountProfile(accountId, clubId);
+        return responseService.getDataResponse(dto);
     }
 
 

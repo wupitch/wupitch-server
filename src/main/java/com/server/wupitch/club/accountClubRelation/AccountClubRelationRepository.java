@@ -12,4 +12,5 @@ public interface AccountClubRelationRepository extends JpaRepository<AccountClub
     Optional<AccountClubRelation> findByStatusAndAccountAndClub(Status status, Account account, Club club);
     List<AccountClubRelation> findAllByStatusAndAccountAndIsSelect(Status status, Account account, Boolean isSelect);
     List<AccountClubRelation> findAllByStatusAndClubAndIsSelect(Status status, Club club, Boolean isSelect);
+    Optional<AccountClubRelation> findAllByStatusAndClubAndAccountAndIsSelect(Status status, Club club, Account account, Boolean isSelect);
 }

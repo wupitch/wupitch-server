@@ -1,6 +1,7 @@
 package com.server.wupitch.club;
 
 import com.server.wupitch.account.AccountRepository;
+import com.server.wupitch.account.dto.ProfileRes;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.area.Area;
 import com.server.wupitch.area.AreaRepository;
@@ -575,5 +576,38 @@ public class ClubService {
                     .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID));
             guestInfo.disagreeEnroll();
         }
+    }
+
+    public ClubProfileRes getClubAccountProfile(Long accountId, Long clubId) {
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        Club club = clubRepository.findByClubIdAndStatus(clubId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
+
+        List<AccountSportsRelation> entityList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        List<String> stringList = new ArrayList<>();
+        for (AccountSportsRelation accountSportsRelation : entityList) {
+            stringList.add(accountSportsRelation.getSports().getName());
+        }
+
+        ClubProfileRes result = new ClubProfileRes(account, stringList);
+
+
+        Optional<AccountClubRelation> optional
+                = accountClubRelationRepository.findAllByStatusAndClubAndAccountAndIsSelect(VALID, club, account, true);
+
+        if (optional.isPresent()) {
+            result.addInfo(optional.get());
+        }
+
+        else{
+            Optional<GuestInfo> guestInfoOptional
+                    = guestInfoRepository.findByClubAndAccountAndStatusAndSelectedDateAfter(club, account, VALID, LocalDate.now().minusDays(1));
+            if (guestInfoOptional.isEmpty()) throw new CustomException(CustomExceptionStatus.CREW_RELATION_INVALID);
+            else result.addInfo(guestInfoOptional.get());
+        }
+
+        return result;
     }
 }
