@@ -175,9 +175,9 @@ public class ImpromptuController {
     })
     @Operation(summary = "번개 회원 프로필 조회 API", description = "accountId, impromptuId 기준으로 번개 회원 프로필 조회")
     @GetMapping(value = "/impromptus/{impromptuId}/accounts/{accountId}/profile-info")
-    public DataResponse<ClubProfileRes> getImpromptuAccountProfile(@PathVariable(name = "accountId") Long accountId,
+    public DataResponse<ClubProfileRes> getImpromptuAccountProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "accountId") Long accountId,
                                                               @PathVariable(name = "impromptuId") Long impromptuId) {
-        ClubProfileRes dto = impromptuService.getImpromptuAccountProfile(accountId, impromptuId);
+        ClubProfileRes dto = impromptuService.getImpromptuAccountProfile(customUserDetails, accountId, impromptuId);
         return responseService.getDataResponse(dto);
     }
 

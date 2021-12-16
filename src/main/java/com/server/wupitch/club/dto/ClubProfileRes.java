@@ -53,6 +53,12 @@ public class ClubProfileRes {
 
     private Long impromptuId;
 
+    private Boolean isAuthAccountLeader;
+
+    public void isLeader(Boolean isAuthAccountLeader) {
+        this.isAuthAccountLeader = isAuthAccountLeader;
+    }
+
     public ClubProfileRes(Account account, List<Long> sportsList) {
         this.accountId = account.getAccountId();
         this.accountNickname = account.getNickname();

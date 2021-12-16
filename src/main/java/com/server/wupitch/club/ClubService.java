@@ -579,7 +579,7 @@ public class ClubService {
         }
     }
 
-    public ClubProfileRes getClubAccountProfile(Long accountId, Long clubId) {
+    public ClubProfileRes getClubAccountProfile(CustomUserDetails customUserDetails, Long accountId, Long clubId) {
         Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
@@ -594,6 +594,7 @@ public class ClubService {
 
         ClubProfileRes result = new ClubProfileRes(account, stringList);
 
+        result.isLeader(club.getAccount().equals(customUserDetails.getAccount()));
 
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findAllByStatusAndClubAndAccountAndIsSelect(VALID, club, account, true);

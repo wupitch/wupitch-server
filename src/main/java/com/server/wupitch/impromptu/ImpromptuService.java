@@ -482,7 +482,7 @@ public class ImpromptuService {
     }
 
 
-    public ClubProfileRes getImpromptuAccountProfile(Long accountId, Long impromptuId) {
+    public ClubProfileRes getImpromptuAccountProfile(CustomUserDetails customUserDetails, Long accountId, Long impromptuId) {
 
         Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
@@ -497,6 +497,8 @@ public class ImpromptuService {
 
         Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        result.isLeader(impromptu.getAccount().equals(customUserDetails.getAccount()));
 
         Optional<AccountImpromptuRelation> optional = accountImpromptuRelationRepository.findByStatusAndImpromptuAndAccountAndIsSelect(VALID, impromptu, account, true);
         if (optional.isEmpty()) throw new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID);

@@ -219,9 +219,9 @@ public class ClubController {
     })
     @Operation(summary = "크루 회원 프로필 조회 API", description = "accountId, clubId 기준으로 크루 회원 프로필 조회")
     @GetMapping(value = "/clubs/{clubId}/accounts/{accountId}/profile-info")
-    public DataResponse<ClubProfileRes> getClubAccountProfile(@PathVariable(name = "accountId") Long accountId,
+    public DataResponse<ClubProfileRes> getClubAccountProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "accountId") Long accountId,
                                                       @PathVariable(name = "clubId") Long clubId) {
-        ClubProfileRes dto = clubService.getClubAccountProfile(accountId, clubId);
+        ClubProfileRes dto = clubService.getClubAccountProfile(customUserDetails, accountId, clubId);
         return responseService.getDataResponse(dto);
     }
 
