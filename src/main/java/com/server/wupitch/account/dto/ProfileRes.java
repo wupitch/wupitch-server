@@ -26,11 +26,11 @@ public class ProfileRes {
 
     private String phoneNumber;
 
-    private List<String> sportsList;
+    private List<Long> sportsList;
 
     private String introduction;
 
-    public ProfileRes(Account account, List<String> sportsList) {
+    public ProfileRes(Account account, List<Long> sportsList) {
         this.accountId = account.getAccountId();
         this.accountNickname = account.getNickname();
         this.profileImage = account.getProfileImage();

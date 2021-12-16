@@ -587,9 +587,9 @@ public class ClubService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.CREW_NOT_FOUND));
 
         List<AccountSportsRelation> entityList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
-        List<String> stringList = new ArrayList<>();
+        List<Long> stringList = new ArrayList<>();
         for (AccountSportsRelation accountSportsRelation : entityList) {
-            stringList.add(accountSportsRelation.getSports().getName());
+            stringList.add(accountSportsRelation.getSports().getSportsId());
         }
 
         ClubProfileRes result = new ClubProfileRes(account, stringList);

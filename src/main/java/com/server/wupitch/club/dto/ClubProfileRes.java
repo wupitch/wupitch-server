@@ -34,7 +34,7 @@ public class ClubProfileRes {
 
     private String phoneNumber;
 
-    private List<String> sportsList;
+    private List<Long> sportsList;
 
     private String introduction;
 
@@ -53,7 +53,7 @@ public class ClubProfileRes {
 
     private Long impromptuId;
 
-    public ClubProfileRes(Account account, List<String> sportsList) {
+    public ClubProfileRes(Account account, List<Long> sportsList) {
         this.accountId = account.getAccountId();
         this.accountNickname = account.getNickname();
         this.profileImage = account.getProfileImage();
