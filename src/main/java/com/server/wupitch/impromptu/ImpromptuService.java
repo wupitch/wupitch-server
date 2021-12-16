@@ -498,7 +498,7 @@ public class ImpromptuService {
         Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
 
-        result.isLeader(impromptu.getAccount().equals(customUserDetails.getAccount()));
+        result.isLeader(impromptu.getAccount().getEmail().equals(customUserDetails.getEmail()));
 
         Optional<AccountImpromptuRelation> optional = accountImpromptuRelationRepository.findByStatusAndImpromptuAndAccountAndIsSelect(VALID, impromptu, account, true);
         if (optional.isEmpty()) throw new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID);

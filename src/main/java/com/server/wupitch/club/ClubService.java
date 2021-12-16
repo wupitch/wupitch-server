@@ -594,7 +594,7 @@ public class ClubService {
 
         ClubProfileRes result = new ClubProfileRes(account, stringList);
 
-        result.isLeader(club.getAccount().equals(customUserDetails.getAccount()));
+        result.isLeader(club.getAccount().getEmail().equals(customUserDetails.getEmail()));
 
         Optional<AccountClubRelation> optional
                 = accountClubRelationRepository.findAllByStatusAndClubAndAccountAndIsSelect(VALID, club, account, true);
