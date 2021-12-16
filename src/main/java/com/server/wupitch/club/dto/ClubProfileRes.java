@@ -1,5 +1,6 @@
 package com.server.wupitch.club.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.club.Club;
 import com.server.wupitch.club.GuestInfo;
@@ -41,6 +42,7 @@ public class ClubProfileRes {
 
     private Boolean isGuest;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isValid;
 
     private LocalDateTime addedAt;
@@ -88,7 +90,6 @@ public class ClubProfileRes {
         Impromptu impromptu = accountImpromptuRelation.getImpromptu();
         if (impromptu.getAccount().equals(account)) this.isLeader = true;
         else this.isLeader = false;
-        this.isValid = accountImpromptuRelation.getIsValid();
         this.addedAt = accountImpromptuRelation.getUpdatedAt();
         this.impromptuId = impromptu.getImpromptuId();
     }

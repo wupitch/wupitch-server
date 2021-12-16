@@ -56,6 +56,6 @@ public class AccountImpromptuRelation extends BaseTimeEntity {
     }
 
     public void disagreeEnroll() {
-        this.isValid = false;
+        this.isSelect = false;
     }
 }
