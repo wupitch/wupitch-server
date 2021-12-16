@@ -8,6 +8,7 @@ import com.server.wupitch.club.Club;
 import com.server.wupitch.club.GuestInfo;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
 import com.server.wupitch.club.dto.ClubListRes;
+import com.server.wupitch.club.dto.ClubProfileRes;
 import com.server.wupitch.club.dto.CrewFilterRes;
 import com.server.wupitch.club.dto.MemberListRes;
 import com.server.wupitch.configure.response.exception.CustomException;
@@ -490,5 +491,29 @@ public class ImpromptuService {
         AccountImpromptuRelation accountImpromptuRelation = accountImpromptuRelationRepository.findByStatusAndAccountAndImpromptu(VALID, account, impromptu)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID));
         accountImpromptuRelation.disagreeEnroll();
+    }
+
+    public ClubProfileRes getImpromptuAccountProfile(Long accountId, Long impromptuId) {
+
+        Account account = accountRepository.findByAccountIdAndStatus(accountId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        List<AccountSportsRelation> entityList = accountSportsRelationRepository.findAllByAccountAndStatus(account, VALID);
+        List<String> stringList = new ArrayList<>();
+        for (AccountSportsRelation accountSportsRelation : entityList) {
+            stringList.add(accountSportsRelation.getSports().getName());
+        }
+
+        ClubProfileRes result = new ClubProfileRes(account, stringList);
+
+        Impromptu impromptu = impromptuRepository.findByImpromptuIdAndStatus(impromptuId, VALID)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.IMPROMPTUS_NOT_FOUND));
+
+        Optional<AccountImpromptuRelation> optional = accountImpromptuRelationRepository.findByStatusAndImpromptuAndAccountAndIsSelect(VALID, impromptu, account, true);
+        if (optional.isEmpty()) throw new CustomException(CustomExceptionStatus.IMPROMPTUS_RELATION_INVALID);
+        else result.addInfo(optional.get());
+        
+        return result;
+
     }
 }

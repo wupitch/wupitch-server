@@ -1,9 +1,6 @@
 package com.server.wupitch.impromptu;
 
-import com.server.wupitch.club.dto.ClubListRes;
-import com.server.wupitch.club.dto.CrewFilterRes;
-import com.server.wupitch.club.dto.EnrollMemberReq;
-import com.server.wupitch.club.dto.MemberListRes;
+import com.server.wupitch.club.dto.*;
 import com.server.wupitch.configure.response.CommonResponse;
 import com.server.wupitch.configure.response.DataResponse;
 import com.server.wupitch.configure.response.ResponseService;
@@ -181,6 +178,17 @@ public class ImpromptuController {
     public CommonResponse disagreeEnrollImpromptuMember(@PathVariable(name = "impromptuId") Long impromptuId, @PathVariable(name = "accountId") Long accountId)  {
         impromptuService.disagreeEnrollImpromptuMember(impromptuId, accountId);
         return responseService.getSuccessResponse();
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
+    })
+    @Operation(summary = "번개 회원 프로필 조회 API", description = "accountId, impromptuId 기준으로 번개 회원 프로필 조회")
+    @GetMapping(value = "/impromptus/{impromptuId}/accounts/{accountId}/profile-info")
+    public DataResponse<ClubProfileRes> getImpromptuAccountProfile(@PathVariable(name = "accountId") Long accountId,
+                                                              @PathVariable(name = "impromptuId") Long impromptuId) {
+        ClubProfileRes dto = impromptuService.getImpromptuAccountProfile(accountId, impromptuId);
+        return responseService.getDataResponse(dto);
     }
 
 }

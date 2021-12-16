@@ -13,4 +13,5 @@ public interface AccountImpromptuRelationRepository extends JpaRepository<Accoun
     Optional<AccountImpromptuRelation> findByStatusAndAccountAndImpromptu(Status status, Account account, Impromptu impromptu);
     List<AccountImpromptuRelation> findAllByStatusAndAccountAndIsSelect(Status status, Account account, Boolean isSelect);
     List<AccountImpromptuRelation> findAllByStatusAndImpromptuAndIsSelect(Status valid, Impromptu impromptu, Boolean isSelect);
+    Optional<AccountImpromptuRelation> findByStatusAndImpromptuAndAccountAndIsSelect(Status valid, Impromptu impromptu, Account account,Boolean isSelect);
 }

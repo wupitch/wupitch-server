@@ -4,6 +4,8 @@ import com.server.wupitch.account.entity.Account;
 import com.server.wupitch.club.Club;
 import com.server.wupitch.club.GuestInfo;
 import com.server.wupitch.club.accountClubRelation.AccountClubRelation;
+import com.server.wupitch.impromptu.accountImpromptuRelation.AccountImpromptuRelation;
+import com.server.wupitch.impromptu.entity.Impromptu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +47,10 @@ public class ClubProfileRes {
 
     private LocalDate guestReserveTime;
 
+    private Long clubId;
+
+    private Long impromptuId;
+
     public ClubProfileRes(Account account, List<String> sportsList) {
         this.accountId = account.getAccountId();
         this.accountNickname = account.getNickname();
@@ -65,6 +71,7 @@ public class ClubProfileRes {
         this.isGuest = false;
         this.isValid = accountClubRelation.getIsValid();
         this.addedAt = accountClubRelation.getUpdatedAt();
+        this.clubId = club.getClubId();
     }
 
     public void addInfo(GuestInfo guestInfo){
@@ -73,6 +80,17 @@ public class ClubProfileRes {
         this.isValid = guestInfo.getIsValid();
         this.addedAt = guestInfo.getUpdatedAt();
         this.guestReserveTime = guestInfo.getSelectedDate();
+        this.clubId = guestInfo.getClub().getClubId();
+    }
+
+    public void addInfo(AccountImpromptuRelation accountImpromptuRelation) {
+        Account account = accountImpromptuRelation.getAccount();
+        Impromptu impromptu = accountImpromptuRelation.getImpromptu();
+        if (impromptu.getAccount().equals(account)) this.isLeader = true;
+        else this.isLeader = false;
+        this.isValid = accountImpromptuRelation.getIsValid();
+        this.addedAt = accountImpromptuRelation.getUpdatedAt();
+        this.impromptuId = impromptu.getImpromptuId();
     }
 
 
