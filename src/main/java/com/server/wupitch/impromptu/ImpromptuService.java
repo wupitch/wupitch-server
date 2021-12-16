@@ -289,9 +289,10 @@ public class ImpromptuService {
                 return new ImpromptuResultRes(true);
             }
             else{
-                impromptu.minusMemberCount();
-                optional.get().toggleSelect();
-                return new ImpromptuResultRes(false);
+                throw new CustomException(CustomExceptionStatus.IMPROMPTUS_ALREADY_BELONG);
+//                impromptu.minusMemberCount();
+//                optional.get().toggleSelect();
+//                return new ImpromptuResultRes(false);
             }
         }
         else{

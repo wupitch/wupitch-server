@@ -122,7 +122,7 @@ public class ImpromptuController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
-    @Operation(summary = "번개 참여 토글 API", description = "번개 ID, JWT토큰을 기준으로 번개 참여 토글")
+    @Operation(summary = "번개 참여 API", description = "번개 ID, JWT토큰을 기준으로 번개 참여")
     @PostMapping(value = "/impromptus/{impromptuId}/participation-toggle")
     public DataResponse<ImpromptuResultRes> impromptuParticipationToggleByAuth(@PathVariable Long impromptuId,
                                                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {

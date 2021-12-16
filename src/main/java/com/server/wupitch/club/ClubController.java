@@ -135,7 +135,7 @@ public class ClubController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
-    @Operation(summary = "크루 참여 토글 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여 토글")
+    @Operation(summary = "크루 참여 API", description = "크루 ID, JWT토큰을 기준으로 크루 참여")
     @PostMapping(value = "/clubs/{clubId}/participation-toggle")
     public DataResponse<CrewResultRes> clubParticipationToggleByAuth(@PathVariable Long clubId,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {

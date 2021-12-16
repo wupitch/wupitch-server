@@ -304,9 +304,10 @@ public class ClubService {
                 optional.get().toggleSelect();
                 return new CrewResultRes(true);
             } else{
-                club.minusMemberCount();
-                optional.get().toggleSelect();
-                return new CrewResultRes(false);
+                throw new CustomException(CustomExceptionStatus.CREW_ALREADY_BELONG);
+//                club.minusMemberCount();
+//                optional.get().toggleSelect();
+//                return new CrewResultRes(false);
             }
         }
         else{
