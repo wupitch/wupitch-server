@@ -179,7 +179,7 @@ public class PostService {
 
     @Transactional
     public PostResultRes postReportToggleByAuth(Long postId, CustomUserDetails customUserDetails, ReportReq dto) {
-        if(dto==null) dto = new ReportReq();
+        if(dto==null) throw new CustomException(CustomExceptionStatus.EMPTY_CONTENTS_REPORT);
 
         Account account = accountRepository.findByEmailAndStatus(customUserDetails.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
@@ -190,15 +190,14 @@ public class PostService {
         Optional<AccountPostRelation> optional
                 = accountPostRelationRepository.findByAccountAndPostAndStatus(account, post, VALID);
         if(optional.isPresent()){
-            optional.get().toggleReport();
+            optional.get().giveReport();
             if (optional.get().getIsReport()){
                 post.adjustPostReportCount(true);
                 optional.get().setReportContents(dto.getReportContents());
                 return new PostResultRes(true);
             }
             else{
-                post.adjustPostReportCount(false);
-                return new PostResultRes(false);
+                throw new CustomException(CustomExceptionStatus.ALREADY_SET_REPORT);
             }
         }
         else{

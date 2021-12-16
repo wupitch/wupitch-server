@@ -85,7 +85,7 @@ public class PostController {
             @ApiImplicitParam(name = "X-ACCESS-TOKEN", value = "로그인 성공 후 토큰", dataTypeClass = String.class, paramType = "header")
     })
     @Operation(summary = "게시글 신고 토글 API", description = "게시글 ID, JWT토큰을 기준으로 게시글 신고 토글")
-    @PatchMapping(value = "/posts/{postId}/report-toggle")
+    @PatchMapping(value = "/posts/{postId}/report")
     public DataResponse<PostResultRes> postReportToggleByAuth(@PathVariable Long postId,
                                                               @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody(required = false) ReportReq dto)  {
         PostResultRes postResultRes = postService.postReportToggleByAuth(postId, customUserDetails, dto);
