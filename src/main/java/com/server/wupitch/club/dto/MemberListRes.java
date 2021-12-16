@@ -28,6 +28,7 @@ public class MemberListRes implements Comparable<MemberListRes>{
     private Boolean isValid;
     private LocalDateTime addedAt;
     private LocalDate guestReserveTime;
+    private String profileImage;
 
     @Override
     public int compareTo(@NotNull MemberListRes other) {
@@ -49,6 +50,7 @@ public class MemberListRes implements Comparable<MemberListRes>{
         this.isGuest = false;
         this.isValid = accountClubRelation.getIsValid();
         this.addedAt = accountClubRelation.getUpdatedAt();
+        this.profileImage = account.getProfileImage();
     }
 
     public MemberListRes(GuestInfo guestInfo) {
@@ -60,5 +62,6 @@ public class MemberListRes implements Comparable<MemberListRes>{
         this.isValid = guestInfo.getIsValid();
         this.addedAt = guestInfo.getUpdatedAt();
         this.guestReserveTime = guestInfo.getSelectedDate();
+        this.profileImage = account.getProfileImage();
     }
 }

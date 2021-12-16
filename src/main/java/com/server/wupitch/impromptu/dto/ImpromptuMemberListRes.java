@@ -24,6 +24,7 @@ public class ImpromptuMemberListRes implements Comparable<ImpromptuMemberListRes
     private Boolean isLeader;
     private Boolean isValid;
     private LocalDateTime addedAt;
+    private String profileImage;
 
     @Override
     public int compareTo(@NotNull ImpromptuMemberListRes other) {
@@ -44,5 +45,6 @@ public class ImpromptuMemberListRes implements Comparable<ImpromptuMemberListRes
         else this.isLeader = false;
         this.isValid = accountImpromptuRelation.getIsValid();
         this.addedAt = accountImpromptuRelation.getUpdatedAt();
+        this.profileImage = account.getProfileImage();
     }
 }
