@@ -157,7 +157,7 @@ public class ClubDetailRes {
             if (club.getSundayStartTime() == null) schedule.startTime = 00.00;
             else schedule.startTime = club.getSundayStartTime();
             if (club.getSundayEndTime() == null) schedule.endTime = 24.00;
-            else schedule.endTime = club.getSaturdayEndTime();
+            else schedule.endTime = club.getSundayEndTime();
             this.schedules.add(schedule);
         }
 
